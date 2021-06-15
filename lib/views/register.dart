@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/widgets.dart';
+import 'package:mybetaride/views/welcomeScreen.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -71,7 +72,14 @@ class _RegisterState extends State<Register> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => WelcomePage(),
+                        ),
+                      );
+                    },
                     child: Container(
                       margin: EdgeInsets.only(top: 10),
                       height: 55.0,

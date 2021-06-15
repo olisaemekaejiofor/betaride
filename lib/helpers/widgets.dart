@@ -221,39 +221,39 @@ class _FormDropdownState extends State<FormDropdown> {
                 controller: widget.controller,
                 decoration: InputDecoration(
                   prefixIcon: Container(
-                      margin: EdgeInsets.only(left: 5.0),
-                      width: 65,
-                      child: Center(
-                        child: Row(
-                          children: [
-                            Text(
-                              dropdownValue,
-                              style: GoogleFonts.notoSans(
-                                color: Color(0xff717171),
-                                fontWeight: FontWeight.w300,
-                                fontSize: 18,
-                              ),
-                            ),
-                            Icon(
-                              Icons.keyboard_arrow_down,
+                    margin: EdgeInsets.only(left: 5.0),
+                    width: 65,
+                    child: Center(
+                      child: Row(
+                        children: [
+                          Text(
+                            dropdownValue,
+                            style: GoogleFonts.notoSans(
                               color: Color(0xff717171),
-                              size: 18,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 18,
                             ),
-                            Container(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 5.0, vertical: 5),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  left: BorderSide(
-                                    color: Color(0xffC78638),
-                                  ),
+                          ),
+                          Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Color(0xff717171),
+                            size: 18,
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 5.0, vertical: 5),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(
+                                  color: Color(0xffC78638),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
+                  ),
                   contentPadding: EdgeInsets.symmetric(
                     vertical: 16,
                   ),
@@ -271,4 +271,127 @@ class _FormDropdownState extends State<FormDropdown> {
       ),
     );
   }
+}
+
+Container buildIcon() {
+  return Container(
+    height: 16.0,
+    width: 16.0,
+    decoration: BoxDecoration(
+      color: Color(0xffFF8C00),
+      border: Border.all(color: Colors.white, width: 2.0),
+      shape: BoxShape.circle,
+    ),
+    child: Container(
+      decoration: BoxDecoration(
+          border: Border.all(color: Color(0xffFF8C00), width: 3.0),
+          shape: BoxShape.circle,
+          color: Colors.white),
+    ),
+  );
+}
+
+Padding buildIconRow({String label}) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 17.0),
+    child: Row(
+      children: [
+        buildIcon(),
+        SizedBox(
+          width: 6.0,
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Center NextButton(BuildContext context, {Widget screen}) {
+  return Center(
+    child: GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+      },
+      child: Text(
+        'Next',
+        style: TextStyle(
+          fontSize: 24.0,
+          fontWeight: FontWeight.w700,
+          color: Color(0XffFFC885),
+        ),
+      ),
+    ),
+  );
+}
+
+GestureDetector CustomLongButton(BuildContext context,
+    {String label, Color buttonColor, Color labelColor, Widget screen}) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => screen != null ? screen : null),
+      );
+    },
+    child: Container(
+      margin: EdgeInsets.only(top: 10),
+      height: 55.0,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Color(0xFFFFA73B),
+          width: 4.0,
+        ),
+        color: buttonColor,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: Center(
+        child: Text(
+          label,
+          style: GoogleFonts.notoSans(
+            fontSize: 18,
+            color: labelColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+GestureDetector ExitButton(BuildContext context) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.pop(context);
+    },
+    child: Icon(
+      Icons.chevron_left,
+      color: Colors.white,
+      size: 30.0,
+    ),
+  );
+}
+
+Padding buildLicenseRow({String title}) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 16.0),
+    child: Text(
+      title,
+      style: TextStyle(
+        fontSize: 14.0,
+        fontWeight: FontWeight.w500,
+        color: Colors.white,
+      ),
+    ),
+  );
 }

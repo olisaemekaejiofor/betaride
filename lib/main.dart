@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'views/onboard.dart';
+import 'package:mybetaride/views/onboard.dart';
 
 void main() {
   runApp(MyApp());
