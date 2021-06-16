@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mybetaride/helpers/widgets.dart';
-import 'package:mybetaride/views/vehicle_details.dart';
+import 'package:mybetaride/views/uploading_details_screens/vehicle_details.dart';
 
 class UploadInspectionReport extends StatelessWidget {
   @override

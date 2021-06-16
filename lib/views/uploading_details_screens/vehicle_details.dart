@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mybetaride/helpers/widgets.dart';
+import 'package:mybetaride/views/auth_screens/login_screen.dart';
 
 class VehicleDetails extends StatelessWidget {
   @override
@@ -46,6 +48,13 @@ class VehicleDetails extends StatelessWidget {
             Spacer(
               flex: 2,
             ),
+            CustomLongButton(context,
+                label: 'Verify',
+                labelColor: Color(0XffFF9411),
+                buttonColor: Colors.white),
+            Spacer(),
+            NextButton(context, screen: LogInScreen()),
+            Spacer()
           ],
         ),
       ),

@@ -369,14 +369,14 @@ GestureDetector CustomLongButton(BuildContext context,
   );
 }
 
-GestureDetector ExitButton(BuildContext context) {
+GestureDetector ExitButton(BuildContext context, {Color color}) {
   return GestureDetector(
     onTap: () {
       Navigator.pop(context);
     },
     child: Icon(
       Icons.chevron_left,
-      color: Colors.white,
+      color: color != null ? color : Colors.white,
       size: 30.0,
     ),
   );
@@ -393,5 +393,40 @@ Padding buildLicenseRow({String title}) {
         color: Colors.white,
       ),
     ),
+  );
+}
+
+Column BoxTextFormField({String hintText, String text}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        text,
+        style: TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.w700,
+          color: Colors.black,
+        ),
+      ),
+      SizedBox(
+        height: 5.0,
+      ),
+      TextFormField(
+        decoration: InputDecoration(
+            focusColor: Color(0XffFFF7ED),
+            fillColor: Color(0XffFFF7ED),
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+              color: Color(0XffC78638),
+              width: 1.0,
+            )),
+            hintText: hintText,
+            hintStyle: TextStyle(
+              fontSize: 12.0,
+              fontWeight: FontWeight.w600,
+              color: Color(0XffDCBC94),
+            )),
+      ),
+    ],
   );
 }
