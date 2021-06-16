@@ -51,13 +51,9 @@ class _RegisterState extends State<Register> {
                             secondController: lastnameController,
                           ),
                           SingleFormField(
-                              label: "Email Address",
-                              controller: emailController,
-                              obscure: false),
+                              label: "Email Address", controller: emailController, obscure: false),
                           SingleFormField(
-                              label: "Password",
-                              controller: passwordController,
-                              obscure: true),
+                              label: "Password", controller: passwordController, obscure: true),
                           FormDropdown(
                             label: "Phone Number",
                           ),
