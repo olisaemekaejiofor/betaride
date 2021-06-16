@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/views/auth_screens/forgotten_password.dart';
 
 class LogInScreen extends StatelessWidget {
   @override
@@ -56,15 +57,23 @@ class LogInScreen extends StatelessWidget {
                     ),
                   ),
                   Spacer(),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      'Couldn’t remember password?',
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => ForgottenPasswordScreen()));
+                    },
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'Couldn’t remember password?',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
