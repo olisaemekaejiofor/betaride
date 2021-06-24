@@ -31,6 +31,9 @@ dependencies:
   google_fonts: ^2.1.0
   provider: ^5.0.0
   http: ^0.13.3
+  another_flushbar: ^1.10.23
+  shared_preferences: ^2.0.6
+  google_maps_flutter: ^2.0.6
 
 dev_dependencies:
   flutter_test:

@@ -218,6 +218,8 @@ class _FormDropdownState extends State<FormDropdown> {
             ),
             child: Container(
               child: TextFormField(
+                keyboardType: TextInputType.phone,
+                style: GoogleFonts.notoSans(fontSize: 17),
                 controller: widget.controller,
                 decoration: InputDecoration(
                   prefixIcon: Container(
@@ -231,7 +233,7 @@ class _FormDropdownState extends State<FormDropdown> {
                             style: GoogleFonts.notoSans(
                               color: Color(0xff717171),
                               fontWeight: FontWeight.w300,
-                              fontSize: 18,
+                              fontSize: 17,
                             ),
                           ),
                           Icon(
@@ -240,8 +242,7 @@ class _FormDropdownState extends State<FormDropdown> {
                             size: 18,
                           ),
                           Container(
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 5.0, vertical: 5),
+                            margin: EdgeInsets.symmetric(horizontal: 1.0, vertical: 5),
                             decoration: BoxDecoration(
                               border: Border(
                                 left: BorderSide(
@@ -255,13 +256,14 @@ class _FormDropdownState extends State<FormDropdown> {
                     ),
                   ),
                   contentPadding: EdgeInsets.symmetric(
-                    vertical: 16,
+                    vertical: 12.5,
                   ),
                   border: InputBorder.none,
                   hintText: "8123456789",
                   hintStyle: GoogleFonts.notoSans(
                     color: Color(0xffC78638),
                     fontWeight: FontWeight.w300,
+                    fontSize: 17,
                   ),
                 ),
               ),
@@ -322,7 +324,7 @@ Center NextButton(BuildContext context, {Widget screen}) {
       child: Text(
         'Next',
         style: TextStyle(
-          fontSize: 24.0,
+          fontSize: 26.0,
           fontWeight: FontWeight.w700,
           color: Color(0XffFFC885),
         ),
@@ -345,10 +347,6 @@ GestureDetector CustomLongButton(BuildContext context,
       height: 55.0,
       width: double.infinity,
       decoration: BoxDecoration(
-        border: Border.all(
-          color: Color(0xFFFFA73B),
-          width: 4.0,
-        ),
         color: buttonColor,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(20),
@@ -359,7 +357,70 @@ GestureDetector CustomLongButton(BuildContext context,
         child: Text(
           label,
           style: GoogleFonts.notoSans(
-            fontSize: 18,
+            fontSize: 25,
+            color: labelColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+GestureDetector SecCustomLongButton(BuildContext context,
+    {String label, Color buttonColor, Color labelColor, Widget screen}) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => screen != null ? screen : null),
+      );
+    },
+    child: Container(
+      margin: EdgeInsets.only(top: 10),
+      height: 55.0,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: buttonColor,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: Center(
+        child: Text(
+          label,
+          style: GoogleFonts.notoSans(
+            fontSize: 25,
+            color: labelColor,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+GestureDetector SCustomLongButton(BuildContext context,
+    {String label, Color buttonColor, Color labelColor, void Function() fun}) {
+  return GestureDetector(
+    onTap: fun,
+    child: Container(
+      margin: EdgeInsets.only(top: 10),
+      height: 55.0,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: buttonColor,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: Center(
+        child: Text(
+          label,
+          style: GoogleFonts.notoSans(
+            fontSize: 25,
             color: labelColor,
             fontWeight: FontWeight.w600,
           ),
@@ -387,7 +448,7 @@ Padding buildLicenseRow({String title}) {
     padding: const EdgeInsets.only(bottom: 16.0),
     child: Text(
       title,
-      style: TextStyle(
+      style: GoogleFonts.notoSans(
         fontSize: 14.0,
         fontWeight: FontWeight.w500,
         color: Colors.white,
@@ -430,3 +491,62 @@ Column BoxTextFormField({String hintText, String text}) {
     ],
   );
 }
+
+Column formField({String label, String hintText}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: GoogleFonts.notoSans(
+          color: Colors.white,
+          fontSize: 18.0,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      SizedBox(height: 3),
+      Container(
+        width: double.infinity,
+        decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white))),
+        child: TextField(
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: hintText,
+            hintStyle: GoogleFonts.notoSans(color: Colors.white70),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+// Container customDropdown({String label}) {
+//   return Container(
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           label,
+//           style: GoogleFonts.notoSans(
+//               color: Colors.white, fontSize: 18.0, fontWeight: FontWeight.w600),
+//         ),
+//         DropdownButton<String>(
+//           value: "dropdownValue",
+//           icon: Icon(Icons.keyboard_arrow_down),
+//           iconSize: 26,
+//           onChanged: (newValue) {
+//             setState(() {
+//               dropdownValue = newValue;
+//             });
+//           },
+//           items: ['one', 'two', 'three', 'four'].map<DropdownMenuItem<String>>((String value) {
+//             return DropdownMenuItem<String>(
+//               value: value,
+//               child: Text(value),
+//             );
+//           }).toList(),
+//         )
+//       ],
+//     ),
+//   );
+// }
