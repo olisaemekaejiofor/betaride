@@ -4,8 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:mybetaride/helpers/widgets.dart';
-// import 'package:mybetaride/views/auth_screens/login_screen.dart';
 
 class VehicleDetails extends StatefulWidget {
   @override
@@ -13,6 +11,7 @@ class VehicleDetails extends StatefulWidget {
 }
 
 class _VehicleDetailsState extends State<VehicleDetails> {
+  Future nextSave() async {}
   String dropdownValue = 'Toyota';
   @override
   Widget build(BuildContext context) {
@@ -205,10 +204,9 @@ class _VehicleDetailsState extends State<VehicleDetails> {
             Center(
               child: GestureDetector(
                 onTap: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  final finKey = 'finKey';
-                  prefs.setString(finKey, 'finish');
-                  print('saved');
+                  final SharedPreferences prefs = await SharedPreferences.getInstance();
+                  prefs.setInt('pageIndex', 2);
+                  print(prefs.getInt('pageIndex'));
                   Navigator.pushReplacement(
                       context, MaterialPageRoute(builder: (_) => LogInScreen()));
                 },

@@ -81,10 +81,9 @@ class _RegisterState extends State<Register> {
 
       print(response.statusCode);
       if (response.statusCode == 201) {
-        final prefs = await SharedPreferences.getInstance();
-        final regKey = 'regKey';
-        prefs.setString(regKey, 'registered');
-        print('saved');
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setInt('pageIndex', 1);
+        print(prefs.getInt('pageIndex'));
         Navigator.pop(context);
         Navigator.pushReplacement(
           context,

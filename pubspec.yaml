@@ -34,6 +34,9 @@ dependencies:
   another_flushbar: ^1.10.23
   shared_preferences: ^2.0.6
   google_maps_flutter: ^2.0.6
+  location: ^4.3.0
+  geolocator: ^7.2.0
+  geocoding: ^2.0.0
 
 dev_dependencies:
   flutter_test:

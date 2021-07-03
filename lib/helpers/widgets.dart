@@ -550,3 +550,338 @@ Column formField({String label, String hintText}) {
 //     ),
 //   );
 // }
+AppBar homeAppBar() {
+  return AppBar(
+    backgroundColor: Colors.white,
+    automaticallyImplyLeading: false,
+    centerTitle: true,
+    leading: Builder(
+      builder: (context) => IconButton(
+        iconSize: 12,
+        onPressed: () => Scaffold.of(context).openDrawer(),
+        icon: Image.asset("assets/menu.png"),
+      ),
+    ),
+    title: Container(
+      width: 150,
+      height: 25,
+      decoration: BoxDecoration(
+        color: Color(0xffE1FFFF),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Center(
+        child: Text(
+          "Available",
+          style: GoogleFonts.notoSans(
+              color: Color(0xff0698D7), fontSize: 12, fontWeight: FontWeight.w600),
+        ),
+      ),
+    ),
+    actions: [
+      IconButton(
+        iconSize: 20,
+        onPressed: () {},
+        icon: Image.asset("assets/bell.png"),
+      ),
+    ],
+  );
+}
+
+Drawer homeDrawer({double width}) {
+  return Drawer(
+    child: Container(
+      width: width,
+      child: Column(children: [
+        Container(
+          width: double.infinity,
+          height: 200,
+          decoration: BoxDecoration(
+            color: Color(0xffFF8C00),
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage(
+                "assets/Mask Group (2).png",
+              ),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset("assets/bgdraw.png", width: 80),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Toyin Omobolanle",
+                      style: GoogleFonts.notoSans(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 19.0,
+                      ),
+                    ),
+                    MaterialButton(
+                      onPressed: () {},
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                        ),
+                      ),
+                      child: Container(
+                        width: 120,
+                        height: 30,
+                        child: Center(
+                          child: Text(
+                            "Edit Profile",
+                            style: GoogleFonts.notoSans(
+                              color: Color(0xffFF8C00),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 15),
+        customTile("Home", "home 1"),
+        customTile("My Wallet", "credit-card"),
+        customTile("Schedule", "calendar"),
+        customTile("Trip History", "steering-wheel (1)"),
+        customTile("Invite Friends", "friends"),
+        customTile("Settings", "settings"),
+        customTile("Help", "call-center"),
+        Expanded(child: SizedBox()),
+        customTile("Logout", "logout 2"),
+        SizedBox(height: 10),
+      ]),
+    ),
+  );
+}
+
+customTile(String name, String iconName) {
+  return ListTile(
+    leading: Image.asset("assets/" + iconName + ".png", width: 25.0),
+    title: Text(
+      name,
+      style: GoogleFonts.notoSans(
+          color: Color(0xff3e3e3e), fontWeight: FontWeight.w400, fontSize: 20.0),
+    ),
+  );
+}
+
+Positioned acceptReject({
+  double positionedHeight,
+  double positionedLeft,
+  double containerWidth,
+  double acceptWidth,
+  double rejectWidth,
+  void Function() reject,
+}) {
+  return Positioned(
+    bottom: 30.0,
+    height: positionedHeight,
+    left: positionedLeft,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          width: containerWidth,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset("assets/bgdraw.png", width: 50),
+                  SizedBox(width: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Toyin Omobolanle",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      Text(
+                        "+2348167758317",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  Column(
+                    children: [
+                      Text(
+                        "₦2500",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      Text(
+                        "200km",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Spacer(),
+              Row(
+                children: [
+                  Column(),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Pick Up location",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontSize: 14.0,
+                        ),
+                      ),
+                      Text(
+                        "Dutse-nara, Abuja, Nigeria",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xff3e3e3e),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 17.0,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        "Destination",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontSize: 14.0,
+                        ),
+                      ),
+                      Text(
+                        "Iwo, Osun state, Nigeria",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xff3e3e3e),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 17.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        "pickup time",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontSize: 12.0,
+                        ),
+                      ),
+                      Text(
+                        "0.15ms",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15.0,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Text(
+                        "Est. time",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontSize: 12.0,
+                        ),
+                      ),
+                      Text(
+                        "2.30 hrs",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: reject,
+                    child: Container(
+                      width: rejectWidth,
+                      child: Center(
+                        child: Text(
+                          "Reject",
+                          style: GoogleFonts.notoSans(
+                            color: Color(0xffFF8C00),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  MaterialButton(
+                    onPressed: () {},
+                    color: Color(0xffFF8C00),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                      ),
+                    ),
+                    child: Container(
+                      width: acceptWidth,
+                      height: 30,
+                      child: Center(
+                        child: Text(
+                          "Accept",
+                          style: GoogleFonts.notoSans(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              )
+              //show dialog when reject button is clicked,
+              //show riders on board when accept is clicked
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}

@@ -7,9 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/forgotten_password.dart';
-import 'package:mybetaride/views/home.dart';
+import 'package:mybetaride/views/home/home.dart';
 import 'package:mybetaride/views/register.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogInScreen extends StatefulWidget {
   @override
@@ -56,6 +57,9 @@ class _LogInScreenState extends State<LogInScreen> {
       http.StreamedResponse response = await request.send();
       print(response.statusCode);
       if (response.statusCode == 201) {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setInt('pageIndex', 3);
+        print(prefs.getInt('pageIndex'));
         Navigator.pop(context);
         Navigator.pushAndRemoveUntil(
           context,
