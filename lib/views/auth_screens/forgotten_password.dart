@@ -139,10 +139,21 @@ class _ForgottenPasswordScreenState extends State<ForgottenPasswordScreen> {
               ),
             ),
             Spacer(),
-            SingleFormField(
-              label: "Email Address",
-              obscure: false,
-              controller: mail,
+            singleFormField(
+              label: "Password",
+              formChild: TextFormField(
+                controller: mail,
+                obscureText: true,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                  border: InputBorder.none,
+                  hintText: "Email Address",
+                  hintStyle: GoogleFonts.notoSans(
+                    color: Color(0xffC78638),
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ),
             ),
             Spacer(
               flex: 5,

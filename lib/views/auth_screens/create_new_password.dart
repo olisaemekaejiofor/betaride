@@ -37,7 +37,21 @@ class CreateNewPassword extends StatelessWidget {
               ),
             ),
             Spacer(),
-            SingleFormField(label: "Password", obscure: true),
+            singleFormField(
+              label: "Password",
+              formChild: TextFormField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                  border: InputBorder.none,
+                  hintText: "New Password",
+                  hintStyle: GoogleFonts.notoSans(
+                    color: Color(0xffC78638),
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ),
+            ),
             SizedBox(
               height: 11.0,
             ),
@@ -50,7 +64,21 @@ class CreateNewPassword extends StatelessWidget {
               ),
             ),
             Spacer(),
-            SingleFormField(label: "Confirm Password", obscure: true),
+            singleFormField(
+              label: "Password",
+              formChild: TextFormField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                  border: InputBorder.none,
+                  hintText: "Confirm Password",
+                  hintStyle: GoogleFonts.notoSans(
+                    color: Color(0xffC78638),
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ),
+            ),
             Spacer(
               flex: 5,
             ),

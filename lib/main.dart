@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mybetaride/Providers/authProvider.dart';
+import 'package:mybetaride/Providers/userProvider.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/home.dart';
 import 'package:mybetaride/views/onboard.dart';
 import 'package:mybetaride/views/welcomeScreen.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 saveIndex(int index) async {
@@ -32,13 +35,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'MyBetaRide',
-      initialRoute: 'route',
-      routes: {
-        'route': (context) => pages[routeIndex],
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'MyBetaRide',
+        initialRoute: 'route',
+        routes: {
+          'route': (context) => pages[routeIndex],
+        },
+      ),
     );
   }
 }

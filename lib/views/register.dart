@@ -1,12 +1,11 @@
-import 'dart:convert';
-
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/Providers/authProvider.dart';
 import 'package:mybetaride/helpers/widgets.dart';
+import 'package:mybetaride/models/user.dart';
 import 'package:mybetaride/views/welcomeScreen.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -14,104 +13,61 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  TextEditingController firstnameController = TextEditingController();
-  TextEditingController lastnameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController stateController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  String _firstname, _lastname, _email, _password, _phone, _state;
 
-  Future register() async {
-    var firstName = firstnameController.text;
-    var lastName = lastnameController.text;
-    var email = emailController.text;
-    var phone = phoneController.text;
-    var password = passwordController.text;
-    var state = stateController.text;
+  @override
+  Widget build(BuildContext context) {
+    AuthProvider auth = Provider.of<AuthProvider>(context);
 
-    if (firstName == null ||
-        lastName == "" ||
-        email == "" ||
-        phone == "" ||
-        password == "" ||
-        state == "") {
-      Flushbar(
-        icon: Icon(Icons.error, size: 26, color: Colors.white),
-        flushbarPosition: FlushbarPosition.TOP,
-        duration: Duration(seconds: 5),
-        message: "Please fill all the fields",
-        shouldIconPulse: true,
-        backgroundColor: Colors.red[400],
-        borderRadius: BorderRadius.circular(10),
-        padding: EdgeInsets.symmetric(vertical: 20),
-        margin: EdgeInsets.symmetric(horizontal: 10),
-      )..show(context);
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-
-      var url = "https://mybetaride.herokuapp.com/api/v1/auth/register";
-      var response = await http.post(
-        Uri.parse(url),
-        headers: {"content-type": "application/json"},
-        body: json.encode({
-          "firstName": firstName,
-          "lastName": lastName,
-          "password": password,
-          "email": email,
-          "address": state,
-          "phone": "0" + phone,
-          "stateOfResidence": state,
-          "role": "driver",
-        }),
-      );
-      var body = json.decode(response.body);
-      print(body);
-      String checkerror() {
-        if (body['error'] == "A duplicate field value entered") {
-          return "A driver has registered with this email";
-        } else {
-          return body['error'];
-        }
-      }
-
-      print(response.statusCode);
-      if (response.statusCode == 201) {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setInt('pageIndex', 1);
-        print(prefs.getInt('pageIndex'));
-        Navigator.pop(context);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (BuildContext context) {
-            return WelcomePage();
-          }),
+    var register = () {
+      final form = formKey.currentState;
+      if (form.validate()) {
+        showDialog(
+          context: context,
+          builder: (context) => Center(
+            child: CircularProgressIndicator(),
+          ),
         );
-        print("Successful");
+        form.save();
+        auth.register(_firstname, _lastname, _email, _password, _state, _phone).then((response) {
+          print(response['status']);
+          if (response['status'] != null) {
+            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) {
+                return WelcomePage();
+              }),
+            );
+          } else {
+            Flushbar(
+              icon: Icon(Icons.error, size: 26, color: Colors.white),
+              flushbarPosition: FlushbarPosition.TOP,
+              duration: Duration(seconds: 5),
+              message: "Registration Failed",
+              shouldIconPulse: true,
+              backgroundColor: Colors.red[400],
+              borderRadius: BorderRadius.circular(10),
+              padding: EdgeInsets.symmetric(vertical: 20),
+              margin: EdgeInsets.symmetric(horizontal: 10),
+            )..show(context);
+          }
+        });
       } else {
-        Navigator.pop(context);
         Flushbar(
           icon: Icon(Icons.error, size: 26, color: Colors.white),
           flushbarPosition: FlushbarPosition.TOP,
           duration: Duration(seconds: 5),
-          message: checkerror(),
+          message: "Fill all the feilds",
           shouldIconPulse: true,
           backgroundColor: Colors.red[400],
           borderRadius: BorderRadius.circular(10),
           padding: EdgeInsets.symmetric(vertical: 20),
           margin: EdgeInsets.symmetric(horizontal: 10),
         )..show(context);
-        print("Failed");
       }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+    };
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.only(left: 25, right: 25.0, top: 45, bottom: 10),
@@ -131,25 +87,102 @@ class _RegisterState extends State<Register> {
             SizedBox(height: 40),
             Expanded(
               child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    DoubleFormField(
-                      label_1: "Firstname",
-                      label_2: "Lastname",
-                      firstController: firstnameController,
-                      secondController: lastnameController,
-                    ),
-                    SingleFormField(
-                        label: "Email Address", controller: emailController, obscure: false),
-                    SingleFormField(
-                        label: "Password", controller: passwordController, obscure: true),
-                    FormDropdown(
-                      label: "Phone Number",
-                      controller: phoneController,
-                    ),
-                    SingleFormField(
-                        label: "State/City", controller: stateController, obscure: false)
-                  ],
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      doubleFormField(
+                        label_1: "Firstname",
+                        label_2: "Lastname",
+                        width: MediaQuery.of(context).size.width * 0.40,
+                        formChild1: TextFormField(
+                          onSaved: (value) => _firstname = value,
+                          validator: (value) => value.isEmpty ? '' : null,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                            border: InputBorder.none,
+                            hintText: "FirstName",
+                            hintStyle: GoogleFonts.notoSans(
+                              color: Color(0xffC78638),
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                        formChild2: TextFormField(
+                          onSaved: (value) => _lastname = value,
+                          validator: (value) => value.isEmpty ? '' : null,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                            border: InputBorder.none,
+                            hintText: "LastName",
+                            hintStyle: GoogleFonts.notoSans(
+                              color: Color(0xffC78638),
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                      ),
+                      singleFormField(
+                        label: "Email Address",
+                        formChild: TextFormField(
+                          onSaved: (value) => _email = value,
+                          validator: (value) => value.isEmpty ? '' : null,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                            border: InputBorder.none,
+                            hintText: "Email Address",
+                            hintStyle: GoogleFonts.notoSans(
+                              color: Color(0xffC78638),
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                      ),
+                      singleFormField(
+                        label: "Password",
+                        formChild: TextFormField(
+                          obscureText: true,
+                          onSaved: (value) => _password = value,
+                          validator: (value) => value.isEmpty ? '' : null,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                            border: InputBorder.none,
+                            hintText: "Password",
+                            hintStyle: GoogleFonts.notoSans(
+                              color: Color(0xffC78638),
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                      ),
+                      formDropdown(
+                        label: "Phone Number",
+                        formChild: TextFormField(
+                          onSaved: (value) => _state = '0' + value,
+                          validator: (value) => value.isEmpty ? '' : null,
+                          keyboardType: TextInputType.phone,
+                          style: GoogleFonts.notoSans(fontSize: 17),
+                          decoration: decoration(),
+                        ),
+                      ),
+                      singleFormField(
+                        label: "State/City",
+                        formChild: TextFormField(
+                          onSaved: (value) => _state = value,
+                          validator: (value) => value.isEmpty ? '' : null,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                            border: InputBorder.none,
+                            hintText: "State/City",
+                            hintStyle: GoogleFonts.notoSans(
+                              color: Color(0xffC78638),
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -158,9 +191,7 @@ class _RegisterState extends State<Register> {
               labelColor: Colors.white,
               buttonColor: Color(0xffFF9411),
               label: "Proceed",
-              fun: () {
-                register();
-              },
+              fun: register,
             ),
           ],
         ),
