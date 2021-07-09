@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/Providers/authProvider.dart';
 import 'package:mybetaride/helpers/widgets.dart';
-import 'package:mybetaride/models/user.dart';
 import 'package:mybetaride/views/welcomeScreen.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +13,12 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final formKey = GlobalKey<FormState>();
-  String _firstname, _lastname, _email, _password, _phone, _state;
+  String _firstname;
+  String _lastname;
+  String _email;
+  String _password;
+  String _phone;
+  String _state;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +36,7 @@ class _RegisterState extends State<Register> {
         form.save();
         auth.register(_firstname, _lastname, _email, _password, _state, _phone).then((response) {
           print(response['status']);
-          if (response['status'] != null) {
+          if (response['status'] != null && true) {
             Navigator.pop(context);
             Navigator.pushReplacement(
               context,
@@ -41,6 +45,7 @@ class _RegisterState extends State<Register> {
               }),
             );
           } else {
+            Navigator.pop(context);
             Flushbar(
               icon: Icon(Icons.error, size: 26, color: Colors.white),
               flushbarPosition: FlushbarPosition.TOP,
@@ -158,7 +163,7 @@ class _RegisterState extends State<Register> {
                       formDropdown(
                         label: "Phone Number",
                         formChild: TextFormField(
-                          onSaved: (value) => _state = '0' + value,
+                          onSaved: (value) => _phone = '0' + value,
                           validator: (value) => value.isEmpty ? '' : null,
                           keyboardType: TextInputType.phone,
                           style: GoogleFonts.notoSans(fontSize: 17),

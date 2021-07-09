@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/views/home/home.dart';
+import 'package:mybetaride/views/home/invite_friends.dart';
+import 'package:mybetaride/views/home/wallet.dart';
 
 Container doubleFormField({
   String label_1,
@@ -243,6 +246,7 @@ Padding buildIconRow({String label}) {
   );
 }
 
+// ignore: non_constant_identifier_names
 Center NextButton(BuildContext context, {Widget screen}) {
   return Center(
     child: GestureDetector(
@@ -261,6 +265,7 @@ Center NextButton(BuildContext context, {Widget screen}) {
   );
 }
 
+// ignore: non_constant_identifier_names
 GestureDetector CustomLongButton(BuildContext context,
     {String label, Color buttonColor, Color labelColor, Widget screen}) {
   return GestureDetector(
@@ -295,6 +300,7 @@ GestureDetector CustomLongButton(BuildContext context,
   );
 }
 
+// ignore: non_constant_identifier_names
 GestureDetector SecCustomLongButton(BuildContext context,
     {String label, Color buttonColor, Color labelColor, Widget screen}) {
   return GestureDetector(
@@ -329,6 +335,7 @@ GestureDetector SecCustomLongButton(BuildContext context,
   );
 }
 
+// ignore: non_constant_identifier_names
 GestureDetector SCustomLongButton(BuildContext context,
     {String label, Color buttonColor, Color labelColor, void Function() fun}) {
   return GestureDetector(
@@ -358,6 +365,7 @@ GestureDetector SCustomLongButton(BuildContext context,
   );
 }
 
+// ignore: non_constant_identifier_names
 GestureDetector ExitButton(BuildContext context, {Color color}) {
   return GestureDetector(
     onTap: () {
@@ -385,6 +393,7 @@ Padding buildLicenseRow({String title}) {
   );
 }
 
+// ignore: non_constant_identifier_names
 Column BoxTextFormField({String hintText, String text}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -581,30 +590,39 @@ Drawer homeDrawer({double width}) {
           ),
         ),
         SizedBox(height: 15),
-        customTile("Home", "home 1"),
-        customTile("My Wallet", "credit-card"),
-        customTile("Schedule", "calendar"),
-        customTile("Trip History", "steering-wheel (1)"),
-        customTile("Invite Friends", "friends"),
-        customTile("Settings", "settings"),
-        customTile("Help", "call-center"),
+        CustomTile(name: "Home", iconName: "home 1", widget: Home()),
+        CustomTile(name: "My Wallet", iconName: "credit-card", widget: Wallet()),
+        CustomTile(name: "Schedule", iconName: "calendar", widget: Home()),
+        CustomTile(name: "Trip History", iconName: "steering-wheel (1)", widget: Home()),
+        CustomTile(name: "Invite Friends", iconName: "friends", widget: Invite()),
+        CustomTile(name: "Settings", iconName: "settings", widget: Home()),
+        CustomTile(name: "Help", iconName: "call-center", widget: Home()),
         Expanded(child: SizedBox()),
-        customTile("Logout", "logout 2"),
+        CustomTile(name: "Logout", iconName: "logout 2", widget: Home()),
         SizedBox(height: 10),
       ]),
     ),
   );
 }
 
-customTile(String name, String iconName) {
-  return ListTile(
-    leading: Image.asset("assets/" + iconName + ".png", width: 25.0),
-    title: Text(
-      name,
-      style: GoogleFonts.notoSans(
-          color: Color(0xff3e3e3e), fontWeight: FontWeight.w400, fontSize: 20.0),
-    ),
-  );
+class CustomTile extends StatelessWidget {
+  final String name;
+  final String iconName;
+  final Widget widget;
+  CustomTile({this.name, this.iconName, this.widget});
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => widget));
+      },
+      leading: Image.asset("assets/" + iconName + ".png", width: 25.0),
+      title: Text(
+        name,
+        style: GoogleFonts.notoSans(
+            color: Color(0xff3e3e3e), fontWeight: FontWeight.w400, fontSize: 20.0),
+      ),
+    );
+  }
 }
 
 Positioned acceptReject({
@@ -614,6 +632,7 @@ Positioned acceptReject({
   double acceptWidth,
   double rejectWidth,
   void Function() reject,
+  void Function() accept,
 }) {
   return Positioned(
     bottom: 30.0,
@@ -779,7 +798,7 @@ Positioned acceptReject({
                     ),
                   ),
                   MaterialButton(
-                    onPressed: () {},
+                    onPressed: accept,
                     color: Color(0xffFF8C00),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(

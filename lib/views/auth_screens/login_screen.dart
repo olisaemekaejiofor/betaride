@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/forgotten_password.dart';
 import 'package:mybetaride/views/home/home.dart';
-import 'package:mybetaride/views/register.dart';
+import 'package:mybetaride/views/auth_screens/register.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -86,6 +86,7 @@ class _LogInScreenState extends State<LogInScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
+      // ignore: missing_return
       onWillPop: () {
         if (Navigator.canPop(context)) {
           SystemNavigator.pop();

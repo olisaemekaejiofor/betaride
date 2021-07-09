@@ -10,8 +10,10 @@ import 'package:mybetaride/models/user.dart';
 enum Status {
   NotRegistered,
   NotLoggedIn,
+  NotUploaded,
   LoggedIn,
   Registered,
+  Uploaded,
   Authenticating,
   Registering,
   LoggedOut,
@@ -20,22 +22,48 @@ enum Status {
 class AuthProvider extends ChangeNotifier {
   Status _loggedinStatus = Status.NotLoggedIn;
   Status _registeredStatus = Status.NotRegistered;
+  Status _uploadedStatus = Status.NotUploaded;
 
-  // ignore: unnecessary_getters_setters
   Status get loggedinStatus => _loggedinStatus;
 
-  // ignore: unnecessary_getters_setters
   set loggedinStatus(Status value) {
     _loggedinStatus = value;
+    notifyListeners();
   }
 
-  // ignore: unnecessary_getters_setters
   Status get registeredStatus => _registeredStatus;
 
-  // ignore: unnecessary_getters_setters
-  set registeredStatus(Status value) => _registeredStatus = value;
+  set registeredStatus(Status value) {
+    _registeredStatus = value;
+    notifyListeners();
+  }
 
-  Future<Map<String, String>> register(
+  Status get uploadedStatus => _uploadedStatus;
+
+  set uploadedStatus(Status value) {
+    _uploadedStatus = value;
+    notifyListeners();
+  }
+
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final Map<String, dynamic> apiBodyData = {
+      "role": "driver",
+      "email": email,
+      "password": password,
+    };
+
+    return await post(
+      Uri.parse(AppUrl.login),
+      body: json.encode(apiBodyData),
+      headers: {
+        'Authorization':
+            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwMmQ0ZGRjMjg0YzBlNmU4NDlkNmUyZCIsInJvbGUiOiJkcml2ZXIiLCJpYXQiOjE2MjI1MzU2MzMsImV4cCI6MTYyMzE0MDQzM30.pcbwA5QQJSmI1sXDdpZXl5dPuWF0hOsGQZjmpF8ACY8',
+        'Content-Type': 'application/json'
+      },
+    ).then(onValue).catchError(onError);
+  }
+
+  Future<Map<String, dynamic>> register(
     String firstname,
     String lastname,
     String email,
@@ -43,13 +71,13 @@ class AuthProvider extends ChangeNotifier {
     String state,
     String phone,
   ) async {
-    final Map<String, String> apiBodyData = {
+    final Map<String, dynamic> apiBodyData = {
       "firstName": firstname,
       "lastName": lastname,
       "password": password,
       "email": email,
       "address": state,
-      "phone": "0" + phone,
+      "phone": phone,
       "stateOfResidence": state,
       "role": "driver",
     };
@@ -59,10 +87,6 @@ class AuthProvider extends ChangeNotifier {
       body: json.encode(apiBodyData),
       headers: {'Content-Type': 'application/json'},
     ).then(onValue).catchError(onError);
-  }
-
-  notify() {
-    notifyListeners();
   }
 
   static Future<FutureOr> onValue(Response response) async {
