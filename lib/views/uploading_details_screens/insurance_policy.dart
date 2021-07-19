@@ -1,10 +1,26 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/uploading_details_screens/roadworthiness_certificate.dart';
 
-class UploadInsurancePolicy extends StatelessWidget {
+class UploadInsurancePolicy extends StatefulWidget {
+  @override
+  _UploadInsurancePolicyState createState() => _UploadInsurancePolicyState();
+}
+
+class _UploadInsurancePolicyState extends State<UploadInsurancePolicy> {
+  String path;
+  Future saveImgP() async {
+    var doc = await FilePicker.platform.pickFiles(
+        type: FileType.custom, allowedExtensions: ["png", "jpg"], allowCompression: false);
+    setState(() {
+      path = doc.paths.first;
+      print(path);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,13 +73,26 @@ class UploadInsurancePolicy extends StatelessWidget {
               ),
             ),
             Spacer(),
-            CustomLongButton(context,
-                label: "Upload", buttonColor: Colors.white, labelColor: Color(0xffFF8C00)),
-            Spacer(),
-            NextButton(
+            SCustomLongButton(
               context,
-              screen: UploadRoadWorthinessCertificate(),
+              label: "Upload",
+              buttonColor: Colors.white,
+              labelColor: Color(0xffFF8C00),
+              fun: () => saveImgP(),
             ),
+            Spacer(),
+            (path == null)
+                ? Center(
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 26.0,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0XffFFC885),
+                      ),
+                    ),
+                  )
+                : NextButton(context, screen: UploadRoadWorthinessCertificate()),
             Spacer()
           ],
         ),

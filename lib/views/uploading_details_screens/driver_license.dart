@@ -1,10 +1,26 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/uploading_details_screens/insurance_policy.dart';
 
-class UploadDriverLicense extends StatelessWidget {
+class UploadDriverLicense extends StatefulWidget {
+  @override
+  _UploadDriverLicenseState createState() => _UploadDriverLicenseState();
+}
+
+class _UploadDriverLicenseState extends State<UploadDriverLicense> {
+  String path;
+  Future saveImgP() async {
+    var doc = await FilePicker.platform.pickFiles(
+        type: FileType.custom, allowedExtensions: ["png", "jpg"], allowCompression: false);
+    setState(() {
+      path = doc.paths.first;
+      print(path);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,10 +77,26 @@ class UploadDriverLicense extends StatelessWidget {
               ),
             ),
             Spacer(),
-            CustomLongButton(context,
-                label: "Upload", buttonColor: Colors.white, labelColor: Color(0xffFF8C00)),
+            SCustomLongButton(
+              context,
+              label: "Upload",
+              buttonColor: Colors.white,
+              labelColor: Color(0xffFF8C00),
+              fun: () => saveImgP(),
+            ),
             Spacer(),
-            NextButton(context, screen: UploadInsurancePolicy()),
+            (path == null)
+                ? Center(
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 26.0,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0XffFFC885),
+                      ),
+                    ),
+                  )
+                : NextButton(context, screen: UploadInsurancePolicy()),
             Spacer()
           ],
         ),

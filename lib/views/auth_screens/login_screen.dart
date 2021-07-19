@@ -1,16 +1,14 @@
-import 'dart:convert';
-
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/Providers/authProvider.dart';
+import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/forgotten_password.dart';
 import 'package:mybetaride/views/home/home.dart';
-import 'package:mybetaride/views/auth_screens/register.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mybetaride/views/onboard.dart';
+import 'package:provider/provider.dart';
 
 class LogInScreen extends StatefulWidget {
   @override
@@ -21,70 +19,30 @@ TextEditingController emailController = TextEditingController();
 TextEditingController passwordController = TextEditingController();
 
 class _LogInScreenState extends State<LogInScreen> {
-  Future login() async {
-    var email = emailController.text;
-    var password = passwordController.text;
-    if (email == "" || password == "") {
-      Flushbar(
-        icon: Icon(Icons.error, size: 26, color: Colors.white),
-        flushbarPosition: FlushbarPosition.TOP,
-        duration: Duration(seconds: 5),
-        message: "Please fill all the fields",
-        shouldIconPulse: true,
-        backgroundColor: Colors.red[400],
-        borderRadius: BorderRadius.circular(10),
-        padding: EdgeInsets.symmetric(vertical: 20),
-        margin: EdgeInsets.symmetric(horizontal: 10),
-      )..show(context);
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) => Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-
-      var headers = {
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwMmQ0ZGRjMjg0YzBlNmU4NDlkNmUyZCIsInJvbGUiOiJkcml2ZXIiLCJpYXQiOjE2MjI1MzU2MzMsImV4cCI6MTYyMzE0MDQzM30.pcbwA5QQJSmI1sXDdpZXl5dPuWF0hOsGQZjmpF8ACY8',
-        'Content-Type': 'application/json'
-      };
-      var request =
-          http.Request('POST', Uri.parse('https://mybetaride.herokuapp.com/api/v1/auth/login'));
-      request.body = json.encode({"role": "driver", "email": email, "password": password});
-      request.headers.addAll(headers);
-
-      http.StreamedResponse response = await request.send();
-      print(response.statusCode);
-      if (response.statusCode == 201) {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setInt('pageIndex', 3);
-        print(prefs.getInt('pageIndex'));
-        Navigator.pop(context);
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => Home()),
-          (Route<dynamic> route) => false,
-        );
-      } else {
-        Navigator.pop(context);
-        Flushbar(
-          icon: Icon(Icons.error, size: 26, color: Colors.white),
-          flushbarPosition: FlushbarPosition.TOP,
-          duration: Duration(seconds: 5),
-          message: "Email and Password do not match",
-          shouldIconPulse: true,
-          backgroundColor: Colors.red[400],
-          borderRadius: BorderRadius.circular(10),
-          padding: EdgeInsets.symmetric(vertical: 20),
-          margin: EdgeInsets.symmetric(horizontal: 10),
-        )..show(context);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    AuthProvider auth = Provider.of<AuthProvider>(context);
+    var login = () {
+      showDialog(
+        context: context,
+        builder: (context) => Center(child: CircularProgressIndicator()),
+      );
+      if (emailController.text == '' || passwordController.text == '') {
+        Navigator.pop(context);
+        flushbar(context, "Please fill all fields");
+      } else {
+        auth.login(emailController.text, passwordController.text).then((respose) {
+          if (respose['status'] == true) {
+            Navigator.pop(context);
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+          } else {
+            Navigator.pop(context);
+            flushbar(context, "Incorrect Details");
+          }
+        });
+      }
+    };
+
     return WillPopScope(
       // ignore: missing_return
       onWillPop: () {
@@ -173,18 +131,17 @@ class _LogInScreenState extends State<LogInScreen> {
                               labelColor: Color(0xffFF9411),
                               buttonColor: Colors.white,
                               label: "Login",
-                              fun: () {
-                                login();
-                              },
+                              fun: login,
                             ),
                             SizedBox(height: 20.0),
                             Center(
                               child: GestureDetector(
                                 onTap: () {
+                                  ScreenPref().setScreenPref(1);
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => Register(),
+                                      builder: (_) => OnBoard(),
                                     ),
                                   );
                                 },

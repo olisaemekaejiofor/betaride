@@ -1,5 +1,7 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/home.dart';
 import 'package:mybetaride/views/home/invite_friends.dart';
 import 'package:mybetaride/views/home/wallet.dart';
@@ -258,7 +260,7 @@ Center NextButton(BuildContext context, {Widget screen}) {
         style: TextStyle(
           fontSize: 26.0,
           fontWeight: FontWeight.w700,
-          color: Color(0XffFFC885),
+          color: Colors.white,
         ),
       ),
     ),
@@ -598,7 +600,7 @@ Drawer homeDrawer({double width}) {
         CustomTile(name: "Settings", iconName: "settings", widget: Home()),
         CustomTile(name: "Help", iconName: "call-center", widget: Home()),
         Expanded(child: SizedBox()),
-        CustomTile(name: "Logout", iconName: "logout 2", widget: Home()),
+        CustomTile(name: "Logout", iconName: "logout 2", widget: LogInScreen()),
         SizedBox(height: 10),
       ]),
     ),
@@ -701,7 +703,15 @@ Positioned acceptReject({
               Spacer(),
               Row(
                 children: [
-                  Column(),
+                  Column(
+                    children: [
+                      Image.asset("assets/Ellipse 29.png", width: 15),
+                      Image.asset("assets/Line 2.png", height: 40),
+                      Image.asset("assets/Rectangle 40.png", width: 15),
+                      SizedBox(height: 20),
+                    ],
+                  ),
+                  SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -822,13 +832,25 @@ Positioned acceptReject({
                     ),
                   )
                 ],
-              )
-              //show dialog when reject button is clicked,
-              //show riders on board when accept is clicked
+              ),
             ],
           ),
         ),
       ],
     ),
   );
+}
+
+Widget flushbar(BuildContext context, String message) {
+  return Flushbar(
+    icon: Icon(Icons.error, size: 26, color: Colors.white),
+    flushbarPosition: FlushbarPosition.TOP,
+    duration: Duration(seconds: 5),
+    message: message,
+    shouldIconPulse: true,
+    backgroundColor: Colors.red[400],
+    borderRadius: BorderRadius.circular(10),
+    padding: EdgeInsets.symmetric(vertical: 20),
+    margin: EdgeInsets.symmetric(horizontal: 10),
+  )..show(context);
 }

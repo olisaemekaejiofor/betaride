@@ -15,6 +15,7 @@ class _HomeState extends State<Home> {
   Location location = Location();
   bool acceptRejectVisible = true;
   bool userBoardVisible = false;
+  String dropdownValue = 'Riders Delay';
 
   void _onMapCreated(GoogleMapController cntlr) {
     controller = cntlr;
@@ -86,12 +87,45 @@ class _HomeState extends State<Home> {
                       Text("Please let us know why", style: GoogleFonts.notoSans()),
                       SizedBox(height: 5),
                       Container(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
                         height: 50,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: Color(0xffFF8C00),
                           ),
+                        ),
+                        child: DropdownButton<String>(
+                          value: dropdownValue,
+                          underline: Container(),
+                          icon: Row(
+                            children: [
+                              SizedBox(width: MediaQuery.of(context).size.width * 0.45),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                              ),
+                            ],
+                          ),
+                          iconSize: 26,
+                          onChanged: (newValue) {
+                            setState(() {
+                              dropdownValue = newValue;
+                            });
+                          },
+                          items: [
+                            'Riders Delay',
+                            'Rider gives poor Rating',
+                            'Rider harass driver',
+                            'No specific reason',
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: GoogleFonts.notoSans(),
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
                       Spacer(),
@@ -197,11 +231,19 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
                 child: Column(
                   children: [
-                    Text("Users on Board",
-                        style: GoogleFonts.notoSans(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
-                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset("assets/coolicon.png", width: 25),
+                        Text(
+                          "Users on Board",
+                          style: GoogleFonts.notoSans(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ],
+                    ),
                     SizedBox(height: 15),
                     user(),
                     user(),

@@ -60,7 +60,7 @@ class AuthProvider extends ChangeNotifier {
             'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwMmQ0ZGRjMjg0YzBlNmU4NDlkNmUyZCIsInJvbGUiOiJkcml2ZXIiLCJpYXQiOjE2MjI1MzU2MzMsImV4cCI6MTYyMzE0MDQzM30.pcbwA5QQJSmI1sXDdpZXl5dPuWF0hOsGQZjmpF8ACY8',
         'Content-Type': 'application/json'
       },
-    ).then(onValue).catchError(onError);
+    ).then(onRecieve).catchError(onError);
   }
 
   Future<Map<String, dynamic>> register(
@@ -89,6 +89,15 @@ class AuthProvider extends ChangeNotifier {
     ).then(onValue).catchError(onError);
   }
 
+  // Future saveImgPref() async {
+  //   var doc = await FilePicker.platform.pickFiles(
+  //       type: FileType.image, allowedExtensions: ["png", "jpg"], allowCompression: false);
+  // }
+
+  // Future uploadDoc() async {
+  //   // var
+  // }
+
   static Future<FutureOr> onValue(Response response) async {
     var result;
 
@@ -98,7 +107,7 @@ class AuthProvider extends ChangeNotifier {
 
     if (response.statusCode == 201) {
       User authUser = User.fromJson(responseData);
-      ScreenPref().setScreenPref();
+      ScreenPref().setScreenPref(2);
 
       result = {
         'status': true,
@@ -109,6 +118,33 @@ class AuthProvider extends ChangeNotifier {
       result = {
         'status': false,
         'message': 'Registration Failed',
+        'data': responseData,
+      };
+    }
+    print(result);
+    return result;
+  }
+
+  static Future<FutureOr> onRecieve(Response respose) async {
+    var result;
+
+    final Map<String, dynamic> responseData = json.decode(respose.body);
+    print(responseData);
+    print(respose.statusCode);
+
+    if (respose.statusCode == 201) {
+      User authUser = User.fromJson(responseData);
+      ScreenPref().setScreenPref(3);
+
+      result = {
+        'status': true,
+        'message': 'Successfully Logged in',
+        'data': authUser,
+      };
+    } else {
+      result = {
+        'status': false,
+        'message': 'Login Failed',
         'data': responseData,
       };
     }

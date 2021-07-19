@@ -8,7 +8,7 @@ import 'package:mybetaride/views/welcomeScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-saveIndex(int index) async {
+Future saveIndex(int index) async {
   if (index == null) {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('pageIndex', 0);
@@ -31,7 +31,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   final int routeIndex;
   MyApp({this.routeIndex});
-  List<Widget> pages = [OnBoard(), WelcomePage(), LogInScreen(), Home()];
+  List<Widget> pages = [LogInScreen(), OnBoard(), WelcomePage(), Home()];
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
         title: 'MyBetaRide',
         initialRoute: 'route',
         routes: {
-          'route': (context) => pages[routeIndex],
+          'route': (context) => (routeIndex == null) ? LogInScreen() : pages[routeIndex],
         },
       ),
     );

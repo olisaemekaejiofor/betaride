@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,6 +40,21 @@ class _UploadProfilePicState extends State<UploadProfilePic> {
       ],
     );
   }
+
+  Future saveImgPref() async {
+    var doc = await FilePicker.platform.pickFiles(
+        type: FileType.custom, allowedExtensions: ["png", "jpg"], allowCompression: false);
+    print(doc.paths);
+    setState(() {
+      path = doc.paths.first;
+    });
+  }
+
+  // Future galleryImg() async {
+  //   var doc = await FilePicker.platform.pickFiles();
+  // }
+
+  String path;
 
   @override
   Widget build(BuildContext context) {
@@ -93,20 +109,25 @@ class _UploadProfilePicState extends State<UploadProfilePic> {
                 Positioned(
                   left: 220,
                   top: 145,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: Colors.white),
-                        bottom: BorderSide(color: Colors.white),
-                        left: BorderSide(color: Colors.white),
-                        right: BorderSide(color: Colors.white),
+                  child: GestureDetector(
+                    // onTap: () {
+                    //   galleryImg();
+                    // },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: Colors.white),
+                          bottom: BorderSide(color: Colors.white),
+                          left: BorderSide(color: Colors.white),
+                          right: BorderSide(color: Colors.white),
+                        ),
+                        borderRadius: BorderRadius.circular(50),
                       ),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: CircleAvatar(
-                      radius: 25,
-                      backgroundColor: Color(0xffFF9411),
-                      child: Icon(Icons.add, color: Colors.white),
+                      child: CircleAvatar(
+                        radius: 25,
+                        backgroundColor: Color(0xffFF9411),
+                        child: Icon(Icons.add, color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
@@ -120,14 +141,28 @@ class _UploadProfilePicState extends State<UploadProfilePic> {
             todo("Take your photo in a well-lit enviroment "),
             SizedBox(height: 10),
             Spacer(flex: 2),
-            CustomLongButton(
+            SCustomLongButton(
               context,
               label: "Upload",
               labelColor: Color(0xffFF9411),
               buttonColor: Colors.white,
+              fun: () {
+                saveImgPref();
+              },
             ),
             Spacer(),
-            NextButton(context, screen: UploadDriverLicense()),
+            (path == null)
+                ? Center(
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 26.0,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0XffFFC885),
+                      ),
+                    ),
+                  )
+                : NextButton(context, screen: UploadDriverLicense()),
             Spacer(),
           ],
         ),
