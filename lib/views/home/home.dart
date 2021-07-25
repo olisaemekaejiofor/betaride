@@ -2,25 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:mybetaride/Providers/userProvider.dart';
+import 'package:mybetaride/helpers/schedule_service.dart';
+import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
+import 'package:mybetaride/models/schedule_model.dart';
+import 'package:mybetaride/models/user.dart';
+import 'package:mybetaride/views/auth_screens/login_screen.dart';
+import 'package:mybetaride/views/home/profile.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
+  bool userBoardVisible;
+  bool acceptRejectVisible;
+  bool newSchedule;
+
+  Home(this.userBoardVisible, this.acceptRejectVisible, this.newSchedule);
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  ScheduleService client = ScheduleService();
   LatLng initialcameraposition = LatLng(6.440641, 23.2549939);
   GoogleMapController controller;
   Location location = Location();
-  bool acceptRejectVisible = true;
-  bool userBoardVisible = false;
+  // bool acceptRejectVisible = true;
+  // bool userBoardVisible = false;
   String dropdownValue = 'Riders Delay';
 
   void _onMapCreated(GoogleMapController cntlr) {
     controller = cntlr;
     location.onLocationChanged.listen((l) {
-      print(l.latitude.toString() + l.longitude.toString());
       controller.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(target: LatLng(l.latitude, l.longitude), zoom: 15),
@@ -31,9 +44,9 @@ class _HomeState extends State<Home> {
 
   void accept() {
     setState(() {
-      acceptRejectVisible = false;
-      userBoardVisible = true;
-      print(userBoardVisible);
+      widget.acceptRejectVisible = false;
+      widget.userBoardVisible = true;
+      // print(userBoardVisible);
     });
   }
 
@@ -42,135 +55,30 @@ class _HomeState extends State<Home> {
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return Scaffold(
-          backgroundColor: Colors.white60,
-          body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                Expanded(child: SizedBox()),
-                Row(
-                  children: [
-                    Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Image.asset("assets/mini_x_2 3.png"),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  height: MediaQuery.of(context).size.height * 0.35,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 15),
-                      Text(
-                        "Rejected?",
-                        style: GoogleFonts.notoSans(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 22,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Divider(
-                        color: Color(0xffFF8C00),
-                      ),
-                      SizedBox(height: 5),
-                      Text("Please let us know why", style: GoogleFonts.notoSans()),
-                      SizedBox(height: 5),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        height: 50,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Color(0xffFF8C00),
-                          ),
-                        ),
-                        child: DropdownButton<String>(
-                          value: dropdownValue,
-                          underline: Container(),
-                          icon: Row(
-                            children: [
-                              SizedBox(width: MediaQuery.of(context).size.width * 0.45),
-                              Icon(
-                                Icons.keyboard_arrow_down,
-                              ),
-                            ],
-                          ),
-                          iconSize: 26,
-                          onChanged: (newValue) {
-                            setState(() {
-                              dropdownValue = newValue;
-                            });
-                          },
-                          items: [
-                            'Riders Delay',
-                            'Rider gives poor Rating',
-                            'Rider harass driver',
-                            'No specific reason',
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(
-                                value,
-                                style: GoogleFonts.notoSans(),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      Spacer(),
-                      MaterialButton(
-                        onPressed: () {},
-                        color: Color(0xffFF8C00),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(10),
-                            bottomLeft: Radius.circular(10),
-                          ),
-                        ),
-                        child: Container(
-                          width: double.infinity,
-                          height: 50,
-                          child: Center(
-                            child: Text(
-                              "Forward Response",
-                              style: GoogleFonts.notoSans(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16.0,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 80),
-              ],
-            ),
-          ),
-        );
+        return homeScaffold(context, value: dropdownValue, onChanged: (newValue) {
+          setState(() {
+            dropdownValue = newValue;
+          });
+        });
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    User user = Provider.of<UserProvider>(context).user;
+    print(user.token);
     return Scaffold(
       appBar: homeAppBar(),
-      drawer: homeDrawer(width: MediaQuery.of(context).size.width * 85),
+      drawer: homeDrawer(
+          width: MediaQuery.of(context).size.width * 85,
+          fun: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
+          },
+          logout: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+            ScreenPref().setScreenPref(0);
+          }),
       body: Stack(
         children: [
           GoogleMap(
@@ -184,44 +92,56 @@ class _HomeState extends State<Home> {
             mapToolbarEnabled: false,
             myLocationButtonEnabled: false,
           ),
+          FutureBuilder(
+              future: client.getSchedule(),
+              builder: (BuildContext context, AsyncSnapshot<List<ScheduleData>> snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data.length < 1) {
+                    return Visibility(
+                      visible: widget.acceptRejectVisible,
+                      child: acceptReject(
+                        positionedHeight: MediaQuery.of(context).size.height * 0.35,
+                        positionedLeft: MediaQuery.of(context).size.width * 0.050,
+                        containerWidth: MediaQuery.of(context).size.width * 0.9,
+                        rejectWidth: MediaQuery.of(context).size.width * 0.25,
+                        acceptWidth: MediaQuery.of(context).size.width * 0.25,
+                        reject: reject,
+                        accept: accept,
+                      ),
+                    );
+                  } else {
+                    return SizedBox();
+                  }
+                } else {
+                  return SizedBox();
+                }
+              }),
+          // Positioned(
+          //   bottom: MediaQuery.of(context).size.height * 0.42,
+          //   left: MediaQuery.of(context).size.width * 0.82,
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(8.0),
+          //     child: Column(
+          //       children: [
+          //         CircleAvatar(
+          //           radius: 22,
+          //           backgroundColor: Color(0xffFF8C00),
+          //           child: Icon(Icons.zoom_in_sharp, color: Colors.white, size: 30),
+          //         ),
+          //         SizedBox(
+          //           height: 20,
+          //         ),
+          //         CircleAvatar(
+          //           radius: 22,
+          //           backgroundColor: Color(0xffFF8C00),
+          //           child: Icon(Icons.zoom_out_sharp, color: Colors.white, size: 30),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           Visibility(
-            visible: acceptRejectVisible,
-            child: acceptReject(
-              positionedHeight: MediaQuery.of(context).size.height * 0.35,
-              positionedLeft: MediaQuery.of(context).size.width * 0.050,
-              containerWidth: MediaQuery.of(context).size.width * 0.9,
-              rejectWidth: MediaQuery.of(context).size.width * 0.25,
-              acceptWidth: MediaQuery.of(context).size.width * 0.25,
-              reject: reject,
-              accept: accept,
-            ),
-          ),
-          Positioned(
-            bottom: MediaQuery.of(context).size.height * 0.42,
-            left: MediaQuery.of(context).size.width * 0.82,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 22,
-                    backgroundColor: Color(0xffFF8C00),
-                    child: Icon(Icons.zoom_in_sharp, color: Colors.white, size: 30),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  CircleAvatar(
-                    radius: 22,
-                    backgroundColor: Color(0xffFF8C00),
-                    child: Icon(Icons.zoom_out_sharp, color: Colors.white, size: 30),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Visibility(
-            visible: userBoardVisible,
+            visible: widget.userBoardVisible,
             child: Positioned(
               bottom: 0.0,
               left: MediaQuery.of(context).size.width * 0.05,
@@ -235,6 +155,7 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset("assets/coolicon.png", width: 25),
+                        SizedBox(width: 10),
                         Text(
                           "Users on Board",
                           style: GoogleFonts.notoSans(
@@ -245,13 +166,37 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                     SizedBox(height: 15),
-                    user(),
-                    user(),
-                    user(),
-                    user(),
+                    userP(),
+                    userP(),
+                    userP(),
+                    userP(),
                   ],
                 ),
               ),
+            ),
+          ),
+          Visibility(
+            visible: widget.newSchedule,
+            child: Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.38,
+                  color: Color(0xffFF9411),
+                  child: Column(),
+                ),
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: SCustomLongButton(
+                    context,
+                    labelColor: Colors.white,
+                    buttonColor: Color(0xffFF9411),
+                    label: "Create Schedule",
+                    fun: () {},
+                  ),
+                ),
+                SizedBox(height: 30)
+              ],
             ),
           ),
         ],
@@ -259,12 +204,12 @@ class _HomeState extends State<Home> {
     );
   }
 
-  GestureDetector user() {
+  GestureDetector userP() {
     return GestureDetector(
       onTap: () {
         setState(() {
-          acceptRejectVisible = true;
-          userBoardVisible = false;
+          widget.acceptRejectVisible = true;
+          widget.userBoardVisible = false;
         });
       },
       child: Container(
