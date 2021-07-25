@@ -134,6 +134,7 @@ class AuthProvider extends ChangeNotifier {
 
     if (respose.statusCode == 201) {
       User authUser = User.fromJson(responseData);
+      UserPref().saveUser(authUser);
       ScreenPref().setScreenPref(3);
 
       result = {

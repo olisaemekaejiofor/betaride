@@ -10,13 +10,18 @@ class _WalletState extends State<Wallet> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
       body: Stack(
         alignment: AlignmentDirectional.center,
         clipBehavior: Clip.none,
         children: [
           Container(
             width: double.infinity,
-            height: MediaQuery.of(context).size.width * 0.60,
+            height: MediaQuery.of(context).size.height * 0.30,
             decoration: BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.contain,
@@ -35,7 +40,7 @@ class _WalletState extends State<Wallet> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 5),
                 Text(
                   "N0.00",
                   style: GoogleFonts.notoSans(
@@ -55,7 +60,7 @@ class _WalletState extends State<Wallet> {
             ),
           ),
           Positioned(
-            top: 230,
+            top: MediaQuery.of(context).size.height * 0.27,
             child: MaterialButton(
               elevation: 15,
               onPressed: () {},
@@ -87,7 +92,7 @@ class _WalletState extends State<Wallet> {
             ),
           ),
           Positioned(
-            top: 320,
+            top: MediaQuery.of(context).size.height * 0.4,
             left: 30,
             child: Column(
               children: [

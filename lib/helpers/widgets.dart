@@ -1,9 +1,14 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mybetaride/views/auth_screens/login_screen.dart';
+import 'package:mybetaride/helpers/shared_prefs.dart';
+import 'package:mybetaride/models/schedule_model.dart';
+import 'package:mybetaride/views/home/help.dart';
 import 'package:mybetaride/views/home/home.dart';
 import 'package:mybetaride/views/home/invite_friends.dart';
+import 'package:mybetaride/views/home/schedule.dart';
+import 'package:mybetaride/views/home/settings/settings.dart';
+import 'package:mybetaride/views/home/trip_history.dart';
 import 'package:mybetaride/views/home/wallet.dart';
 
 Container doubleFormField({
@@ -526,7 +531,7 @@ AppBar homeAppBar() {
   );
 }
 
-Drawer homeDrawer({double width}) {
+Drawer homeDrawer({double width, String name, void Function() fun, void Function() logout}) {
   return Drawer(
     child: Container(
       width: width,
@@ -553,12 +558,15 @@ Drawer homeDrawer({double width}) {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Toyin Omobolanle",
-                      style: GoogleFonts.notoSans(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 19.0,
+                    FutureBuilder(
+                      future: UserPref().getName(),
+                      builder: (context, snapshot) => Text(
+                        snapshot.data ?? "null null",
+                        style: GoogleFonts.notoSans(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 19.0,
+                        ),
                       ),
                     ),
                     MaterialButton(
@@ -570,16 +578,19 @@ Drawer homeDrawer({double width}) {
                           bottomLeft: Radius.circular(10),
                         ),
                       ),
-                      child: Container(
-                        width: 120,
-                        height: 30,
-                        child: Center(
-                          child: Text(
-                            "Edit Profile",
-                            style: GoogleFonts.notoSans(
-                              color: Color(0xffFF8C00),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16.0,
+                      child: GestureDetector(
+                        onTap: fun,
+                        child: Container(
+                          width: 120,
+                          height: 30,
+                          child: Center(
+                            child: Text(
+                              "Edit Profile",
+                              style: GoogleFonts.notoSans(
+                                color: Color(0xffFF8C00),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16.0,
+                              ),
                             ),
                           ),
                         ),
@@ -592,15 +603,23 @@ Drawer homeDrawer({double width}) {
           ),
         ),
         SizedBox(height: 15),
-        CustomTile(name: "Home", iconName: "home 1", widget: Home()),
+        CustomTile(name: "Home", iconName: "home 1", widget: Home(false, true, false)),
         CustomTile(name: "My Wallet", iconName: "credit-card", widget: Wallet()),
-        CustomTile(name: "Schedule", iconName: "calendar", widget: Home()),
-        CustomTile(name: "Trip History", iconName: "steering-wheel (1)", widget: Home()),
+        CustomTile(name: "Schedule", iconName: "calendar", widget: Schedule()),
+        CustomTile(name: "Trip History", iconName: "steering-wheel (1)", widget: RideHistory()),
         CustomTile(name: "Invite Friends", iconName: "friends", widget: Invite()),
-        CustomTile(name: "Settings", iconName: "settings", widget: Home()),
-        CustomTile(name: "Help", iconName: "call-center", widget: Home()),
+        CustomTile(name: "Settings", iconName: "settings", widget: Settings()),
+        CustomTile(name: "Help", iconName: "call-center", widget: Help()),
         Expanded(child: SizedBox()),
-        CustomTile(name: "Logout", iconName: "logout 2", widget: LogInScreen()),
+        ListTile(
+          onTap: logout,
+          leading: Image.asset("assets/logout 2.png", width: 25.0),
+          title: Text(
+            "Logout",
+            style: GoogleFonts.notoSans(
+                color: Color(0xff3e3e3e), fontWeight: FontWeight.w400, fontSize: 20.0),
+          ),
+        ),
         SizedBox(height: 10),
       ]),
     ),
@@ -853,4 +872,333 @@ Widget flushbar(BuildContext context, String message) {
     padding: EdgeInsets.symmetric(vertical: 20),
     margin: EdgeInsets.symmetric(horizontal: 10),
   )..show(context);
+}
+
+Widget homeScaffold(BuildContext context, {String value, Function(String) onChanged}) {
+  return Scaffold(
+    backgroundColor: Colors.white60,
+    body: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          Expanded(child: SizedBox()),
+          Row(
+            children: [
+              Spacer(),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Image.asset("assets/mini_x_2 3.png"),
+              ),
+            ],
+          ),
+          SizedBox(height: 15),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: MediaQuery.of(context).size.height * 0.35,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 15),
+                Text(
+                  "Rejected?",
+                  style: GoogleFonts.notoSans(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 22,
+                  ),
+                ),
+                SizedBox(height: 5),
+                Divider(
+                  color: Color(0xffFF8C00),
+                ),
+                SizedBox(height: 5),
+                Text("Please let us know why", style: GoogleFonts.notoSans()),
+                SizedBox(height: 5),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Color(0xffFF8C00),
+                    ),
+                  ),
+                  child: DropdownButton<String>(
+                    value: value,
+                    underline: Container(),
+                    icon: Row(
+                      children: [
+                        Icon(
+                          Icons.keyboard_arrow_down,
+                        ),
+                      ],
+                    ),
+                    iconSize: 26,
+                    onChanged: onChanged,
+                    items: [
+                      'Riders Delay',
+                      'Rider gives poor Rating',
+                      'Rider harass driver',
+                      'No specific reason',
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: GoogleFonts.notoSans(),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Spacer(),
+                MaterialButton(
+                  onPressed: () {},
+                  color: Color(0xffFF8C00),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                    ),
+                  ),
+                  child: Container(
+                    width: double.infinity,
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                        "Forward Response",
+                        style: GoogleFonts.notoSans(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+              ],
+            ),
+          ),
+          SizedBox(height: 80),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget schedulePost(
+  ScheduleData schedule,
+  BuildContext context, {
+  double containerHeight,
+  double containerWidth,
+  double acceptWidth,
+  double rejectWidth,
+  void Function() reject,
+  void Function() accept,
+}) {
+  return Column(
+    children: [
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        height: containerHeight,
+        width: containerWidth,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset("assets/bgdraw.png", width: 50),
+                SizedBox(width: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Toyin Omobolanle",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    Text(
+                      "+2348167758317",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                Column(
+                  children: [
+                    Text(
+                      schedule.paymentType ?? "₦2500",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    Text(
+                      schedule.distance ?? "200km",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Spacer(),
+            Row(
+              children: [
+                Column(
+                  children: [
+                    Image.asset("assets/Ellipse 29.png", width: 15),
+                    Image.asset("assets/Line 2.png", height: 40),
+                    Image.asset("assets/Rectangle 40.png", width: 15),
+                    SizedBox(height: 20),
+                  ],
+                ),
+                SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Pick Up location",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 14.0,
+                      ),
+                    ),
+                    Text(
+                      schedule.fromAddress ?? "Dutse-nara, Abuja, Nigeria",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xff3e3e3e),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Text(
+                      "Destination",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 14.0,
+                      ),
+                    ),
+                    Text(
+                      schedule.toAddress ?? "Iwo, Osun state, Nigeria",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xff3e3e3e),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "pickup time",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      "0.15ms",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15.0,
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Text(
+                      "Est. time",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      "2.30 hrs",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: reject,
+                  child: Container(
+                    width: rejectWidth,
+                    child: Center(
+                      child: Text(
+                        "Reject",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                MaterialButton(
+                  onPressed: () {},
+                  color: Color(0xffFF8C00),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                    ),
+                  ),
+                  child: Container(
+                    width: acceptWidth,
+                    height: 30,
+                    child: Center(
+                      child: Text(
+                        "Accept",
+                        style: GoogleFonts.notoSans(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+      SizedBox(height: 15),
+    ],
+  );
 }

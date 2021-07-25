@@ -34,7 +34,8 @@ class _LogInScreenState extends State<LogInScreen> {
         auth.login(emailController.text, passwordController.text).then((respose) {
           if (respose['status'] == true) {
             Navigator.pop(context);
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => Home(false, true, false)));
           } else {
             Navigator.pop(context);
             flushbar(context, "Incorrect Details");

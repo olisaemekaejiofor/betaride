@@ -31,7 +31,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   final int routeIndex;
   MyApp({this.routeIndex});
-  List<Widget> pages = [LogInScreen(), OnBoard(), WelcomePage(), Home()];
+  List<Widget> pages = [LogInScreen(), OnBoard(), WelcomePage(), Home(false, true, false)];
 
   @override
   Widget build(BuildContext context) {
