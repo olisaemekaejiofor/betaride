@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/helpers/app_url.dart';
 import 'package:mybetaride/helpers/schedule_service.dart';
+import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/models/profile_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:mybetaride/views/home/home.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -13,6 +19,45 @@ class _ProfileState extends State<Profile> {
   var state = ["Lagos", "Abia", "Delta", "Ogun", "Edo", "Enugu", "Osun", "Abuja"];
   String stateValue = "Lagos";
   ProfileService client = ProfileService();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+
+  Future update() async {
+    String token = await UserPref().getToken();
+    var body = {
+      "firstName": firstNameController.text,
+      "lastName": lastNameController.text,
+      "email": emailController.text,
+      "phone": phoneController.text,
+      "address": cityController.text + "" + stateValue,
+      "stateOfResidence": stateValue,
+    };
+    if (firstNameController.text == '' ||
+        lastNameController.text == '' ||
+        emailController.text == '' ||
+        phoneController.text == '' ||
+        cityController.text == '') {
+      flushbar(context, "Fill all fields");
+    } else {
+      var res = await http.put(
+        Uri.parse(AppUrl.updateProfile),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(body),
+      );
+      if (res.statusCode == 200) {
+        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+          return Home(false, true, false);
+        }));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,14 +98,28 @@ class _ProfileState extends State<Profile> {
                         child: Form(
                           child: Column(
                             children: [
-                              singleFormField(
-                                label: "Full Name",
-                                formChild: TextFormField(
-                                  // controller: nameController,
+                              doubleFormField(
+                                label_1: "FirstName",
+                                label_2: "LastName",
+                                width: MediaQuery.of(context).size.width * 0.40,
+                                formChild1: TextFormField(
+                                  controller: firstNameController,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.symmetric(horizontal: 10),
                                     border: InputBorder.none,
-                                    hintText: profile.firstname + " " + profile.lastname,
+                                    hintText: profile.firstname,
+                                    hintStyle: GoogleFonts.notoSans(
+                                      color: Color(0xffC78638),
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ),
+                                formChild2: TextFormField(
+                                  controller: lastNameController,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                                    border: InputBorder.none,
+                                    hintText: profile.lastname,
                                     hintStyle: GoogleFonts.notoSans(
                                       color: Color(0xffC78638),
                                       fontWeight: FontWeight.w300,
@@ -72,7 +131,7 @@ class _ProfileState extends State<Profile> {
                                 label: "E-mail Address",
                                 formChild: TextFormField(
                                   obscureText: true,
-                                  // controller: emailController,
+                                  controller: emailController,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.symmetric(horizontal: 10),
                                     border: InputBorder.none,
@@ -87,8 +146,7 @@ class _ProfileState extends State<Profile> {
                               singleFormField(
                                 label: "Phone number",
                                 formChild: TextFormField(
-                                  obscureText: true,
-                                  // controller: emailController,
+                                  controller: phoneController,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.symmetric(horizontal: 10),
                                     border: InputBorder.none,
@@ -128,7 +186,7 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                                 formChild2: TextFormField(
-                                  // controller: lastNameController,
+                                  controller: cityController,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.symmetric(horizontal: 10),
                                     border: InputBorder.none,
@@ -151,7 +209,9 @@ class _ProfileState extends State<Profile> {
                       labelColor: Colors.white,
                       buttonColor: Color(0xffFF9411),
                       label: "Save Changes",
-                      fun: () {},
+                      fun: () {
+                        update();
+                      },
                     ),
                   ],
                 ),

@@ -89,6 +89,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                   dropdownValue = newValue;
                                 });
                               },
+                              // documentUpload
                               items: [
                                 'Toyota',
                                 'Honda',

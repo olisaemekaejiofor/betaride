@@ -1,6 +1,6 @@
 class ProfileData {
   String role;
-  String id_;
+  String id;
   String firstname;
   String lastname;
   String email;
@@ -11,7 +11,7 @@ class ProfileData {
 
   ProfileData({
     this.role,
-    this.id_,
+    this.id,
     this.firstname,
     this.lastname,
     this.email,
@@ -24,7 +24,7 @@ class ProfileData {
   factory ProfileData.fromJson(Map<String, dynamic> json) {
     return ProfileData(
       role: json['role'],
-      id_: json['_id'],
+      id: json['_id'],
       firstname: json['firstName'],
       lastname: json['lastName'],
       email: json['email'],

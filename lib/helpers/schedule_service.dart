@@ -6,7 +6,7 @@ import 'package:mybetaride/models/profile_model.dart';
 import 'package:mybetaride/models/schedule_model.dart';
 
 class ScheduleService {
-  final url = "https://mybetaride.herokuapp.com/api/v1/schedule/mySchedule";
+  final url = "https://mybetaride.herokuapp.com/api/v1/schedule";
   Future<List<ScheduleData>> getSchedule() async {
     String token = await UserPref().getToken();
     var headers = {'Authorization': 'Bearer $token'};
@@ -46,6 +46,7 @@ class ProfileService {
       return profile;
     } else {
       print("Cant get profile");
+      return null;
     }
   }
 }

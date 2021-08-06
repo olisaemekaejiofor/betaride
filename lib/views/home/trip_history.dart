@@ -89,9 +89,9 @@ class _RideHistoryState extends State<RideHistory> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                card('assets/car 1.png', 'Total Spent', '20'),
+                card('assets/car 1.png', 'Total Spent', '0'),
                 SizedBox(width: 20.0),
-                card('assets/earn 1.png', 'Total Spent', 'N50,000'),
+                card('assets/earn 1.png', 'Total Spent', 'N0.00'),
               ],
             ),
           ),
@@ -105,69 +105,76 @@ class _RideHistoryState extends State<RideHistory> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: historyList.length,
-              itemBuilder: (ctx, i) => Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                child: Container(
-                  padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 10.0),
-                  decoration: BoxDecoration(
-                    color: Color(0xffffffff),
-                    boxShadow: [
-                      BoxShadow(
-                          // blurRadius: ,
-                          color: Color(0xffFFEFE0),
-                          offset: Offset(0, 2),
-                          spreadRadius: 0.5)
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            child: Image.asset('assets/bgdraw.png'),
-                          ),
-                          SizedBox(width: 10.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(historyList[i].name),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.star,
-                                    color: Color(0xffFFA941),
-                                  ),
-                                  Text(historyList[i].rating.toString()),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Spacer(),
-                          Column(
-                            children: [
-                              Text(
-                                historyList[i].amount.toString(),
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                historyList[i].distance,
-                                style: TextStyle(
-                                  color: Color(0xffD27400),
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Color(0xffD27400),
-                      )
-                    ],
-                  ),
-                ),
+            // child: ListView.builder(
+            //   itemCount: historyList.length,
+            //   itemBuilder: (ctx, i) => Container(
+            //     padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+            //     child: Container(
+            //       padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20, bottom: 10.0),
+            //       decoration: BoxDecoration(
+            //         color: Color(0xffffffff),
+            //         boxShadow: [
+            //           BoxShadow(
+            //               // blurRadius: ,
+            //               color: Color(0xffFFEFE0),
+            //               offset: Offset(0, 2),
+            //               spreadRadius: 0.5)
+            //         ],
+            //       ),
+            //       child: Column(
+            //         children: [
+            //           Row(
+            //             children: [
+            //               CircleAvatar(
+            //                 child: Image.asset('assets/bgdraw.png'),
+            //               ),
+            //               SizedBox(width: 10.0),
+            //               Column(
+            //                 crossAxisAlignment: CrossAxisAlignment.start,
+            //                 children: [
+            //                   Text(historyList[i].name),
+            //                   Row(
+            //                     children: [
+            //                       Icon(
+            //                         Icons.star,
+            //                         color: Color(0xffFFA941),
+            //                       ),
+            //                       Text(historyList[i].rating.toString()),
+            //                     ],
+            //                   ),
+            //                 ],
+            //               ),
+            //               Spacer(),
+            //               Column(
+            //                 children: [
+            //                   Text(
+            //                     historyList[i].amount.toString(),
+            //                     style: TextStyle(fontWeight: FontWeight.bold),
+            //                   ),
+            //                   Text(
+            //                     historyList[i].distance,
+            //                     style: TextStyle(
+            //                       color: Color(0xffD27400),
+            //                     ),
+            //                   ),
+            //                 ],
+            //               )
+            //             ],
+            //           ),
+            //           Icon(
+            //             Icons.keyboard_arrow_down,
+            //             color: Color(0xffD27400),
+            //           )
+            //         ],
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            child: Center(
+              child: Text(
+                "You havent been on any trips\n Open your schedules Sceen to start a trip",
+                style: GoogleFonts.notoSans(),
+                textAlign: TextAlign.center,
               ),
             ),
           )

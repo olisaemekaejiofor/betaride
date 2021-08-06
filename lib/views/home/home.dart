@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:card_selector/card_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stack_card/flutter_stack_card.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -11,6 +15,7 @@ import 'package:mybetaride/models/user.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/profile.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   bool userBoardVisible;
@@ -27,9 +32,25 @@ class _HomeState extends State<Home> {
   LatLng initialcameraposition = LatLng(6.440641, 23.2549939);
   GoogleMapController controller;
   Location location = Location();
-  // bool acceptRejectVisible = true;
-  // bool userBoardVisible = false;
   String dropdownValue = 'Riders Delay';
+  TextEditingController pickup = TextEditingController();
+  TextEditingController destination = TextEditingController();
+  DateTime selectedDate;
+  TimeOfDay selectedDay;
+  bool changeTime = false;
+  bool changeDate = false;
+
+  String convertTime() {
+    var time = selectedDay;
+    var finalTime = time.hour.toString() + ":" + time.minute.toString();
+    return finalTime;
+  }
+
+  String convertDate() {
+    var date = selectedDate;
+    var finalDate = date.day.toString() + "/" + date.month.toString() + "/" + date.year.toString();
+    return finalDate;
+  }
 
   void _onMapCreated(GoogleMapController cntlr) {
     controller = cntlr;
@@ -64,12 +85,69 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void selectDate() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2022),
+    ).then((pickDate) {
+      if (pickDate == null) {}
+      setState(() {
+        selectedDate = pickDate;
+        changeDate = true;
+      });
+    });
+  }
+
+  void selectTime() {
+    showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    ).then((pickTime) {
+      if (pickTime == null) {}
+      setState(() {
+        selectedDay = pickTime;
+        changeTime = true;
+      });
+    });
+  }
+
+  Future sendNewSchedule() async {
+    showDialog(
+      context: context,
+      builder: (context) => Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    if (pickup.text == '' || destination.text == '') {
+      Navigator.pop(context);
+      flushbar(context, "All Feilds are required");
+    } else {
+      String token = await UserPref().getToken();
+      var headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
+      var response = await http.post(
+        Uri.parse(""),
+        headers: headers,
+        body: jsonEncode({}),
+      );
+
+      if (response.statusCode == 201) {
+        print(response.body);
+      } else {
+        print("Wahala Dey");
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<UserProvider>(context).user;
-    print(user.token);
+    // User user = Provider.of<UserProvider>(context).user;
     return Scaffold(
-      appBar: homeAppBar(),
+      resizeToAvoidBottomInset: false,
+      appBar: (widget.newSchedule == true)
+          ? AppBar(backgroundColor: Color(0xffFF9411), elevation: 0)
+          : homeAppBar(),
       drawer: homeDrawer(
           width: MediaQuery.of(context).size.width * 85,
           fun: () {
@@ -77,6 +155,7 @@ class _HomeState extends State<Home> {
           },
           logout: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+            UserPref().removeUser();
             ScreenPref().setScreenPref(0);
           }),
       body: Stack(
@@ -96,50 +175,41 @@ class _HomeState extends State<Home> {
               future: client.getSchedule(),
               builder: (BuildContext context, AsyncSnapshot<List<ScheduleData>> snapshot) {
                 if (snapshot.hasData) {
-                  if (snapshot.data.length < 1) {
+                  List<ScheduleData> schedule = snapshot.data;
+                  if (schedule.length == 0) {
+                    return SizedBox();
+                  } else {
                     return Visibility(
                       visible: widget.acceptRejectVisible,
-                      child: acceptReject(
-                        positionedHeight: MediaQuery.of(context).size.height * 0.35,
-                        positionedLeft: MediaQuery.of(context).size.width * 0.050,
-                        containerWidth: MediaQuery.of(context).size.width * 0.9,
-                        rejectWidth: MediaQuery.of(context).size.width * 0.25,
-                        acceptWidth: MediaQuery.of(context).size.width * 0.25,
-                        reject: reject,
-                        accept: accept,
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.35,
+                          child: PageView.builder(
+                            itemCount: schedule.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 30.0),
+                                child: acceptReject(
+                                  context,
+                                  schedule[index],
+                                  containerWidth: MediaQuery.of(context).size.width * 0.9,
+                                  rejectWidth: MediaQuery.of(context).size.width * 0.25,
+                                  acceptWidth: MediaQuery.of(context).size.width * 0.25,
+                                  reject: reject,
+                                  accept: accept,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ),
                     );
-                  } else {
-                    return SizedBox();
                   }
                 } else {
                   return SizedBox();
                 }
               }),
-          // Positioned(
-          //   bottom: MediaQuery.of(context).size.height * 0.42,
-          //   left: MediaQuery.of(context).size.width * 0.82,
-          //   child: Padding(
-          //     padding: const EdgeInsets.all(8.0),
-          //     child: Column(
-          //       children: [
-          //         CircleAvatar(
-          //           radius: 22,
-          //           backgroundColor: Color(0xffFF8C00),
-          //           child: Icon(Icons.zoom_in_sharp, color: Colors.white, size: 30),
-          //         ),
-          //         SizedBox(
-          //           height: 20,
-          //         ),
-          //         CircleAvatar(
-          //           radius: 22,
-          //           backgroundColor: Color(0xffFF8C00),
-          //           child: Icon(Icons.zoom_out_sharp, color: Colors.white, size: 30),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
           Visibility(
             visible: widget.userBoardVisible,
             child: Positioned(
@@ -166,10 +236,26 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                     SizedBox(height: 15),
-                    userP(),
-                    userP(),
-                    userP(),
-                    userP(),
+                    ExpansionPanelList(
+                      elevation: 0,
+                      animationDuration: Duration(seconds: 2),
+                      children: [
+                        ExpansionPanel(
+                          canTapOnHeader: true,
+                          isExpanded: true,
+                          headerBuilder: (BuildContext context, bool header) {
+                            return userP();
+                          },
+                          body: Container(
+                            height: 20,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                    // userP(),
+                    // userP(),
+                    // userP(),
                   ],
                 ),
               ),
@@ -180,9 +266,23 @@ class _HomeState extends State<Home> {
             child: Column(
               children: [
                 Container(
+                  padding: EdgeInsets.symmetric(horizontal: 25.0),
                   height: MediaQuery.of(context).size.height * 0.38,
                   color: Color(0xffFF9411),
-                  child: Column(),
+                  child: Column(
+                    children: [
+                      form(double.infinity,
+                          label: "Set pickup station", controller: pickup, hint: "Select pickup"),
+                      SizedBox(height: 20),
+                      form(double.infinity,
+                          label: "Set your destination",
+                          controller: destination,
+                          hint: "Select destination"),
+                      SizedBox(height: 20),
+                      doubleForm(),
+                      SizedBox(height: 5),
+                    ],
+                  ),
                 ),
                 Spacer(),
                 Padding(
@@ -192,7 +292,9 @@ class _HomeState extends State<Home> {
                     labelColor: Colors.white,
                     buttonColor: Color(0xffFF9411),
                     label: "Create Schedule",
-                    fun: () {},
+                    fun: () {
+                      sendNewSchedule();
+                    },
                   ),
                 ),
                 SizedBox(height: 30)
@@ -204,21 +306,86 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Column form(double width, {String label, TextEditingController controller, String hint}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: GoogleFonts.notoSans(color: Colors.white)),
+        SizedBox(height: 10),
+        Container(
+          height: 45,
+          width: width,
+          decoration: BoxDecoration(
+            color: Color(0xffFFAF4E),
+          ),
+          child: TextFormField(
+            controller: controller,
+            style: GoogleFonts.notoSans(color: Colors.white),
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(left: 10),
+              border: InputBorder.none,
+              hintText: hint,
+              hintStyle: GoogleFonts.notoSans(color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Row doubleForm() {
+    return Row(
+      children: [
+        dateTime("Date", selectDate, text: (changeDate == false) ? "Select Date" : convertDate()),
+        Spacer(),
+        dateTime("Time", selectTime, text: (changeTime == false) ? "Select Time" : convertTime()),
+      ],
+    );
+  }
+
+  GestureDetector dateTime(String label, void Function() function, {String text}) {
+    return GestureDetector(
+      onTap: function,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.notoSans(color: Colors.white),
+          ),
+          SizedBox(height: 10),
+          Container(
+            height: 45,
+            padding: EdgeInsets.only(left: 10, top: 10),
+            width: MediaQuery.of(context).size.width * 0.35,
+            decoration: BoxDecoration(
+              color: Color(0xffFFAF4E),
+            ),
+            child: Text(
+              text,
+              style: GoogleFonts.notoSans(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   GestureDetector userP() {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          widget.acceptRejectVisible = true;
-          widget.userBoardVisible = false;
-        });
+        // setState(() {
+        //   widget.acceptRejectVisible = true;
+        //   widget.userBoardVisible = false;
+        // });
       },
       child: Container(
         padding: EdgeInsets.all(10.0),
         decoration: BoxDecoration(
-          border: Border(
-            right: BorderSide(color: Color(0xffFF8C00), width: 3),
-          ),
-        ),
+            // border: Border(
+            //   right: BorderSide(color: Color(0xffFF8C00), width: 3),
+            // ),
+            ),
         child: Row(
           children: [
             Image.asset("assets/bgdraw.png", width: 60),
@@ -231,11 +398,14 @@ class _HomeState extends State<Home> {
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                     )),
-                Text("Dutsenara Abuja, Nigeria", style: GoogleFonts.notoSans()),
+                Text(
+                  "Dutsenara Abuja, Nigeria",
+                  style: GoogleFonts.notoSans(),
+                ),
               ],
             ),
             Spacer(),
-            Icon(Icons.keyboard_arrow_right, color: Color(0xffFF8C00))
+            // Icon(Icons.keyboard_arrow_right, color: Color(0xffFF8C00))
           ],
         ),
       ),

@@ -106,17 +106,17 @@ class _WalletState extends State<Wallet> {
                 SizedBox(width: 10),
                 Row(
                   children: [
-                    SizedBox(width: 25),
+                    SizedBox(width: 35),
                     Text(
                       "All",
                       style: GoogleFonts.notoSans(fontSize: 16, color: Color(0xffFF8C00)),
                     ),
-                    SizedBox(width: 15),
+                    SizedBox(width: 20),
                     Text(
                       "Card",
                       style: GoogleFonts.notoSans(fontSize: 16, color: Color(0xffFF8C00)),
                     ),
-                    SizedBox(width: 15),
+                    SizedBox(width: 20),
                     Text(
                       "Cash",
                       style: GoogleFonts.notoSans(fontSize: 16, color: Color(0xffFF8C00)),

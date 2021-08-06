@@ -646,217 +646,212 @@ class CustomTile extends StatelessWidget {
   }
 }
 
-Positioned acceptReject({
-  double positionedHeight,
-  double positionedLeft,
+Widget acceptReject(
+  BuildContext context,
+  ScheduleData schedule, {
   double containerWidth,
   double acceptWidth,
   double rejectWidth,
   void Function() reject,
   void Function() accept,
 }) {
-  return Positioned(
-    bottom: 30.0,
-    height: positionedHeight,
-    left: positionedLeft,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          width: containerWidth,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset("assets/bgdraw.png", width: 50),
-                  SizedBox(width: 20),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Toyin Omobolanle",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xffFF8C00),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      Text(
-                        "+2348167758317",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xffFF8C00),
-                          fontSize: 14.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  Column(
-                    children: [
-                      Text(
-                        "₦2500",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xffFF8C00),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                      Text(
-                        "200km",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xffFF8C00),
-                          fontSize: 14.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Spacer(),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Image.asset("assets/Ellipse 29.png", width: 15),
-                      Image.asset("assets/Line 2.png", height: 40),
-                      Image.asset("assets/Rectangle 40.png", width: 15),
-                      SizedBox(height: 20),
-                    ],
-                  ),
-                  SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Pick Up location",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xffFF8C00),
-                          fontSize: 14.0,
-                        ),
-                      ),
-                      Text(
-                        "Dutse-nara, Abuja, Nigeria",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xff3e3e3e),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 17.0,
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Text(
-                        "Destination",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xffFF8C00),
-                          fontSize: 14.0,
-                        ),
-                      ),
-                      Text(
-                        "Iwo, Osun state, Nigeria",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xff3e3e3e),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 17.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        "pickup time",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xffFF8C00),
-                          fontSize: 12.0,
-                        ),
-                      ),
-                      Text(
-                        "0.15ms",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xffFF8C00),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15.0,
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      Text(
-                        "Est. time",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xffFF8C00),
-                          fontSize: 12.0,
-                        ),
-                      ),
-                      Text(
-                        "2.30 hrs",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xffFF8C00),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: reject,
-                    child: Container(
-                      width: rejectWidth,
-                      child: Center(
-                        child: Text(
-                          "Reject",
-                          style: GoogleFonts.notoSans(
-                            color: Color(0xffFF8C00),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  MaterialButton(
-                    onPressed: accept,
-                    color: Color(0xffFF8C00),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
-                      ),
-                    ),
-                    child: Container(
-                      width: acceptWidth,
-                      height: 30,
-                      child: Center(
-                        child: Text(
-                          "Accept",
-                          style: GoogleFonts.notoSans(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        width: containerWidth,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
         ),
-      ],
-    ),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset("assets/bgdraw.png", width: 50),
+                SizedBox(width: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Toyin Omobolanle",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    Text(
+                      "+2348167758317",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                Column(
+                  children: [
+                    Text(
+                      "₦2500",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    Text(
+                      "200km",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 14.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Spacer(),
+            Row(
+              children: [
+                Column(
+                  children: [
+                    Image.asset("assets/Ellipse 29.png", width: 15),
+                    Image.asset("assets/Line 2.png", height: 40),
+                    Image.asset("assets/Rectangle 40.png", width: 15),
+                    SizedBox(height: 20),
+                  ],
+                ),
+                SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Pick Up location",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 14.0,
+                      ),
+                    ),
+                    Text(
+                      "Dutse-nara, Abuja, Nigeria",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xff3e3e3e),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 17.0,
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Text(
+                      "Destination",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 14.0,
+                      ),
+                    ),
+                    Text(
+                      "Iwo, Osun state, Nigeria",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xff3e3e3e),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 17.0,
+                      ),
+                    ),
+                  ],
+                ),
+                Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      "pickup time",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      "0.15ms",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15.0,
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Text(
+                      "Est. time",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      "2.30 hrs",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: reject,
+                  child: Container(
+                    width: rejectWidth,
+                    child: Center(
+                      child: Text(
+                        "Reject",
+                        style: GoogleFonts.notoSans(
+                          color: Color(0xffFF8C00),
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                MaterialButton(
+                  onPressed: accept,
+                  color: Color(0xffFF8C00),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                    ),
+                  ),
+                  child: Container(
+                    width: acceptWidth,
+                    height: 30,
+                    child: Center(
+                      child: Text(
+                        "Accept",
+                        style: GoogleFonts.notoSans(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    ],
   );
 }
 
@@ -1202,3 +1197,10 @@ Widget schedulePost(
     ],
   );
 }
+
+// Widget stackCards({int index}) {
+//   return StackCard.builder(
+//     itemCount: index,
+//     itemBuilder: 
+//   );
+// }
