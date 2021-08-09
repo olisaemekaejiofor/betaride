@@ -1,20 +1,19 @@
 import 'dart:convert';
 
-import 'package:card_selector/card_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_stack_card/flutter_stack_card.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:mybetaride/Providers/userProvider.dart';
+
 import 'package:mybetaride/helpers/schedule_service.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/models/schedule_model.dart';
-import 'package:mybetaride/models/user.dart';
+
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/profile.dart';
-import 'package:provider/provider.dart';
+
 import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
