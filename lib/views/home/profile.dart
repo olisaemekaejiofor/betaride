@@ -28,41 +28,37 @@ class _ProfileState extends State<Profile> {
   check(String controller, String newValue) {
     if (controller == '') {
       controller = newValue;
+      print(controller);
     }
+    return controller;
   }
 
   Future update() async {
     String token = await UserPref().getToken();
     var data = await client.getProfile();
-    print(data);
+    print(data.firstname);
     var body = {
-      "firstName": firstNameController.text,
-      "lastName": lastNameController.text,
-      "email": emailController.text,
-      "phone": phoneController.text,
-      "address": cityController.text + "" + stateValue,
+      "firstName": check(firstNameController.text, data.firstname),
+      "lastName": check(lastNameController.text, data.lastname),
+      "email": check(emailController.text, data.email),
+      "phone": check(phoneController.text, data.phone),
+      "address": check(cityController.text + "" + stateValue, data.address),
       "stateOfResidence": stateValue,
     };
-    if (firstNameController.text == '' ||
-        lastNameController.text == '' ||
-        emailController.text == '' ||
-        phoneController.text == '' ||
-        cityController.text == '') {
-      flushbar(context, "Fill all fields");
-    } else {
-      var res = await http.put(
-        Uri.parse(AppUrl.updateProfile),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-        body: jsonEncode(body),
-      );
-      if (res.statusCode == 200) {
-        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-          return Home(false, true, false);
-        }));
-      }
+
+    var res = await http.put(
+      Uri.parse(AppUrl.updateProfile),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: jsonEncode(body),
+    );
+    print(res.body);
+    if (res.statusCode == 200) {
+      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+        return Home(false, true, false);
+      }));
     }
   }
 

@@ -9,7 +9,7 @@ class ScheduleData {
   String stateId;
   String terminalId;
   String distance;
-  String riderId;
+  List riderId;
   String driverId;
   String createdAt;
   String updatedAt;
