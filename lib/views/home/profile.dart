@@ -25,8 +25,16 @@ class _ProfileState extends State<Profile> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController cityController = TextEditingController();
 
+  check(String controller, String newValue) {
+    if (controller == '') {
+      controller = newValue;
+    }
+  }
+
   Future update() async {
     String token = await UserPref().getToken();
+    var data = await client.getProfile();
+    print(data);
     var body = {
       "firstName": firstNameController.text,
       "lastName": lastNameController.text,
