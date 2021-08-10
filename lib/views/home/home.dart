@@ -1,20 +1,16 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-
 import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/models/schedule_model.dart';
-
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/profile.dart';
-
 import 'package:http/http.dart' as http;
+import 'package:textfield_search/textfield_search.dart';
 
 class Home extends StatefulWidget {
   bool userBoardVisible;
@@ -39,6 +35,7 @@ class _HomeState extends State<Home> {
   bool changeTime = false;
   bool changeDate = false;
   ProfileService profile = ProfileService();
+  StateService state = StateService();
 
   String convertTime() {
     var time = selectedDay;
@@ -113,6 +110,25 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<List<String>> pickupT() async {
+    var data = await state.getStates();
+    List<String> _list = [];
+    for (int i = 0; i < data.length; i++) {
+      _list.add(data[i].stateName);
+    }
+    return _list;
+  }
+
+  Future<List> destinationT() async {
+    var data = await state.getStates();
+    List _list = [];
+    for (int i = 0; i < data.length; i++) {
+      _list.add(data[i].stateName);
+    }
+    print(_list);
+    return _list;
+  }
+
   Future sendNewSchedule() async {
     showDialog(
       context: context,
@@ -150,6 +166,18 @@ class _HomeState extends State<Home> {
         print("Wahala Dey");
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    pickup.addListener(_printLatestValue);
+    destination.addListener(_printLatestValue);
+  }
+
+  _printLatestValue() {
+    print("text field: ${pickup.text}");
+    print("text field: ${destination.text}");
   }
 
   @override
@@ -283,13 +311,19 @@ class _HomeState extends State<Home> {
                   color: Color(0xffFF9411),
                   child: Column(
                     children: [
-                      form(double.infinity,
-                          label: "Set pickup station", controller: pickup, hint: "Select pickup"),
+                      form(
+                        double.infinity,
+                        label: "Set pickup station",
+                        controller: pickup,
+                        hint: "Select pickup",
+                      ),
                       SizedBox(height: 20),
-                      form(double.infinity,
-                          label: "Set your destination",
-                          controller: destination,
-                          hint: "Select destination"),
+                      form(
+                        double.infinity,
+                        label: "Set your destination",
+                        controller: destination,
+                        hint: "Select destination",
+                      ),
                       SizedBox(height: 20),
                       doubleForm(),
                       SizedBox(height: 5),
@@ -330,9 +364,16 @@ class _HomeState extends State<Home> {
           decoration: BoxDecoration(
             color: Color(0xffFFAF4E),
           ),
-          child: TextFormField(
+          child: TextFieldSearch(
+            label: '',
+            future: () {
+              pickupT();
+            },
+            getSelectedValue: (item) {
+              print(item);
+            },
             controller: controller,
-            style: GoogleFonts.notoSans(color: Colors.white),
+            textStyle: GoogleFonts.notoSans(color: Colors.white),
             decoration: InputDecoration(
               contentPadding: EdgeInsets.only(left: 10),
               border: InputBorder.none,
@@ -340,6 +381,16 @@ class _HomeState extends State<Home> {
               hintStyle: GoogleFonts.notoSans(color: Colors.white),
             ),
           ),
+          // child: TextFormField(
+          //   controller: controller,
+          //   style: GoogleFonts.notoSans(color: Colors.white),
+          //   decoration: InputDecoration(
+          //     contentPadding: EdgeInsets.only(left: 10),
+          //     border: InputBorder.none,
+          //     hintText: hint,
+          //     hintStyle: GoogleFonts.notoSans(color: Colors.white),
+          //   ),
+          // ),
         ),
       ],
     );
