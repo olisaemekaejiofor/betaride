@@ -38,6 +38,7 @@ class _HomeState extends State<Home> {
   TimeOfDay selectedDay;
   bool changeTime = false;
   bool changeDate = false;
+  ProfileService profile = ProfileService();
 
   String convertTime() {
     var time = selectedDay;
@@ -123,12 +124,24 @@ class _HomeState extends State<Home> {
       Navigator.pop(context);
       flushbar(context, "All Feilds are required");
     } else {
+      var data = await profile.getProfile();
       String token = await UserPref().getToken();
       var headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
       var response = await http.post(
-        Uri.parse(""),
+        Uri.parse("https://mybetaride.herokuapp.com/api/v1/schedule/:vehicleID"),
         headers: headers,
-        body: jsonEncode({}),
+        body: jsonEncode({
+          "paymentType": "Cash",
+          "fromAddress": pickup.text,
+          "toAddress": destination.text,
+          "startTime": selectedDate.toIso8601String(),
+          "endTime": selectedDay.toString(),
+          "stateId": "6064ac06b862500015aa9dd9",
+          "terminalId": "6064b65860a28670f6fceeae",
+          "distanceInMiles": "37km",
+          "driverId": data.id,
+          "amount": 300.20
+        }),
       );
 
       if (response.statusCode == 201) {
