@@ -10,7 +10,7 @@ import 'package:mybetaride/models/schedule_model.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/profile.dart';
 import 'package:http/http.dart' as http;
-import 'package:textfield_search/textfield_search.dart';
+import 'package:searchfield/searchfield.dart';
 
 class Home extends StatefulWidget {
   bool userBoardVisible;
@@ -24,28 +24,31 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   ScheduleService client = ScheduleService();
+  ProfileService profile = ProfileService();
+  TerminalService terminal = TerminalService();
   LatLng initialcameraposition = LatLng(6.440641, 23.2549939);
   GoogleMapController controller;
   Location location = Location();
   String dropdownValue = 'Riders Delay';
   TextEditingController pickup = TextEditingController();
   TextEditingController destination = TextEditingController();
-  DateTime selectedDate;
-  TimeOfDay selectedDay;
+  List<String> list = [];
+  TimeOfDay startTime;
+  TimeOfDay endTime;
   bool changeTime = false;
   bool changeDate = false;
-  ProfileService profile = ProfileService();
-  StateService state = StateService();
 
   String convertTime() {
-    var time = selectedDay;
+    var time = startTime;
+    print(time);
     var finalTime = time.hour.toString() + ":" + time.minute.toString();
     return finalTime;
   }
 
   String convertDate() {
-    var date = selectedDate;
-    var finalDate = date.day.toString() + "/" + date.month.toString() + "/" + date.year.toString();
+    var time = endTime;
+    print(time);
+    var finalDate = time.hour.toString() + ":" + time.minute.toString();
     return finalDate;
   }
 
@@ -82,51 +85,42 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void selectDate() {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2022),
-    ).then((pickDate) {
-      if (pickDate == null) {}
-      setState(() {
-        selectedDate = pickDate;
-        changeDate = true;
-      });
-    });
-  }
-
-  void selectTime() {
+  void selectStartTime() {
     showTimePicker(
+      initialEntryMode: TimePickerEntryMode.input,
       context: context,
       initialTime: TimeOfDay.now(),
     ).then((pickTime) {
       if (pickTime == null) {}
       setState(() {
-        selectedDay = pickTime;
+        startTime = pickTime;
+        changeDate = true;
+      });
+    });
+  }
+
+  void selectEndTime() {
+    showTimePicker(
+      initialEntryMode: TimePickerEntryMode.input,
+      context: context,
+      initialTime: TimeOfDay.now(),
+    ).then((pickTime) {
+      if (pickTime == null) {}
+      setState(() {
+        endTime = pickTime;
         changeTime = true;
       });
     });
   }
 
-  Future<List<String>> pickupT() async {
-    var data = await state.getStates();
-    List<String> _list = [];
-    for (int i = 0; i < data.length; i++) {
-      _list.add(data[i].stateName);
-    }
-    return _list;
-  }
+  Future<List<String>> destinationT() async {
+    var data = await terminal.getTerminal();
 
-  Future<List> destinationT() async {
-    var data = await state.getStates();
-    List _list = [];
     for (int i = 0; i < data.length; i++) {
-      _list.add(data[i].stateName);
+      list.add(data[i].location.formattedAddress);
     }
-    print(_list);
-    return _list;
+    print(list);
+    return list;
   }
 
   Future sendNewSchedule() async {
@@ -150,8 +144,8 @@ class _HomeState extends State<Home> {
           "paymentType": "Cash",
           "fromAddress": pickup.text,
           "toAddress": destination.text,
-          "startTime": selectedDate.toIso8601String(),
-          "endTime": selectedDay.toString(),
+          // "startTime": selectedDate.toIso8601String(),
+          // "endTime": selectedDay.toString(),
           "stateId": "6064ac06b862500015aa9dd9",
           "terminalId": "6064b65860a28670f6fceeae",
           "distanceInMiles": "37km",
@@ -159,7 +153,7 @@ class _HomeState extends State<Home> {
           "amount": 300.20
         }),
       );
-
+      print(response.statusCode);
       if (response.statusCode == 201) {
         print(response.body);
       } else {
@@ -171,8 +165,15 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    destinationT();
     pickup.addListener(_printLatestValue);
     destination.addListener(_printLatestValue);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    destinationT();
   }
 
   _printLatestValue() {
@@ -307,20 +308,20 @@ class _HomeState extends State<Home> {
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 25.0),
-                  height: MediaQuery.of(context).size.height * 0.38,
+                  height: MediaQuery.of(context).size.height * 0.40,
                   color: Color(0xffFF9411),
                   child: Column(
                     children: [
                       form(
                         double.infinity,
-                        label: "Set pickup station",
+                        label: "Set pickup terminal",
                         controller: pickup,
                         hint: "Select pickup",
                       ),
                       SizedBox(height: 20),
                       form(
                         double.infinity,
-                        label: "Set your destination",
+                        label: "Set destination terminal",
                         controller: destination,
                         hint: "Select destination",
                       ),
@@ -359,38 +360,29 @@ class _HomeState extends State<Home> {
         Text(label, style: GoogleFonts.notoSans(color: Colors.white)),
         SizedBox(height: 10),
         Container(
-          height: 45,
+          height: 50,
           width: width,
           decoration: BoxDecoration(
             color: Color(0xffFFAF4E),
           ),
-          child: TextFieldSearch(
-            label: '',
-            future: () {
-              pickupT();
-            },
-            getSelectedValue: (item) {
-              print(item);
-            },
+          child: SearchField(
+            suggestions: list,
+            hasOverlay: true,
+            itemHeight: 50,
             controller: controller,
-            textStyle: GoogleFonts.notoSans(color: Colors.white),
-            decoration: InputDecoration(
+            suggestionItemDecoration: BoxDecoration(
+              border: Border.all(width: 0, color: Colors.transparent),
+            ),
+            suggestionStyle: GoogleFonts.notoSans(),
+            maxSuggestionsInViewPort: 6,
+            searchStyle: GoogleFonts.notoSans(color: Colors.white),
+            searchInputDecoration: InputDecoration(
               contentPadding: EdgeInsets.only(left: 10),
               border: InputBorder.none,
               hintText: hint,
               hintStyle: GoogleFonts.notoSans(color: Colors.white),
             ),
           ),
-          // child: TextFormField(
-          //   controller: controller,
-          //   style: GoogleFonts.notoSans(color: Colors.white),
-          //   decoration: InputDecoration(
-          //     contentPadding: EdgeInsets.only(left: 10),
-          //     border: InputBorder.none,
-          //     hintText: hint,
-          //     hintStyle: GoogleFonts.notoSans(color: Colors.white),
-          //   ),
-          // ),
         ),
       ],
     );
@@ -399,9 +391,11 @@ class _HomeState extends State<Home> {
   Row doubleForm() {
     return Row(
       children: [
-        dateTime("Date", selectDate, text: (changeDate == false) ? "Select Date" : convertDate()),
+        dateTime("Start Time", selectStartTime,
+            text: (changeDate == false) ? "Select Date" : convertDate()),
         Spacer(),
-        dateTime("Time", selectTime, text: (changeTime == false) ? "Select Time" : convertTime()),
+        dateTime("End Time", selectEndTime,
+            text: (changeTime == false) ? "Select Time" : convertTime()),
       ],
     );
   }

@@ -5,6 +5,7 @@ import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/models/profile_model.dart';
 import 'package:mybetaride/models/schedule_model.dart';
 import 'package:mybetaride/models/state_model.dart';
+import 'package:mybetaride/models/terminals_model.dart';
 
 class ScheduleService {
   final url = "https://mybetaride.herokuapp.com/api/v1/schedule/mySchedule";
@@ -86,4 +87,22 @@ class StateService {
   }
 }
 
-class TerminalService {}
+class TerminalService {
+  final url = "https://mybetaride.herokuapp.com/api/v1/terminals/";
+  Future<List<TerminalData>> getTerminal() async {
+    String token = await UserPref().getToken();
+    var headers = {'Authorization': 'Bearer $token'};
+    Response res = await get(Uri.parse(url), headers: headers);
+
+    if (res.statusCode == 200) {
+      Map<String, dynamic> json = jsonDecode(res.body);
+      List<dynamic> data = json['data'];
+      List<TerminalData> terminals =
+          data.map((dynamic item) => TerminalData.fromJson(item)).toList();
+      return terminals;
+    } else {
+      print("Cant get Terminals");
+      return null;
+    }
+  }
+}
