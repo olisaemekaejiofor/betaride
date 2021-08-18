@@ -32,15 +32,12 @@ class _ScheduleState extends State<Schedule> {
           ),
         ),
       ),
-      drawer: homeDrawer(
-          width: MediaQuery.of(context).size.width * 85,
-          fun: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
-          },
-          logout: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
-            ScreenPref().setScreenPref(0);
-          }),
+      drawer: homeDrawer(context, width: MediaQuery.of(context).size.width * 85, fun: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
+      }, logout: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+        ScreenPref().setScreenPref(0);
+      }),
       body: Column(
         children: [
           Container(

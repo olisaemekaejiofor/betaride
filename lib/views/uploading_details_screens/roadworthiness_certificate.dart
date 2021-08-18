@@ -5,7 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/uploading_details_screens/inspection_report.dart';
 
+// ignore: must_be_immutable
 class UploadRoadWorthinessCertificate extends StatefulWidget {
+  String licence;
+  String insurance;
+  UploadRoadWorthinessCertificate({@required this.licence, @required this.insurance});
   @override
   _UploadRoadWorthinessCertificateState createState() => _UploadRoadWorthinessCertificateState();
 }
@@ -93,7 +97,12 @@ class _UploadRoadWorthinessCertificateState extends State<UploadRoadWorthinessCe
                       ),
                     ),
                   )
-                : NextButton(context, screen: UploadInspectionReport()),
+                : NextButton(context,
+                    screen: UploadInspectionReport(
+                      licence: widget.licence,
+                      insurance: widget.insurance,
+                      roadworthiness: path,
+                    )),
             Spacer()
           ],
         ),

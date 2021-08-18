@@ -6,6 +6,8 @@ import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/uploading_details_screens/insurance_policy.dart';
 
 class UploadDriverLicense extends StatefulWidget {
+  final String profilepic;
+  UploadDriverLicense({@required this.profilepic});
   @override
   _UploadDriverLicenseState createState() => _UploadDriverLicenseState();
 }
@@ -96,7 +98,11 @@ class _UploadDriverLicenseState extends State<UploadDriverLicense> {
                       ),
                     ),
                   )
-                : NextButton(context, screen: UploadInsurancePolicy()),
+                : NextButton(context,
+                    screen: UploadInsurancePolicy(
+                      profilepic: widget.profilepic,
+                      licence: path,
+                    )),
             Spacer()
           ],
         ),

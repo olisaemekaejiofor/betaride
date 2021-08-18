@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -26,6 +28,8 @@ class _HomeState extends State<Home> {
   ScheduleService client = ScheduleService();
   ProfileService profile = ProfileService();
   TerminalService terminal = TerminalService();
+  VehicleService vehicle = VehicleService();
+  Position currentPosition;
   LatLng initialcameraposition = LatLng(6.440641, 23.2549939);
   GoogleMapController controller;
   Location location = Location();
@@ -33,24 +37,10 @@ class _HomeState extends State<Home> {
   TextEditingController pickup = TextEditingController();
   TextEditingController destination = TextEditingController();
   List<String> list = [];
-  TimeOfDay startTime;
-  TimeOfDay endTime;
+  String startTime;
+  String endTime;
   bool changeTime = false;
   bool changeDate = false;
-
-  String convertTime() {
-    var time = startTime;
-    print(time);
-    var finalTime = time.hour.toString() + ":" + time.minute.toString();
-    return finalTime;
-  }
-
-  String convertDate() {
-    var time = endTime;
-    print(time);
-    var finalDate = time.hour.toString() + ":" + time.minute.toString();
-    return finalDate;
-  }
 
   void _onMapCreated(GoogleMapController cntlr) {
     controller = cntlr;
@@ -62,6 +52,19 @@ class _HomeState extends State<Home> {
       );
     });
   }
+
+  // _getCurrentLocation() async {
+  //   await Geolocator.getCurrentPosition().then((Position position) async {
+  //     setState(() {
+  //       currentPosition = position;
+  //       controller.animateCamera(
+  //         CameraUpdate.newCameraPosition(
+  //           CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 18.0),
+  //         ),
+  //       );
+  //     });
+  //   });
+  // }
 
   void accept() {
     setState(() {
@@ -85,32 +88,24 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void selectStartTime() {
-    showTimePicker(
-      initialEntryMode: TimePickerEntryMode.input,
-      context: context,
-      initialTime: TimeOfDay.now(),
-    ).then((pickTime) {
-      if (pickTime == null) {}
+  Future<void> pickStartTime() async {
+    final TimeOfDay result = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    if (result != null) {
       setState(() {
-        startTime = pickTime;
+        startTime = result.format(context);
         changeDate = true;
       });
-    });
+    }
   }
 
-  void selectEndTime() {
-    showTimePicker(
-      initialEntryMode: TimePickerEntryMode.input,
-      context: context,
-      initialTime: TimeOfDay.now(),
-    ).then((pickTime) {
-      if (pickTime == null) {}
+  Future<void> pickEndTime() async {
+    final TimeOfDay result = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    if (result != null) {
       setState(() {
-        endTime = pickTime;
+        endTime = result.format(context);
         changeTime = true;
       });
-    });
+    }
   }
 
   Future<List<String>> destinationT() async {
@@ -124,6 +119,15 @@ class _HomeState extends State<Home> {
   }
 
   Future sendNewSchedule() async {
+    double calculateDistance(lat1, lon1, lat2, lon2) {
+      var p = 0.017453292519943295;
+      var c = cos;
+      var a = 0.5 -
+          c((lat2 - lat1) * p) / 2 +
+          c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+      return 12742 * asin(sqrt(a));
+    }
+
     showDialog(
       context: context,
       builder: (context) => Center(
@@ -135,17 +139,18 @@ class _HomeState extends State<Home> {
       flushbar(context, "All Feilds are required");
     } else {
       var data = await profile.getProfile();
+      String id = await vehicle.getVehicle();
       String token = await UserPref().getToken();
       var headers = {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'};
       var response = await http.post(
-        Uri.parse("https://mybetaride.herokuapp.com/api/v1/schedule/:vehicleID"),
+        Uri.parse("https://mybetaride.herokuapp.com/api/v1/schedule/$id"),
         headers: headers,
         body: jsonEncode({
           "paymentType": "Cash",
           "fromAddress": pickup.text,
           "toAddress": destination.text,
-          // "startTime": selectedDate.toIso8601String(),
-          // "endTime": selectedDay.toString(),
+          "startTime": DateTime.now().toIso8601String(),
+          "endTime": DateTime.now().toIso8601String(),
           "stateId": "6064ac06b862500015aa9dd9",
           "terminalId": "6064b65860a28670f6fceeae",
           "distanceInMiles": "37km",
@@ -157,6 +162,7 @@ class _HomeState extends State<Home> {
       if (response.statusCode == 201) {
         print(response.body);
       } else {
+        print(response.body);
         print("Wahala Dey");
       }
     }
@@ -166,19 +172,14 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     destinationT();
-    pickup.addListener(_printLatestValue);
-    destination.addListener(_printLatestValue);
+    // _getCurrentLocation();
   }
 
   @override
   void dispose() {
     super.dispose();
     destinationT();
-  }
-
-  _printLatestValue() {
-    print("text field: ${pickup.text}");
-    print("text field: ${destination.text}");
+    // _getCurrentLocation();
   }
 
   @override
@@ -189,16 +190,13 @@ class _HomeState extends State<Home> {
       appBar: (widget.newSchedule == true)
           ? AppBar(backgroundColor: Color(0xffFF9411), elevation: 0)
           : homeAppBar(),
-      drawer: homeDrawer(
-          width: MediaQuery.of(context).size.width * 85,
-          fun: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
-          },
-          logout: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
-            UserPref().removeUser();
-            ScreenPref().setScreenPref(0);
-          }),
+      drawer: homeDrawer(context, width: MediaQuery.of(context).size.width * 85, fun: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
+      }, logout: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+        UserPref().removeUser();
+        ScreenPref().setScreenPref(0);
+      }),
       body: Stack(
         children: [
           GoogleMap(
@@ -277,22 +275,18 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                     SizedBox(height: 15),
-                    ExpansionPanelList(
-                      elevation: 0,
-                      animationDuration: Duration(seconds: 2),
-                      children: [
-                        ExpansionPanel(
-                          canTapOnHeader: true,
-                          isExpanded: true,
-                          headerBuilder: (BuildContext context, bool header) {
-                            return userP();
-                          },
-                          body: Container(
-                            height: 20,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ],
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: 4,
+                        itemBuilder: (context, index) {
+                          return ExpansionTile(
+                            leading: CircleAvatar(),
+                            title: Column(),
+                            trailing: Icon(Icons.keyboard_arrow_right),
+                            children: [],
+                          );
+                        },
+                      ),
                     ),
                     // userP(),
                     // userP(),
@@ -391,11 +385,10 @@ class _HomeState extends State<Home> {
   Row doubleForm() {
     return Row(
       children: [
-        dateTime("Start Time", selectStartTime,
-            text: (changeDate == false) ? "Select Date" : convertDate()),
+        dateTime("Start Time", pickStartTime,
+            text: (changeDate == false) ? "Select Date" : startTime),
         Spacer(),
-        dateTime("End Time", selectEndTime,
-            text: (changeTime == false) ? "Select Time" : convertTime()),
+        dateTime("End Time", pickEndTime, text: (changeTime == false) ? "Select Time" : endTime),
       ],
     );
   }

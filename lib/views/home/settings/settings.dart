@@ -27,15 +27,12 @@ class _SettingsState extends State<Settings> {
                 fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
-      drawer: homeDrawer(
-          width: MediaQuery.of(context).size.width * 85,
-          fun: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
-          },
-          logout: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
-            ScreenPref().setScreenPref(0);
-          }),
+      drawer: homeDrawer(context, width: MediaQuery.of(context).size.width * 85, fun: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
+      }, logout: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+        ScreenPref().setScreenPref(0);
+      }),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 110),
         child: Column(

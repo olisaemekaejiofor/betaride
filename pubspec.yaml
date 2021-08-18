@@ -42,6 +42,9 @@ dependencies:
   animated_horizontal_calendar: ^0.0.2
   flutter_switch: ^0.3.2
   searchfield: ^0.5.2
+  expansion_tile_card: ^2.0.0
+  connectivity: ^3.0.6
+  flutter_typeahead: ^3.2.0
 
 dev_dependencies:
   flutter_test:

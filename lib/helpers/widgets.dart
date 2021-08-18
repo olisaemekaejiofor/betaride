@@ -1,15 +1,13 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/models/schedule_model.dart';
-import 'package:mybetaride/views/home/help.dart';
 import 'package:mybetaride/views/home/home.dart';
-import 'package:mybetaride/views/home/invite_friends.dart';
 import 'package:mybetaride/views/home/schedule.dart';
 import 'package:mybetaride/views/home/settings/settings.dart';
 import 'package:mybetaride/views/home/trip_history.dart';
-import 'package:mybetaride/views/home/wallet.dart';
 
 Container doubleFormField({
   String label_1,
@@ -495,43 +493,81 @@ Column formField({String label, String hintText}) {
 //   );
 // }
 AppBar homeAppBar() {
+  OnlineOffline client = OnlineOffline();
+
   return AppBar(
     backgroundColor: Colors.white,
     automaticallyImplyLeading: false,
     centerTitle: true,
     leading: Builder(
       builder: (context) => IconButton(
-        iconSize: 12,
+        iconSize: 30,
         onPressed: () => Scaffold.of(context).openDrawer(),
-        icon: Image.asset("assets/menu.png"),
-      ),
-    ),
-    title: Container(
-      width: 150,
-      height: 25,
-      decoration: BoxDecoration(
-        color: Color(0xffE1FFFF),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Center(
-        child: Text(
-          "Available",
-          style: GoogleFonts.notoSans(
-              color: Color(0xff0698D7), fontSize: 12, fontWeight: FontWeight.w600),
+        icon: Icon(
+          Icons.menu,
+          color: Color(0xff525252),
         ),
       ),
     ),
-    actions: [
-      IconButton(
-        iconSize: 20,
-        onPressed: () {},
-        icon: Image.asset("assets/bell.png"),
-      ),
-    ],
+    title: FutureBuilder(
+        future: client.check(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data == true) {
+              return Container(
+                width: 150,
+                height: 25,
+                decoration: BoxDecoration(
+                  color: Color(0xffE1FFFF),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Center(
+                  child: Text(
+                    "Available",
+                    style: GoogleFonts.notoSans(
+                        color: Color(0xff0698D7), fontSize: 12, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              );
+            }
+            return Container(
+              width: 150,
+              height: 25,
+              decoration: BoxDecoration(
+                color: Color(0xffE1FFFF),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Center(
+                child: Text(
+                  "Unavailable",
+                  style: GoogleFonts.notoSans(
+                      color: Color(0xff0698D7), fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+              ),
+            );
+          } else {
+            return Container(
+              width: 150,
+              height: 25,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Center(
+                child: Text(
+                  "Unavailable",
+                  style: GoogleFonts.notoSans(
+                      color: Color(0xff0698D7), fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+              ),
+            );
+          }
+        }),
   );
 }
 
-Drawer homeDrawer({double width, String name, void Function() fun, void Function() logout}) {
+Drawer homeDrawer(BuildContext context,
+    {double width, String name, void Function() fun, void Function() logout}) {
   return Drawer(
     child: Container(
       width: width,
@@ -604,12 +640,42 @@ Drawer homeDrawer({double width, String name, void Function() fun, void Function
         ),
         SizedBox(height: 15),
         CustomTile(name: "Home", iconName: "home 1", widget: Home(false, true, false)),
-        CustomTile(name: "My Wallet", iconName: "credit-card", widget: Wallet()),
+        ListTile(
+          onTap: () {
+            comingSoonFlush(context);
+          },
+          leading: Image.asset("assets/credit-card.png", width: 25.0),
+          title: Text(
+            "My Wallet",
+            style: GoogleFonts.notoSans(
+                color: Color(0xff3e3e3e), fontWeight: FontWeight.w400, fontSize: 20.0),
+          ),
+        ),
         CustomTile(name: "Schedule", iconName: "calendar", widget: Schedule()),
         CustomTile(name: "Trip History", iconName: "steering-wheel (1)", widget: RideHistory()),
-        CustomTile(name: "Invite Friends", iconName: "friends", widget: Invite()),
+        ListTile(
+          onTap: () {
+            comingSoonFlush(context);
+          },
+          leading: Image.asset("assets/friends.png", width: 25.0),
+          title: Text(
+            "Invite Friends",
+            style: GoogleFonts.notoSans(
+                color: Color(0xff3e3e3e), fontWeight: FontWeight.w400, fontSize: 20.0),
+          ),
+        ),
         CustomTile(name: "Settings", iconName: "settings", widget: Settings()),
-        CustomTile(name: "Help", iconName: "call-center", widget: Help()),
+        ListTile(
+          onTap: () {
+            comingSoonFlush(context);
+          },
+          leading: Image.asset("assets/call-center.png", width: 25.0),
+          title: Text(
+            "Help",
+            style: GoogleFonts.notoSans(
+                color: Color(0xff3e3e3e), fontWeight: FontWeight.w400, fontSize: 20.0),
+          ),
+        ),
         Expanded(child: SizedBox()),
         ListTile(
           onTap: logout,
@@ -1198,9 +1264,10 @@ Widget schedulePost(
   );
 }
 
-// Widget stackCards({int index}) {
-//   return StackCard.builder(
-//     itemCount: index,
-//     itemBuilder: 
-//   );
-// }
+Widget comingSoonFlush(BuildContext context) {
+  return Flushbar(
+    message: "Coming soon!!!",
+    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 25),
+    margin: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+  )..show(context);
+}

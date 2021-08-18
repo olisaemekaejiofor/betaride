@@ -47,16 +47,13 @@ class _RideHistoryState extends State<RideHistory> {
         ),
         centerTitle: true,
       ),
-      drawer: homeDrawer(
-          width: MediaQuery.of(context).size.width * 85,
-          name: "Toyin Omobolanle",
-          fun: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
-          },
-          logout: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
-            ScreenPref().setScreenPref(0);
-          }),
+      drawer: homeDrawer(context,
+          width: MediaQuery.of(context).size.width * 85, name: "Toyin Omobolanle", fun: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
+      }, logout: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+        ScreenPref().setScreenPref(0);
+      }),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -172,7 +169,7 @@ class _RideHistoryState extends State<RideHistory> {
             // ),
             child: Center(
               child: Text(
-                "You havent been on any trips\n Open your schedules Sceen to start a trip",
+                "You havent been on any trips open\nyour schedules screen to start a trip",
                 style: GoogleFonts.notoSans(),
                 textAlign: TextAlign.center,
               ),

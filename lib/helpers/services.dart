@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/models/profile_model.dart';
@@ -104,5 +105,37 @@ class TerminalService {
       print("Cant get Terminals");
       return null;
     }
+  }
+}
+
+class VehicleService {
+  final url = "https://mybetaride.herokuapp.com/api/v1/auth/me/vehicle";
+  Future<String> getVehicle() async {
+    String token = await UserPref().getToken();
+    var headers = {'Authorization': 'Bearer $token'};
+    Response res = await get(Uri.parse(url), headers: headers);
+
+    if (res.statusCode == 200) {
+      Map<String, dynamic> json = jsonDecode(res.body);
+      var data = json['data'];
+      List<dynamic> vehicle = data['vehicle'];
+      String id = vehicle[0]['_id'];
+      return id;
+    } else {
+      print('cant get id');
+      return null;
+    }
+  }
+}
+
+class OnlineOffline {
+  Future<bool> check() async {
+    var connectivityReult = await (Connectivity().checkConnectivity());
+    if (connectivityReult == ConnectivityResult.mobile) {
+      return true;
+    } else if (connectivityReult == ConnectivityResult.wifi) {
+      return true;
+    }
+    return false;
   }
 }

@@ -6,6 +6,9 @@ import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/uploading_details_screens/roadworthiness_certificate.dart';
 
 class UploadInsurancePolicy extends StatefulWidget {
+  final String profilepic;
+  final String licence;
+  UploadInsurancePolicy({@required this.profilepic, @required this.licence});
   @override
   _UploadInsurancePolicyState createState() => _UploadInsurancePolicyState();
 }
@@ -92,7 +95,11 @@ class _UploadInsurancePolicyState extends State<UploadInsurancePolicy> {
                       ),
                     ),
                   )
-                : NextButton(context, screen: UploadRoadWorthinessCertificate()),
+                : NextButton(context,
+                    screen: UploadRoadWorthinessCertificate(
+                      licence: widget.licence,
+                      insurance: path,
+                    )),
             Spacer()
           ],
         ),

@@ -6,6 +6,12 @@ import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/uploading_details_screens/vehicle_details.dart';
 
 class UploadInspectionReport extends StatefulWidget {
+  String licence;
+  String insurance;
+  String roadworthiness;
+
+  UploadInspectionReport(
+      {@required this.licence, @required this.insurance, @required this.roadworthiness});
   @override
   _UploadInspectionReportState createState() => _UploadInspectionReportState();
 }

@@ -162,7 +162,10 @@ class _UploadProfilePicState extends State<UploadProfilePic> {
                       ),
                     ),
                   )
-                : NextButton(context, screen: UploadDriverLicense()),
+                : NextButton(context,
+                    screen: UploadDriverLicense(
+                      profilepic: path,
+                    )),
             Spacer(),
           ],
         ),
