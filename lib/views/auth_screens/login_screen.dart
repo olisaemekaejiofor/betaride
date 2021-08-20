@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/Providers/authProvider.dart';
+import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/forgotten_password.dart';
+import 'package:mybetaride/views/auth_screens/register.dart';
 import 'package:mybetaride/views/home/home.dart';
-import 'package:mybetaride/views/onboard.dart';
+import 'package:mybetaride/views/welcomeScreen.dart';
 import 'package:provider/provider.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -15,14 +17,15 @@ class LogInScreen extends StatefulWidget {
   _LogInScreenState createState() => _LogInScreenState();
 }
 
-TextEditingController emailController = TextEditingController();
-TextEditingController passwordController = TextEditingController();
-
 class _LogInScreenState extends State<LogInScreen> {
+  CheckDriver client = CheckDriver();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     AuthProvider auth = Provider.of<AuthProvider>(context);
-    var login = () {
+    var login = () async {
+      bool check = await client.check();
       showDialog(
         context: context,
         builder: (context) => Center(child: CircularProgressIndicator()),
@@ -33,9 +36,21 @@ class _LogInScreenState extends State<LogInScreen> {
       } else {
         auth.login(emailController.text, passwordController.text).then((respose) {
           if (respose['status'] == true) {
-            Navigator.pop(context);
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => Home(false, true, false)));
+            if (check == true) {
+              Navigator.pop(context);
+              ScreenPref().setScreenPref(3);
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => Home(false, true, false)));
+            } else if (check == false) {
+              Navigator.pop(context);
+              ScreenPref().setScreenPref(2);
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => WelcomePage()));
+            } else {
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => LogInScreen()));
+            }
           } else {
             Navigator.pop(context);
             flushbar(context, "Incorrect Details");
@@ -138,11 +153,10 @@ class _LogInScreenState extends State<LogInScreen> {
                             Center(
                               child: GestureDetector(
                                 onTap: () {
-                                  ScreenPref().setScreenPref(1);
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => OnBoard(),
+                                      builder: (_) => Register(),
                                     ),
                                   );
                                 },

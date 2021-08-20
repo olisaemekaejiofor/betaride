@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -9,6 +12,7 @@ import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/models/schedule_model.dart';
+import 'package:mybetaride/models/terminals_model.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/profile.dart';
 import 'package:http/http.dart' as http;
@@ -38,7 +42,12 @@ class _HomeState extends State<Home> {
   TextEditingController destination = TextEditingController();
   List<String> list = [];
   String startTime;
+  String startTimer;
   String endTime;
+  String endTimer;
+  List latLng = [];
+  String terminalId;
+  String stateId;
   bool changeTime = false;
   bool changeDate = false;
 
@@ -52,19 +61,6 @@ class _HomeState extends State<Home> {
       );
     });
   }
-
-  // _getCurrentLocation() async {
-  //   await Geolocator.getCurrentPosition().then((Position position) async {
-  //     setState(() {
-  //       currentPosition = position;
-  //       controller.animateCamera(
-  //         CameraUpdate.newCameraPosition(
-  //           CameraPosition(target: LatLng(position.latitude, position.longitude), zoom: 18.0),
-  //         ),
-  //       );
-  //     });
-  //   });
-  // }
 
   void accept() {
     setState(() {
@@ -88,34 +84,48 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Future<void> pickStartTime() async {
-    final TimeOfDay result = await showTimePicker(context: context, initialTime: TimeOfDay.now());
-    if (result != null) {
+  void pickStartTime() {
+    DatePicker.showDateTimePicker(context, showTitleActions: true, onChanged: (date) {
+      print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+    }, onConfirm: (date) {
+      var change = date.day.toString() +
+          "/" +
+          date.month.toString() +
+          "/" +
+          date.year.toString() +
+          "   " +
+          date.hour.toString() +
+          ":" +
+          date.minute.toString();
       setState(() {
-        startTime = result.format(context);
+        startTime = change;
+        startTimer = date.toIso8601String();
         changeDate = true;
       });
-    }
+      print('confirm $date');
+    }, currentTime: DateTime.now(), locale: LocaleType.en);
   }
 
-  Future<void> pickEndTime() async {
-    final TimeOfDay result = await showTimePicker(context: context, initialTime: TimeOfDay.now());
-    if (result != null) {
+  void pickEndTime() {
+    DatePicker.showDateTimePicker(context, showTitleActions: true, onChanged: (date) {
+      print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+    }, onConfirm: (date) {
+      var change = date.day.toString() +
+          "/" +
+          date.month.toString() +
+          "/" +
+          date.year.toString() +
+          "   " +
+          date.hour.toString() +
+          ":" +
+          date.minute.toString();
       setState(() {
-        endTime = result.format(context);
+        endTime = change;
+        endTimer = date.toIso8601String();
         changeTime = true;
       });
-    }
-  }
-
-  Future<List<String>> destinationT() async {
-    var data = await terminal.getTerminal();
-
-    for (int i = 0; i < data.length; i++) {
-      list.add(data[i].location.formattedAddress);
-    }
-    print(list);
-    return list;
+      print('confirm $date');
+    }, currentTime: DateTime.now(), locale: LocaleType.en);
   }
 
   Future sendNewSchedule() async {
@@ -149,18 +159,19 @@ class _HomeState extends State<Home> {
           "paymentType": "Cash",
           "fromAddress": pickup.text,
           "toAddress": destination.text,
-          "startTime": DateTime.now().toIso8601String(),
-          "endTime": DateTime.now().toIso8601String(),
+          "startTime": startTimer,
+          "endTime": endTimer,
           "stateId": "6064ac06b862500015aa9dd9",
-          "terminalId": "6064b65860a28670f6fceeae",
-          "distanceInMiles": "37km",
+          "terminalId": terminalId,
+          "distanceInMiles":
+              calculateDistance(latLng[0], latLng[1], latLng[2], latLng[3]).toString(),
           "driverId": data.id,
           "amount": 300.20
         }),
       );
       print(response.statusCode);
       if (response.statusCode == 201) {
-        print(response.body);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Home(true, false, false)));
       } else {
         print(response.body);
         print("Wahala Dey");
@@ -169,180 +180,161 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    destinationT();
-    // _getCurrentLocation();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    destinationT();
-    // _getCurrentLocation();
-  }
-
-  @override
   Widget build(BuildContext context) {
     // User user = Provider.of<UserProvider>(context).user;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: (widget.newSchedule == true)
-          ? AppBar(backgroundColor: Color(0xffFF9411), elevation: 0)
-          : homeAppBar(),
-      drawer: homeDrawer(context, width: MediaQuery.of(context).size.width * 85, fun: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
-      }, logout: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
-        UserPref().removeUser();
-        ScreenPref().setScreenPref(0);
-      }),
-      body: Stack(
-        children: [
-          GoogleMap(
-            mapType: MapType.normal,
-            initialCameraPosition: CameraPosition(target: initialcameraposition),
-            onMapCreated: _onMapCreated,
-            myLocationEnabled: true,
-            tiltGesturesEnabled: false,
-            compassEnabled: false,
-            zoomControlsEnabled: false,
-            mapToolbarEnabled: false,
-            myLocationButtonEnabled: false,
-          ),
-          FutureBuilder(
-              future: client.getSchedule(),
-              builder: (BuildContext context, AsyncSnapshot<List<ScheduleData>> snapshot) {
-                if (snapshot.hasData) {
-                  List<ScheduleData> schedule = snapshot.data;
-                  if (schedule.length == 0) {
-                    return SizedBox();
-                  } else {
-                    return Visibility(
-                      visible: widget.acceptRejectVisible,
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.35,
-                          child: PageView.builder(
-                            itemCount: schedule.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 30.0),
-                                child: acceptReject(
-                                  context,
-                                  schedule[index],
-                                  containerWidth: MediaQuery.of(context).size.width * 0.9,
-                                  rejectWidth: MediaQuery.of(context).size.width * 0.25,
-                                  acceptWidth: MediaQuery.of(context).size.width * 0.25,
-                                  reject: reject,
-                                  accept: accept,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                } else {
-                  return SizedBox();
-                }
-              }),
-          Visibility(
-            visible: widget.userBoardVisible,
-            child: Positioned(
-              bottom: 0.0,
-              left: MediaQuery.of(context).size.width * 0.05,
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset("assets/coolicon.png", width: 25),
-                        SizedBox(width: 10),
-                        Text(
-                          "Users on Board",
-                          style: GoogleFonts.notoSans(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 15),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: 4,
-                        itemBuilder: (context, index) {
-                          return ExpansionTile(
-                            leading: CircleAvatar(),
-                            title: Column(),
-                            trailing: Icon(Icons.keyboard_arrow_right),
-                            children: [],
-                          );
-                        },
-                      ),
-                    ),
-                    // userP(),
-                    // userP(),
-                    // userP(),
-                  ],
-                ),
-              ),
+    return WillPopScope(
+      // ignore: missing_return
+      onWillPop: () {
+        if (Navigator.canPop(context)) {
+          SystemNavigator.pop();
+        } else {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: (widget.newSchedule == true)
+            ? AppBar(backgroundColor: Color(0xffFF9411), elevation: 0)
+            : homeAppBar(),
+        drawer: homeDrawer(context, width: MediaQuery.of(context).size.width * 85, fun: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
+        }, logout: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+          UserPref().removeUser();
+          ScreenPref().setScreenPref(0);
+        }),
+        body: Stack(
+          children: [
+            GoogleMap(
+              mapType: MapType.normal,
+              initialCameraPosition: CameraPosition(target: initialcameraposition),
+              onMapCreated: _onMapCreated,
+              myLocationEnabled: true,
+              tiltGesturesEnabled: false,
+              compassEnabled: false,
+              zoomControlsEnabled: false,
+              mapToolbarEnabled: false,
+              myLocationButtonEnabled: false,
             ),
-          ),
-          Visibility(
-            visible: widget.newSchedule,
-            child: Column(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
-                  height: MediaQuery.of(context).size.height * 0.40,
-                  color: Color(0xffFF9411),
+            FutureBuilder(
+                future: client.getSchedule(),
+                builder: (BuildContext context, AsyncSnapshot<List<ScheduleData>> snapshot) {
+                  if (snapshot.hasData) {
+                    List<ScheduleData> schedule = snapshot.data;
+                    if (schedule.length == 0) {
+                      return SizedBox();
+                    } else {
+                      return Visibility(
+                        visible: widget.acceptRejectVisible,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.35,
+                            child: PageView.builder(
+                              itemCount: schedule.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 30.0),
+                                  child: acceptReject(
+                                    context,
+                                    schedule[index],
+                                    containerWidth: MediaQuery.of(context).size.width * 0.9,
+                                    rejectWidth: MediaQuery.of(context).size.width * 0.25,
+                                    acceptWidth: MediaQuery.of(context).size.width * 0.25,
+                                    reject: reject,
+                                    accept: accept,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                  } else {
+                    return SizedBox();
+                  }
+                }),
+            Visibility(
+              visible: widget.userBoardVisible,
+              child: Positioned(
+                bottom: 0.0,
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 1,
+                  color: Colors.white,
                   child: Column(
                     children: [
-                      form(
-                        double.infinity,
-                        label: "Set pickup terminal",
-                        controller: pickup,
-                        hint: "Select pickup",
-                      ),
                       SizedBox(height: 20),
-                      form(
-                        double.infinity,
-                        label: "Set destination terminal",
-                        controller: destination,
-                        hint: "Select destination",
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset("assets/coolicon.png", width: 25),
+                          SizedBox(width: 10),
+                          Text(
+                            "Users on Board",
+                            style: GoogleFonts.notoSans(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 20),
-                      doubleForm(),
-                      SizedBox(height: 5),
+                      SizedBox(height: 15),
+                      expansion(),
                     ],
                   ),
                 ),
-                Spacer(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: SCustomLongButton(
-                    context,
-                    labelColor: Colors.white,
-                    buttonColor: Color(0xffFF9411),
-                    label: "Create Schedule",
-                    fun: () {
-                      sendNewSchedule();
-                    },
-                  ),
-                ),
-                SizedBox(height: 30)
-              ],
+              ),
             ),
-          ),
-        ],
+            Visibility(
+              visible: widget.newSchedule,
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 25.0),
+                    height: MediaQuery.of(context).size.height * 0.45,
+                    color: Color(0xffFF9411),
+                    child: Column(
+                      children: [
+                        form(
+                          double.infinity,
+                          label: "Set pickup terminal",
+                          controller: pickup,
+                          hint: "Select pickup",
+                        ),
+                        SizedBox(height: 20),
+                        form(
+                          double.infinity,
+                          label: "Set destination terminal",
+                          controller: destination,
+                          hint: "Select destination",
+                        ),
+                        SizedBox(height: 20),
+                        doubleForm(),
+                        SizedBox(height: 5),
+                      ],
+                    ),
+                  ),
+                  Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: SCustomLongButton(
+                      context,
+                      labelColor: Colors.white,
+                      buttonColor: Color(0xffFF9411),
+                      label: "Create Schedule",
+                      fun: () {
+                        sendNewSchedule();
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 30)
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -359,23 +351,40 @@ class _HomeState extends State<Home> {
           decoration: BoxDecoration(
             color: Color(0xffFFAF4E),
           ),
-          child: SearchField(
-            suggestions: list,
-            hasOverlay: true,
-            itemHeight: 50,
-            controller: controller,
-            suggestionItemDecoration: BoxDecoration(
-              border: Border.all(width: 0, color: Colors.transparent),
+          child: TypeAheadField(
+            textFieldConfiguration: TextFieldConfiguration(
+              style: GoogleFonts.notoSans(color: Colors.white),
+              controller: controller,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(left: 10),
+                border: InputBorder.none,
+                hintText: hint,
+                hintStyle: GoogleFonts.notoSans(color: Colors.white),
+              ),
+              enableSuggestions: true,
             ),
-            suggestionStyle: GoogleFonts.notoSans(),
-            maxSuggestionsInViewPort: 6,
-            searchStyle: GoogleFonts.notoSans(color: Colors.white),
-            searchInputDecoration: InputDecoration(
-              contentPadding: EdgeInsets.only(left: 10),
-              border: InputBorder.none,
-              hintText: hint,
-              hintStyle: GoogleFonts.notoSans(color: Colors.white),
-            ),
+            suggestionsCallback: (_) async {
+              return await TerminalService().getTerminal();
+            },
+            itemBuilder: (BuildContext context, TerminalData terminals) {
+              return ListTile(
+                title: Text(terminals.terminalName),
+                subtitle: Text(terminals.address),
+              );
+            },
+            onSuggestionSelected: (TerminalData terminals) {
+              controller.text = terminals.terminalName;
+              setState(() {
+                if (terminalId == '' || terminalId == null) {
+                  terminalId = terminals.id;
+                }
+                print(terminals.id);
+                print(terminalId);
+                latLng.add(terminals.location.coordinates[0]);
+                latLng.add(terminals.location.coordinates[1]);
+                print(latLng);
+              });
+            },
           ),
         ),
       ],
@@ -417,47 +426,6 @@ class _HomeState extends State<Home> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  GestureDetector userP() {
-    return GestureDetector(
-      onTap: () {
-        // setState(() {
-        //   widget.acceptRejectVisible = true;
-        //   widget.userBoardVisible = false;
-        // });
-      },
-      child: Container(
-        padding: EdgeInsets.all(10.0),
-        decoration: BoxDecoration(
-            // border: Border(
-            //   right: BorderSide(color: Color(0xffFF8C00), width: 3),
-            // ),
-            ),
-        child: Row(
-          children: [
-            Image.asset("assets/bgdraw.png", width: 60),
-            SizedBox(width: 20),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Tobi Dayo",
-                    style: GoogleFonts.notoSans(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    )),
-                Text(
-                  "Dutsenara Abuja, Nigeria",
-                  style: GoogleFonts.notoSans(),
-                ),
-              ],
-            ),
-            Spacer(),
-            // Icon(Icons.keyboard_arrow_right, color: Color(0xffFF8C00))
-          ],
-        ),
       ),
     );
   }

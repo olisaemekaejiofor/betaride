@@ -97,6 +97,7 @@ class _UploadInsurancePolicyState extends State<UploadInsurancePolicy> {
                   )
                 : NextButton(context,
                     screen: UploadRoadWorthinessCertificate(
+                      profilepic: widget.profilepic,
                       licence: widget.licence,
                       insurance: path,
                     )),

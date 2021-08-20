@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/Providers/authProvider.dart';
 import 'package:mybetaride/helpers/widgets.dart';
-import 'package:mybetaride/views/welcomeScreen.dart';
+import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
 class Register extends StatefulWidget {
@@ -49,10 +49,10 @@ class _RegisterState extends State<Register> {
           )
               .then((response) {
             print(response['status']);
-            if (response['status'] == false) {
+            if (response['status'] == true) {
               Navigator.pop(context);
               Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => WelcomePage()));
+                  context, MaterialPageRoute(builder: (context) => LogInScreen()));
             } else {
               Navigator.pop(context);
               flushbar(context, "Registration Failed");
@@ -72,6 +72,12 @@ class _RegisterState extends State<Register> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Icon(Icons.keyboard_arrow_left)),
+            SizedBox(height: 15),
             Text(
               "Set up your driver\naccount",
               style: GoogleFonts.notoSans(

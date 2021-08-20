@@ -169,8 +169,10 @@ class _RideHistoryState extends State<RideHistory> {
             // ),
             child: Center(
               child: Text(
-                "You havent been on any trips open\nyour schedules screen to start a trip",
-                style: GoogleFonts.notoSans(),
+                "You havent been on any trips yet\nOpen your schedules screen to start a trip.",
+                style: GoogleFonts.notoSans(
+                  fontSize: 17,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),

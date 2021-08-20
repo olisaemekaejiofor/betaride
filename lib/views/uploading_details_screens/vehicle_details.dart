@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/helpers/app_url.dart';
+import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
-import 'package:mybetaride/views/auth_screens/login_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:mybetaride/views/home/home.dart';
 
 class VehicleDetails extends StatefulWidget {
   @override
@@ -11,25 +15,63 @@ class VehicleDetails extends StatefulWidget {
 }
 
 class _VehicleDetailsState extends State<VehicleDetails> {
-  Future nextSave() async {}
+  TextEditingController model = TextEditingController();
+  TextEditingController original = TextEditingController();
+  TextEditingController type = TextEditingController();
+  TextEditingController seats = TextEditingController();
+  TextEditingController year = TextEditingController();
+  TextEditingController license = TextEditingController();
+  TextEditingController engine = TextEditingController();
+
+  Future nextSave() async {
+    showDialog(
+      context: context,
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
+    String token = await UserPref().getToken();
+    var data = {
+      "vehicleMake": dropdownValue,
+      "vehicleName": dropdownValue + " " + model.text,
+      "vehicleModel": model.text,
+      "originalOwner": original.text,
+      "type": type.text,
+      "year": year.text,
+      "licenseNumber": license.text,
+      "engineNumber": engine.text
+    };
+    var headers = {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'};
+    if (model.text == '' ||
+        original.text == '' ||
+        type.text == '' ||
+        year.text == '' ||
+        license.text == '' ||
+        engine.text == '') {
+      Navigator.pop(context);
+      flushbar(context, "Please fill all fields");
+    } else {
+      var res = await http.post(
+        Uri.parse(AppUrl.addVehicle),
+        headers: headers,
+        body: jsonEncode(data),
+      );
+      print(res.statusCode);
+      print(res.body);
+      if (res.statusCode == 201) {
+        Navigator.pop(context);
+        ScreenPref().setScreenPref(3);
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Home(false, true, false)));
+      }
+    }
+  }
+
   String dropdownValue = 'Toyota';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffFF9411),
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        automaticallyImplyLeading: false,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Icon(Icons.keyboard_arrow_left, color: Colors.white, size: 30),
-        ),
-      ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.only(left: 20.0, right: 20.0, top: 60),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -67,7 +109,6 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                           Container(
                             width: double.infinity,
                             child: DropdownButton<String>(
-                              elevation: 1,
                               dropdownColor: Color(0xffFF9411),
                               value: dropdownValue,
                               underline: Container(
@@ -106,8 +147,8 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                   child: Text(
                                     value,
                                     style: GoogleFonts.notoSans(
-                                      color: Colors.white,
                                       fontSize: 18,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 );
@@ -118,7 +159,79 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                       ),
                     ),
                     SizedBox(height: 15),
-                    formField(label: 'Vehicle Model', hintText: 'Toyota Corrola'),
+                    formField(
+                        label: 'Vehicle Model', hintText: 'Toyota Corrola', controller: model),
+                    SizedBox(height: 15),
+                    Container(
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.40,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Original Owner",
+                                  style: GoogleFonts.notoSans(
+                                    color: Colors.white,
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(height: 3),
+                                Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      border: Border(bottom: BorderSide(color: Colors.white))),
+                                  child: TextField(
+                                    controller: original,
+                                    style: GoogleFonts.notoSans(color: Colors.white70),
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: "Y/N",
+                                      hintStyle: GoogleFonts.notoSans(color: Colors.white70),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.40,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Car Type",
+                                  style: GoogleFonts.notoSans(
+                                    color: Colors.white,
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(height: 3),
+                                Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      border: Border(bottom: BorderSide(color: Colors.white))),
+                                  child: TextField(
+                                    controller: type,
+                                    style: GoogleFonts.notoSans(color: Colors.white70),
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: "Type of Car",
+                                      hintStyle: GoogleFonts.notoSans(color: Colors.white70),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     SizedBox(height: 15),
                     Container(
                       width: double.infinity,
@@ -144,6 +257,8 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                   decoration: BoxDecoration(
                                       border: Border(bottom: BorderSide(color: Colors.white))),
                                   child: TextField(
+                                    controller: seats,
+                                    style: GoogleFonts.notoSans(color: Colors.white70),
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "4",
@@ -160,7 +275,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Plate No",
+                                  "Year of Production",
                                   style: GoogleFonts.notoSans(
                                     color: Colors.white,
                                     fontSize: 18.0,
@@ -173,9 +288,11 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                   decoration: BoxDecoration(
                                       border: Border(bottom: BorderSide(color: Colors.white))),
                                   child: TextField(
+                                    controller: year,
+                                    style: GoogleFonts.notoSans(color: Colors.white70),
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
-                                      hintText: "Your car plate no",
+                                      hintText: "Your car year of production",
                                       hintStyle: GoogleFonts.notoSans(color: Colors.white70),
                                     ),
                                   ),
@@ -187,39 +304,20 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                       ),
                     ),
                     SizedBox(height: 15),
-                    formField(label: 'Chasis/VIN no', hintText: '(5YJSA1DG9DFP14705)'),
+                    formField(label: 'License no', hintText: '(AAA123AL)', controller: license),
                     SizedBox(height: 15),
-                    formField(label: 'Engine no', hintText: '(52WVC10338)'),
+                    formField(label: 'Engine no', hintText: '(52WVC10338)', controller: engine),
                     SizedBox(height: 15),
                   ],
                 ),
               ),
             ),
-            CustomLongButton(
+            SCustomLongButton(
               context,
               labelColor: Color(0xffFF9411),
               buttonColor: Colors.white,
               label: "Verify",
-            ),
-            SizedBox(height: 10),
-            Center(
-              child: GestureDetector(
-                onTap: () async {
-                  final SharedPreferences prefs = await SharedPreferences.getInstance();
-                  prefs.setInt('pageIndex', 2);
-                  print(prefs.getInt('pageIndex'));
-                  Navigator.pushReplacement(
-                      context, MaterialPageRoute(builder: (_) => LogInScreen()));
-                },
-                child: Text(
-                  'Finish',
-                  style: TextStyle(
-                    fontSize: 26.0,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0XffFFC885),
-                  ),
-                ),
-              ),
+              fun: nextSave,
             ),
             SizedBox(height: 15),
           ],

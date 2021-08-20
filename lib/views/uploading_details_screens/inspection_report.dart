@@ -2,33 +2,51 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/helpers/shared_prefs.dart';
+// import 'package:mybetaride/helpers/app_url.dart';
 import 'package:mybetaride/helpers/widgets.dart';
+// import 'package:http/http.dart' as http;
 import 'package:mybetaride/views/uploading_details_screens/vehicle_details.dart';
 
 class UploadInspectionReport extends StatefulWidget {
-  String licence;
-  String insurance;
-  String roadworthiness;
+  final String profilepic;
+  final String licence;
+  final String insurance;
+  final String roadworthiness;
 
   UploadInspectionReport(
-      {@required this.licence, @required this.insurance, @required this.roadworthiness});
+      {@required this.profilepic,
+      @required this.licence,
+      @required this.insurance,
+      @required this.roadworthiness});
   @override
   _UploadInspectionReportState createState() => _UploadInspectionReportState();
 }
 
 class _UploadInspectionReportState extends State<UploadInspectionReport> {
   String path;
-  Future saveImgP() async {
-    var doc = await FilePicker.platform.pickFiles(
-        type: FileType.custom, allowedExtensions: ["png", "jpg"], allowCompression: false);
-    setState(() {
-      path = doc.paths.first;
-      print(path);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    List<String> images = [
+      widget.profilepic,
+      widget.licence,
+      widget.insurance,
+      widget.roadworthiness,
+    ];
+    Future saveImgP() async {
+      var doc = await FilePicker.platform.pickFiles(
+          type: FileType.custom, allowedExtensions: ["png", "jpg"], allowCompression: false);
+      setState(() {
+        path = doc.paths.first;
+        images.add(path);
+        print(images);
+        print(path);
+      });
+      ScreenPref().setScreenPref(1);
+      Navigator.push(context, MaterialPageRoute(builder: (context) => VehicleDetails()));
+    }
+
     return Scaffold(
       backgroundColor: Color(0xffFF9411),
       appBar: AppBar(
@@ -91,7 +109,7 @@ class _UploadInspectionReportState extends State<UploadInspectionReport> {
             (path == null)
                 ? Center(
                     child: Text(
-                      'Next',
+                      'Finish',
                       style: TextStyle(
                         fontSize: 26.0,
                         fontWeight: FontWeight.w700,
@@ -99,7 +117,17 @@ class _UploadInspectionReportState extends State<UploadInspectionReport> {
                       ),
                     ),
                   )
-                : NextButton(context, screen: VehicleDetails()),
+                : TextButton(
+                    onPressed: saveImgP,
+                    child: Text(
+                      'Finish',
+                      style: TextStyle(
+                        fontSize: 26.0,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0XffFFC885),
+                      ),
+                    ),
+                  ),
             Spacer()
           ],
         ),

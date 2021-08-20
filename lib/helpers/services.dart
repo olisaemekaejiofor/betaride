@@ -2,14 +2,16 @@ import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart';
+import 'package:mybetaride/helpers/app_url.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
+import 'package:mybetaride/main.dart';
 import 'package:mybetaride/models/profile_model.dart';
 import 'package:mybetaride/models/schedule_model.dart';
 import 'package:mybetaride/models/state_model.dart';
 import 'package:mybetaride/models/terminals_model.dart';
 
 class ScheduleService {
-  final url = "https://mybetaride.herokuapp.com/api/v1/schedule/mySchedule";
+  final url = "https://mybetaride.herokuapp.com/api/v1/schedule/activeschedules";
   Future<List<ScheduleData>> getSchedule() async {
     String token = await UserPref().getToken();
     var headers = {'Authorization': 'Bearer $token'};
@@ -129,13 +131,49 @@ class VehicleService {
 }
 
 class OnlineOffline {
-  Future<bool> check() async {
+  Stream<bool> streamcheck() async* {
     var connectivityReult = await (Connectivity().checkConnectivity());
     if (connectivityReult == ConnectivityResult.mobile) {
-      return true;
+      yield true;
     } else if (connectivityReult == ConnectivityResult.wifi) {
-      return true;
+      yield true;
     }
-    return false;
+    yield false;
+  }
+
+  Future futurecheck() async {
+    int pageIndex = await getIndex();
+    print(pageIndex);
+    List listCheck = [pageIndex];
+    var connectivityReult = await (Connectivity().checkConnectivity());
+    if (connectivityReult == ConnectivityResult.mobile) {
+      listCheck.add(true);
+      return listCheck;
+    } else if (connectivityReult == ConnectivityResult.wifi) {
+      listCheck.add(true);
+      return listCheck;
+    }
+    listCheck.add(false);
+    return listCheck;
+  }
+}
+
+class CheckDriver {
+  Future<bool> check() async {
+    String token = await UserPref().getToken();
+    var headers = {'Authorization': 'Bearer $token'};
+    var res = await get(Uri.parse(AppUrl.getVehicle), headers: headers);
+    if (res.statusCode == 200) {
+      var data = jsonDecode(res.body);
+      List<dynamic> vehicleData = data['data'];
+      print(vehicleData);
+      if (vehicleData.length == 0) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return null;
+    }
   }
 }

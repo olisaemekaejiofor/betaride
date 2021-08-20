@@ -7,9 +7,11 @@ import 'package:mybetaride/views/uploading_details_screens/inspection_report.dar
 
 // ignore: must_be_immutable
 class UploadRoadWorthinessCertificate extends StatefulWidget {
+  String profilepic;
   String licence;
   String insurance;
-  UploadRoadWorthinessCertificate({@required this.licence, @required this.insurance});
+  UploadRoadWorthinessCertificate(
+      {@required this.profilepic, @required this.licence, @required this.insurance});
   @override
   _UploadRoadWorthinessCertificateState createState() => _UploadRoadWorthinessCertificateState();
 }
@@ -99,6 +101,7 @@ class _UploadRoadWorthinessCertificateState extends State<UploadRoadWorthinessCe
                   )
                 : NextButton(context,
                     screen: UploadInspectionReport(
+                      profilepic: widget.profilepic,
                       licence: widget.licence,
                       insurance: widget.insurance,
                       roadworthiness: path,
