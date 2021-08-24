@@ -60,7 +60,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
         Navigator.pop(context);
         ScreenPref().setScreenPref(3);
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Home(false, true, false)));
+            context, MaterialPageRoute(builder: (context) => Home(true, false)));
       }
     }
   }

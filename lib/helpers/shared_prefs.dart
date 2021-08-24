@@ -58,3 +58,5 @@ class UserPref {
     return firstname + " " + lastname;
   }
 }
+
+class HomePref {}

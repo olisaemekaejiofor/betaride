@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
@@ -12,6 +13,7 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  ProfileService profile = ProfileService();
   bool showNotification = false;
 
   @override
@@ -27,7 +29,8 @@ class _SettingsState extends State<Settings> {
                 fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
-      drawer: homeDrawer(context, width: MediaQuery.of(context).size.width * 85, fun: () {
+      drawer: homeDrawer(context, profile.getProfile(),
+          width: MediaQuery.of(context).size.width * 85, fun: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
       }, logout: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
@@ -46,16 +49,17 @@ class _SettingsState extends State<Settings> {
                       fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.w500),
                 ),
                 FlutterSwitch(
-                  width: 65.0,
-                  height: 25.0,
+                  width: 60.0,
+                  height: 35.0,
                   valueFontSize: 25.0,
                   toggleSize: 25.0,
                   value: showNotification,
                   borderRadius: 20.0,
                   padding: 1.0,
                   inactiveColor: Colors.white,
-                  activeColor: Colors.greenAccent,
+                  activeColor: Colors.white,
                   toggleColor: Color(0xffFF9E28),
+                  inactiveToggleColor: Colors.grey,
                   onToggle: (val) {
                     setState(() {
                       showNotification = val;
@@ -144,20 +148,34 @@ class _SettingsState extends State<Settings> {
             SizedBox(
               height: 50,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Log out',
-                  style: GoogleFonts.notoSans(
-                      fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.w500),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Colors.white,
-                )
-              ],
+            GestureDetector(
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) {
+                  return customAlert(
+                    context,
+                    title: "Log out?",
+                    content: "Are you sure you want to log out?",
+                    buttonLabel2: "Yes, Logout",
+                    buttonLabel: "No, Stay here",
+                  );
+                },
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Log out',
+                    style: GoogleFonts.notoSans(
+                        fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.w500),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: Colors.white,
+                  )
+                ],
+              ),
             ),
           ],
         ),

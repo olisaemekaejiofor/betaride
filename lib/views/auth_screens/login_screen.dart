@@ -9,7 +9,6 @@ import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/forgotten_password.dart';
 import 'package:mybetaride/views/auth_screens/register.dart';
 import 'package:mybetaride/views/home/home.dart';
-import 'package:mybetaride/views/welcomeScreen.dart';
 import 'package:provider/provider.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -25,7 +24,6 @@ class _LogInScreenState extends State<LogInScreen> {
   Widget build(BuildContext context) {
     AuthProvider auth = Provider.of<AuthProvider>(context);
     var login = () async {
-      bool check = await client.check();
       showDialog(
         context: context,
         builder: (context) => Center(child: CircularProgressIndicator()),
@@ -36,21 +34,10 @@ class _LogInScreenState extends State<LogInScreen> {
       } else {
         auth.login(emailController.text, passwordController.text).then((respose) {
           if (respose['status'] == true) {
-            if (check == true) {
-              Navigator.pop(context);
-              ScreenPref().setScreenPref(3);
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => Home(false, true, false)));
-            } else if (check == false) {
-              Navigator.pop(context);
-              ScreenPref().setScreenPref(2);
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => WelcomePage()));
-            } else {
-              Navigator.pop(context);
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => LogInScreen()));
-            }
+            Navigator.pop(context);
+            ScreenPref().setScreenPref(3);
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => Home(true, false)));
           } else {
             Navigator.pop(context);
             flushbar(context, "Incorrect Details");

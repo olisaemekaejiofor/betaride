@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/models/profile_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:mybetaride/views/home/home.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -24,7 +24,6 @@ class _ProfileState extends State<Profile> {
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController cityController = TextEditingController();
-
   check(String controller, String newValue) {
     if (controller == '') {
       controller = newValue;
@@ -34,6 +33,10 @@ class _ProfileState extends State<Profile> {
   }
 
   Future update() async {
+    showDialog(
+      context: context,
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
     String token = await UserPref().getToken();
     var data = await client.getProfile();
     print(data.firstname);
@@ -56,9 +59,10 @@ class _ProfileState extends State<Profile> {
     );
     print(res.body);
     if (res.statusCode == 200) {
-      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-        return Home(false, true, false);
-      }));
+      Navigator.pop(context);
+      // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+      //   return Home(true, false);
+      // }));
     }
   }
 
@@ -80,6 +84,10 @@ class _ProfileState extends State<Profile> {
           builder: (BuildContext context, AsyncSnapshot<ProfileData> snapshot) {
             if (snapshot.hasData) {
               ProfileData profile = snapshot.data;
+              firstNameController.text = profile.firstname;
+              lastNameController.text = profile.lastname;
+              emailController.text = profile.email;
+              phoneController.text = profile.phone;
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 30),
                 child: Column(
@@ -134,7 +142,6 @@ class _ProfileState extends State<Profile> {
                               singleFormField(
                                 label: "E-mail Address",
                                 formChild: TextFormField(
-                                  obscureText: true,
                                   controller: emailController,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.symmetric(horizontal: 10),

@@ -9,6 +9,7 @@ import 'package:mybetaride/models/schedule_model.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/home.dart';
 import 'package:mybetaride/views/home/profile.dart';
+import 'package:mybetaride/views/welcomeScreen.dart';
 
 class Schedule extends StatefulWidget {
   @override
@@ -16,7 +17,26 @@ class Schedule extends StatefulWidget {
 }
 
 class _ScheduleState extends State<Schedule> {
+  ProfileService profile = ProfileService();
   ScheduleService client = ScheduleService();
+  CheckDriver driver = CheckDriver();
+
+  void show() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return customAlert(
+          context,
+          title: "You have not uploaded your vehicle details",
+          content:
+              "If you have uploaded your vahicle details please ignore and wait till you're verified",
+          buttonLabel2: "Ignore",
+          buttonLabel: "Upload Details",
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +52,8 @@ class _ScheduleState extends State<Schedule> {
           ),
         ),
       ),
-      drawer: homeDrawer(context, width: MediaQuery.of(context).size.width * 85, fun: () {
+      drawer: homeDrawer(context, profile.getProfile(),
+          width: MediaQuery.of(context).size.width * 85, fun: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
       }, logout: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
@@ -70,29 +91,78 @@ class _ScheduleState extends State<Schedule> {
                 ),
                 Positioned(
                   top: MediaQuery.of(context).size.height * 0.26,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Home(false, false, true)));
+                  child: FutureBuilder(
+                    future: driver.check(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return GestureDetector(
+                          onTap: (snapshot.data == true)
+                              ? () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => Home(false, true)));
+                                }
+                              : show,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            height: 50,
+                            decoration: BoxDecoration(color: Color(0xffFF9411)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ImageIcon(AssetImage("assets/calendar.png"), color: Colors.white),
+                                SizedBox(width: 10),
+                                Text("New Schedule",
+                                    style: GoogleFonts.notoSans(
+                                        fontSize: 18.0,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600)),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      return Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        height: 50,
+                        decoration: BoxDecoration(color: Color(0xffFF9411)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ImageIcon(AssetImage("assets/calendar.png"), color: Colors.white),
+                            SizedBox(width: 10),
+                            Text("New Schedule",
+                                style: GoogleFonts.notoSans(
+                                    fontSize: 18.0,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      );
                     },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      height: 50,
-                      decoration: BoxDecoration(color: Color(0xffFF9411)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ImageIcon(AssetImage("assets/calendar.png"), color: Colors.white),
-                          SizedBox(width: 10),
-                          Text("New Schedule",
-                              style: GoogleFonts.notoSans(
-                                  fontSize: 18.0,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600)),
-                        ],
-                      ),
-                    ),
                   ),
+                  // child: GestureDetector(
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //         context, MaterialPageRoute(builder: (context) => Home(false, true)));
+                  //   },
+                  //   child: Container(
+                  //     width: MediaQuery.of(context).size.width * 0.5,
+                  //     height: 50,
+                  //     decoration: BoxDecoration(color: Color(0xffFF9411)),
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       children: [
+                  //         ImageIcon(AssetImage("assets/calendar.png"), color: Colors.white),
+                  //         SizedBox(width: 10),
+                  //         Text("New Schedule",
+                  //             style: GoogleFonts.notoSans(
+                  //                 fontSize: 18.0,
+                  //                 color: Colors.white,
+                  //                 fontWeight: FontWeight.w600)),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                 ),
               ],
             ),
@@ -132,7 +202,7 @@ class _ScheduleState extends State<Schedule> {
                         return schedulePost(
                           schedule[index],
                           context,
-                          containerHeight: 250,
+                          containerHeight: 200,
                           containerWidth: MediaQuery.of(context).size.width * 0.9,
                           rejectWidth: MediaQuery.of(context).size.width * 0.25,
                           acceptWidth: MediaQuery.of(context).size.width * 0.25,

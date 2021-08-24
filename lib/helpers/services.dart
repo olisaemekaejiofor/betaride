@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:connectivity/connectivity.dart';
@@ -35,7 +36,30 @@ class ScheduleService {
 }
 
 class ProfileService {
+  // StreamController<ProfileData> _controller;
+  // Stream<ProfileData> get streamGetProfile => _controller.stream;
+  // final sub = _controller.stream.listen((ProfileData profile) {
+  //   return profile;
+  // });
+
   final url = "https://mybetaride.herokuapp.com/api/v1/auth/me";
+  Stream<ProfileData> streamGetProfile() async* {
+    String token = await UserPref().getToken();
+    var headers = {'Authorization': 'Bearer $token'};
+    Response res = await get(Uri.parse(url), headers: headers);
+
+    if (res.statusCode == 200) {
+      Map<String, dynamic> json = jsonDecode(res.body);
+      Map<String, dynamic> data = json['data'];
+      ProfileData profile = ProfileData.fromJson(data);
+
+      yield profile;
+    } else {
+      print("Cant get profile");
+      yield null;
+    }
+  }
+
   Future<ProfileData> getProfile() async {
     String token = await UserPref().getToken();
     var headers = {'Authorization': 'Bearer $token'};
@@ -169,11 +193,11 @@ class CheckDriver {
       print(vehicleData);
       if (vehicleData.length == 0) {
         return false;
-      } else {
-        return true;
+      } else if (vehicleData[0]['status'] == "Unverified") {
+        return false;
       }
     } else {
-      return null;
+      return true;
     }
   }
 }

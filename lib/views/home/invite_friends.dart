@@ -10,6 +10,20 @@ class _InviteState extends State<Invite> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: Builder(
+          builder: (context) => IconButton(
+            iconSize: 30,
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(
+              Icons.keyboard_arrow_left,
+              color: Color(0xff525252),
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -29,20 +43,20 @@ class _InviteState extends State<Invite> {
                   "Invite your friemds and get free instant reward to your wallet, and also that of your friend. Invite as many as you want and watch your wallet increase",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.notoSans(
-                    fontSize: 18,
+                    fontSize: 17,
                   )),
             ),
             Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset("assets/google-logo 1.png", width: 40),
+                Image.asset("assets/whatsapp-logo-bold 1.png", width: 50),
                 SizedBox(width: 15),
-                Image.asset("assets/Vector.png", width: 40),
+                Image.asset("assets/linkedin-logo 1.png", width: 50),
                 SizedBox(width: 15),
-                Image.asset("assets/linkedin-logo 1.png", width: 40),
+                Image.asset("assets/Vector.png", width: 50),
                 SizedBox(width: 15),
-                Image.asset("assets/whatsapp-logo-bold 1.png", width: 40),
+                Image.asset("assets/google-logo 1.png", width: 50),
               ],
             ),
             Spacer(),
@@ -60,14 +74,14 @@ class _InviteState extends State<Invite> {
                 ),
                 child: Container(
                   width: double.infinity,
-                  height: 50,
+                  height: 60,
                   child: Center(
                     child: Text(
                       "Invite",
                       style: GoogleFonts.notoSans(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
-                        fontSize: 24.0,
+                        fontSize: 20.0,
                       ),
                     ),
                   ),

@@ -32,34 +32,38 @@ class _RegisterState extends State<Register> {
           passwordController.text != '' ||
           emailController.text != '' ||
           stateController.text != '') {
-        if (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-            .hasMatch(emailController.text)) {
-          showDialog(
-            context: context,
-            builder: (context) => Center(child: CircularProgressIndicator()),
-          );
-          auth
-              .register(
-            firstNameController.text,
-            lastNameController.text,
-            emailController.text,
-            passwordController.text,
-            currentValue,
-            phoneController.text,
-          )
-              .then((response) {
-            print(response['status']);
-            if (response['status'] == true) {
-              Navigator.pop(context);
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => LogInScreen()));
-            } else {
-              Navigator.pop(context);
-              flushbar(context, "Registration Failed");
-            }
-          });
+        if (passwordController.text.length <= 5) {
+          if (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+              .hasMatch(emailController.text)) {
+            showDialog(
+              context: context,
+              builder: (context) => Center(child: CircularProgressIndicator()),
+            );
+            auth
+                .register(
+              firstNameController.text,
+              lastNameController.text,
+              emailController.text,
+              passwordController.text,
+              currentValue,
+              "0" + phoneController.text,
+            )
+                .then((response) {
+              print(response['status']);
+              if (response['status'] == true) {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => LogInScreen()));
+              } else {
+                Navigator.pop(context);
+                flushbar(context, "Registration Failed");
+              }
+            });
+          } else {
+            flushbar(context, "Please enter a valid email address");
+          }
         } else {
-          flushbar(context, "Please enter a valid email address");
+          flushbar(context, "Password needs to be more tan 5 characters");
         }
       } else {
         flushbar(context, "All feilds are required");

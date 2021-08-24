@@ -34,7 +34,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   final int routeIndex;
   MyApp({this.routeIndex});
-  List<Widget> pages = [LogInScreen(), VehicleDetails(), WelcomePage(), Home(false, true, false)];
+  List<Widget> pages = [LogInScreen(), VehicleDetails(), WelcomePage(), Home(true, false)];
   OnlineOffline client = OnlineOffline();
 
   @override

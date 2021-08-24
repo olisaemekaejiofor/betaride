@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/views/uploading_details_screens/upload_profile_pic.dart';
 
@@ -45,7 +44,7 @@ class WelcomePage extends StatelessWidget {
       // ignore: missing_return
       onWillPop: () {
         if (Navigator.canPop(context)) {
-          SystemNavigator.pop();
+          Navigator.pop(context);
         } else {
           Navigator.pop(context);
         }

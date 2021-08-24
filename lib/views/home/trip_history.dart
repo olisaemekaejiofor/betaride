@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animated_horizontal_calendar/animated_horizontal_calendar.dart';
+import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
@@ -20,6 +21,7 @@ class RideHistory extends StatefulWidget {
 }
 
 class _RideHistoryState extends State<RideHistory> {
+  ProfileService profile = ProfileService();
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   var selectedDate;
 
@@ -47,7 +49,7 @@ class _RideHistoryState extends State<RideHistory> {
         ),
         centerTitle: true,
       ),
-      drawer: homeDrawer(context,
+      drawer: homeDrawer(context, profile.getProfile(),
           width: MediaQuery.of(context).size.width * 85, name: "Toyin Omobolanle", fun: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
       }, logout: () {
@@ -70,12 +72,12 @@ class _RideHistoryState extends State<RideHistory> {
                 date: DateTime.now(),
                 textColor: Color(0xff848383),
                 backgroundColor: Color(0xffF1F1F1),
-                // tableCalenderThemeData: ThemeData.light().copyWith(
-                //   primaryColor: Color(0xffFFCF94),
-                //   accentColor: Colors.brown,
-                //   colorScheme: ColorScheme.light(primary: Color(0xffFFCF94)),
-                //   buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-                // ),
+                tableCalenderThemeData: ThemeData(
+                  primaryColor: Color(0xffFF9411),
+                  accentColor: Color(0xffFF9411).withOpacity(0.7),
+                  colorScheme: ColorScheme.light(primary: Color(0xffFF9411)),
+                  buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+                ),
                 selectedColor: Color(0xffFF9411),
                 onDateSelected: (date) {
                   selectedDate = date;
@@ -86,9 +88,9 @@ class _RideHistoryState extends State<RideHistory> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                card('assets/car 1.png', 'Total Spent', '0'),
+                card('assets/car 1.png', 'Total Jobs', '0'),
                 SizedBox(width: 20.0),
-                card('assets/earn 1.png', 'Total Spent', 'N0.00'),
+                card('assets/earn 1.png', 'Earned', 'N0.00'),
               ],
             ),
           ),

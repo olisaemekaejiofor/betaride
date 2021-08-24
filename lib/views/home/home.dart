@@ -11,19 +11,16 @@ import 'package:location/location.dart';
 import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
-import 'package:mybetaride/models/schedule_model.dart';
 import 'package:mybetaride/models/terminals_model.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/profile.dart';
 import 'package:http/http.dart' as http;
-import 'package:searchfield/searchfield.dart';
 
 class Home extends StatefulWidget {
   bool userBoardVisible;
-  bool acceptRejectVisible;
   bool newSchedule;
 
-  Home(this.userBoardVisible, this.acceptRejectVisible, this.newSchedule);
+  Home(this.userBoardVisible, this.newSchedule);
   @override
   _HomeState createState() => _HomeState();
 }
@@ -63,25 +60,25 @@ class _HomeState extends State<Home> {
   }
 
   void accept() {
-    setState(() {
-      widget.acceptRejectVisible = false;
-      widget.userBoardVisible = true;
-      // print(userBoardVisible);
-    });
+    // setState(() {
+    //   widget.acceptRejectVisible = false;
+    //   widget.userBoardVisible = true;
+    //   // print(userBoardVisible);
+    // });
   }
 
   void reject() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return homeScaffold(context, value: dropdownValue, onChanged: (newValue) {
-          setState(() {
-            dropdownValue = newValue;
-          });
-        });
-      },
-    );
+    // showDialog(
+    //   barrierDismissible: false,
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return homeScaffold(context, value: dropdownValue, onChanged: (newValue) {
+    //       setState(() {
+    //         dropdownValue = newValue;
+    //       });
+    //     });
+    //   },
+    // );
   }
 
   void pickStartTime() {
@@ -171,7 +168,7 @@ class _HomeState extends State<Home> {
       );
       print(response.statusCode);
       if (response.statusCode == 201) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Home(true, false, false)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Home(true, false)));
       } else {
         print(response.body);
         print("Wahala Dey");
@@ -181,7 +178,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    // User user = Provider.of<UserProvider>(context).user;
     return WillPopScope(
       // ignore: missing_return
       onWillPop: () {
@@ -196,7 +192,8 @@ class _HomeState extends State<Home> {
         appBar: (widget.newSchedule == true)
             ? AppBar(backgroundColor: Color(0xffFF9411), elevation: 0)
             : homeAppBar(),
-        drawer: homeDrawer(context, width: MediaQuery.of(context).size.width * 85, fun: () {
+        drawer: homeDrawer(context, profile.getProfile(),
+            width: MediaQuery.of(context).size.width * 85, fun: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
         }, logout: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
@@ -216,73 +213,119 @@ class _HomeState extends State<Home> {
               mapToolbarEnabled: false,
               myLocationButtonEnabled: false,
             ),
-            FutureBuilder(
-                future: client.getSchedule(),
-                builder: (BuildContext context, AsyncSnapshot<List<ScheduleData>> snapshot) {
-                  if (snapshot.hasData) {
-                    List<ScheduleData> schedule = snapshot.data;
-                    if (schedule.length == 0) {
-                      return SizedBox();
-                    } else {
-                      return Visibility(
-                        visible: widget.acceptRejectVisible,
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Container(
-                            height: MediaQuery.of(context).size.height * 0.35,
-                            child: PageView.builder(
-                              itemCount: schedule.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 30.0),
-                                  child: acceptReject(
-                                    context,
-                                    schedule[index],
-                                    containerWidth: MediaQuery.of(context).size.width * 0.9,
-                                    rejectWidth: MediaQuery.of(context).size.width * 0.25,
-                                    acceptWidth: MediaQuery.of(context).size.width * 0.25,
-                                    reject: reject,
-                                    accept: accept,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                  } else {
-                    return SizedBox();
-                  }
-                }),
+            // FutureBuilder(
+            //     future: client.getSchedule(),
+            //     builder: (BuildContext context, AsyncSnapshot<List<ScheduleData>> snapshot) {
+            //       if (snapshot.hasData) {
+            //         List<ScheduleData> schedule = snapshot.data;
+            //         if (schedule.length == 0) {
+            //           return SizedBox();
+            //         } else {
+            //           return Visibility(
+            //             visible: widget.acceptRejectVisible,
+            //             child: Align(
+            //               alignment: Alignment.bottomCenter,
+            //               child: Container(
+            //                 height: MediaQuery.of(context).size.height * 0.35,
+            //                 child: PageView.builder(
+            //                   itemCount: schedule.length,
+            //                   itemBuilder: (context, index) {
+            //                     return Padding(
+            //                       padding: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 30.0),
+            //                       child: acceptReject(
+            //                         context,
+            //                         schedule[index],
+            //                         containerWidth: MediaQuery.of(context).size.width * 0.9,
+            //                         rejectWidth: MediaQuery.of(context).size.width * 0.25,
+            //                         acceptWidth: MediaQuery.of(context).size.width * 0.25,
+            //                         reject: reject,
+            //                         accept: accept,
+            //                       ),
+            //                     );
+            //                   },
+            //                 ),
+            //               ),
+            //             ),
+            //           );
+            //         }
+            //       } else {
+            //         return SizedBox();
+            //       }
+            //     }),
             Visibility(
               visible: widget.userBoardVisible,
               child: Positioned(
                 bottom: 0.0,
-                height: MediaQuery.of(context).size.height * 0.5,
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 1,
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset("assets/coolicon.png", width: 25),
-                          SizedBox(width: 10),
-                          Text(
-                            "Users on Board",
-                            style: GoogleFonts.notoSans(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
+                height: MediaQuery.of(context).size.height * 0.1,
+                child: GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(30),
+                          topLeft: Radius.circular(30),
+                        ),
                       ),
-                      SizedBox(height: 15),
-                      expansion(),
-                    ],
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width * 1,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          color: Colors.white,
+                          child: Column(
+                            children: [
+                              SizedBox(height: 20),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset("assets/coolicon.png", width: 25),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Users on Board",
+                                    style: GoogleFonts.notoSans(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 15),
+                              expansion(),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(30),
+                          topLeft: Radius.circular(30),
+                        )),
+                    width: MediaQuery.of(context).size.width * 1,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset("assets/coolicon.png", width: 25),
+                            SizedBox(width: 10),
+                            Text(
+                              "Users on Board",
+                              style: GoogleFonts.notoSans(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // SizedBox(height: 15),
+                        // expansion(),
+                      ],
+                    ),
                   ),
                 ),
               ),
