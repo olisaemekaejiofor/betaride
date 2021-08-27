@@ -1,6 +1,7 @@
 class ScheduleData {
   List passengers;
   String paymentType;
+  String status;
   String id;
   String fromAddress;
   String toAddress;
@@ -18,6 +19,7 @@ class ScheduleData {
   ScheduleData({
     this.passengers,
     this.paymentType,
+    this.status,
     this.id,
     this.fromAddress,
     this.toAddress,
@@ -37,6 +39,7 @@ class ScheduleData {
     return ScheduleData(
       passengers: json['passengers'],
       paymentType: json['paymentType'],
+      status: json['status'],
       id: json['_id'],
       fromAddress: json['fromAddress'],
       toAddress: json['toAddress'],

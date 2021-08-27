@@ -9,7 +9,6 @@ import 'package:mybetaride/models/schedule_model.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/home.dart';
 import 'package:mybetaride/views/home/profile.dart';
-import 'package:mybetaride/views/welcomeScreen.dart';
 
 class Schedule extends StatefulWidget {
   @override
@@ -52,7 +51,7 @@ class _ScheduleState extends State<Schedule> {
           ),
         ),
       ),
-      drawer: homeDrawer(context, profile.getProfile(),
+      drawer: homeDrawer(context, profile.getProfile(), driver.check(),
           width: MediaQuery.of(context).size.width * 85, fun: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
       }, logout: () {
@@ -196,6 +195,10 @@ class _ScheduleState extends State<Schedule> {
                     );
                   } else {
                     List<ScheduleData> schedule = snapshot.data;
+
+                    // for("Offline" in schedule.){
+                    //   return Container();
+                    // }
                     return ListView.builder(
                       itemCount: schedule.length,
                       itemBuilder: (context, index) {
@@ -206,6 +209,9 @@ class _ScheduleState extends State<Schedule> {
                           containerWidth: MediaQuery.of(context).size.width * 0.9,
                           rejectWidth: MediaQuery.of(context).size.width * 0.25,
                           acceptWidth: MediaQuery.of(context).size.width * 0.25,
+                          accept: () {
+                            client.activate(context, schedule[index].id);
+                          },
                         );
                       },
                     );

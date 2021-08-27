@@ -59,4 +59,21 @@ class UserPref {
   }
 }
 
-class HomePref {}
+class HomePref {
+  Future setHomeSchedule(String id) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("activeSchedule", id);
+  }
+
+  Future getHomeSchedule() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var stuff = prefs.getString("activeSchedule");
+    print(stuff);
+    return stuff;
+  }
+
+  void removeSchedule() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("activeSchedule");
+  }
+}

@@ -1,15 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:mybetaride/helpers/app_url.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
+import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/main.dart';
 import 'package:mybetaride/models/profile_model.dart';
 import 'package:mybetaride/models/schedule_model.dart';
 import 'package:mybetaride/models/state_model.dart';
 import 'package:mybetaride/models/terminals_model.dart';
+import 'package:mybetaride/views/home/home.dart';
 
 class ScheduleService {
   final url = "https://mybetaride.herokuapp.com/api/v1/schedule/activeschedules";
@@ -26,11 +30,63 @@ class ScheduleService {
       } else {
         List<ScheduleData> schedule =
             data.map((dynamic item) => ScheduleData.fromJson(item)).toList();
-
+        List<ScheduleData> filtered = schedule.where((s) => s.status == "Offline").toList();
+        print(filtered);
         return schedule;
       }
     } else {
       return null;
+    }
+  }
+
+  Future activate(BuildContext context, String id) async {
+    showDialog(
+      context: context,
+      builder: (context) => Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    var myList = await OnlineOffline().futurecheck();
+    print(myList);
+    var uurl = "https://mybetaride.herokuapp.com/api/v1/schedule/updateschedule/$id";
+    if (myList[1] == true) {
+      String token = await UserPref().getToken();
+      var headers = {'Authorization': 'Bearer $token', "Content-Type": "application/json"};
+      Response res =
+          await post(Uri.parse(uurl), headers: headers, body: jsonEncode({"status": "Online"}));
+
+      if (res.statusCode == 201) {
+        String homePref = await HomePref().getHomeSchedule();
+        if (homePref == null || homePref == '') {
+          HomePref().setHomeSchedule(id);
+          Navigator.pop(context);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Home(true, false)));
+        } else {
+          Navigator.pop(context);
+          showDialog(
+            context: context,
+            builder: (context) => customAlert(context,
+                title: "You already have an active schedule",
+                content: "To activate another schedule you have to cancel the current schedule",
+                buttonLabel: "Cancel",
+                buttonLabel2: "Ignore"),
+          );
+        }
+      } else {
+        return null;
+      }
+    } else {
+      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (context) => oneCustomAlert(
+          context,
+          title: "Ooops!",
+          content:
+              "Looks like youre not connected to the internet. Please check your network settings and try again",
+          buttonLabel: "Try again",
+        ),
+      );
     }
   }
 }
@@ -165,17 +221,38 @@ class OnlineOffline {
     yield false;
   }
 
-  Future futurecheck() async {
+  Future<List> futurecheck() async {
     int pageIndex = await getIndex();
     print(pageIndex);
     List listCheck = [pageIndex];
+
+    // final result = await InternetAddress.lookup('google.com');
+    // if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+    //   listCheck.add(true);
+    //   return listCheck;
+    // } else {
+    //   listCheck.add(false);
+    //   return listCheck;
+    // }
     var connectivityReult = await (Connectivity().checkConnectivity());
     if (connectivityReult == ConnectivityResult.mobile) {
-      listCheck.add(true);
-      return listCheck;
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        listCheck.add(true);
+        return listCheck;
+      } else {
+        listCheck.add(false);
+        return listCheck;
+      }
     } else if (connectivityReult == ConnectivityResult.wifi) {
-      listCheck.add(true);
-      return listCheck;
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        listCheck.add(true);
+        return listCheck;
+      } else {
+        listCheck.add(false);
+        return listCheck;
+      }
     }
     listCheck.add(false);
     return listCheck;

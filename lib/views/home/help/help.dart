@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/helpers/widgets.dart';
+import 'package:mybetaride/views/home/help/feedbacks.dart';
 
 class HelpOptions {
   final String image;
   final String text;
   final String text1;
-  final Function screen;
+  final void Function() screen;
   HelpOptions({this.screen, this.image, this.text, this.text1});
 }
 
@@ -18,22 +20,28 @@ class Help extends StatelessWidget {
           image: 'assets/appointment 1.png',
           text: 'Request \nAppointment',
           text1: '',
-          screen: () {}),
+          screen: () {
+            comingSoonFlush(context);
+          }),
       HelpOptions(
           image: 'assets/contact.png',
           text: 'Contact Us',
-          screen: () {},
+          screen: () {
+            comingSoonFlush(context);
+          },
           text1: 'Get across to us via \nour contacts'),
       HelpOptions(
           image: 'assets/appointment 1.png',
           text: 'Chat Us',
-          screen: () {},
+          screen: () {
+            comingSoonFlush(context);
+          },
           text1: 'Talk to MyBetaRide'),
       HelpOptions(
           image: 'assets/feedback.png',
           text: 'Feedbacks',
           screen: () {
-            // Navigator.of(context).pushNamed('/feedback');
+            Navigator.push(context, MaterialPageRoute(builder: (context) => FeedbackMessage()));
           },
           text1: 'Complaints and feedbacks'),
     ];

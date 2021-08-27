@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/models/profile_model.dart';
 import 'package:mybetaride/models/schedule_model.dart';
-import 'package:mybetaride/views/home/help.dart';
+import 'package:mybetaride/views/home/help/help.dart';
 import 'package:mybetaride/views/home/home.dart';
 import 'package:mybetaride/views/home/invite_friends.dart';
 import 'package:mybetaride/views/home/schedule.dart';
@@ -567,7 +567,7 @@ AppBar homeAppBar() {
   );
 }
 
-Drawer homeDrawer(BuildContext context, Future<ProfileData> userName,
+Drawer homeDrawer(BuildContext context, Future<ProfileData> userName, Future<bool> check,
     {double width, String name, void Function() fun, void Function() logout}) {
   return Drawer(
     child: Container(
@@ -632,7 +632,30 @@ Drawer homeDrawer(BuildContext context, Future<ProfileData> userName,
                           ),
                         ),
                       ),
-                    )
+                    ),
+                    FutureBuilder(
+                        future: check,
+                        builder: (context, snapshot) {
+                          if (snapshot.data == true) {
+                            return Text(
+                              "Driver Status: Verified",
+                              style: GoogleFonts.notoSans(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w300,
+                                fontSize: 14.0,
+                              ),
+                            );
+                          } else {
+                            return Text(
+                              "Driver Status: Not Verified",
+                              style: GoogleFonts.notoSans(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w300,
+                                fontSize: 14.0,
+                              ),
+                            );
+                          }
+                        }),
                   ],
                 )
               ],
@@ -1143,51 +1166,30 @@ Widget schedulePost(
               ],
             ),
             Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: reject,
-                  child: Container(
-                    width: rejectWidth,
-                    child: Center(
-                      child: Text(
-                        "Delete",
-                        style: GoogleFonts.notoSans(
-                          color: Color(0xffFF8C00),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.0,
-                        ),
-                      ),
+            MaterialButton(
+              onPressed: accept,
+              color: Color(0xffFF8C00),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                ),
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 1,
+                height: 50,
+                child: Center(
+                  child: Text(
+                    "Activate",
+                    style: GoogleFonts.notoSans(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20.0,
                     ),
                   ),
                 ),
-                MaterialButton(
-                  onPressed: () {},
-                  color: Color(0xffFF8C00),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(10),
-                      bottomLeft: Radius.circular(10),
-                    ),
-                  ),
-                  child: Container(
-                    width: acceptWidth,
-                    height: 30,
-                    child: Center(
-                      child: Text(
-                        "Activate",
-                        style: GoogleFonts.notoSans(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
+              ),
+            )
           ],
         ),
       ),
@@ -1448,6 +1450,54 @@ Widget customAlert(BuildContext context,
             ),
           ),
         ],
+      ),
+    ],
+  );
+}
+
+Widget oneCustomAlert(BuildContext context, {String title, String content, String buttonLabel}) {
+  return AlertDialog(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topRight: Radius.circular(25),
+        bottomLeft: Radius.circular(25),
+      ),
+    ),
+    title: Center(
+      child: Text(
+        title,
+        style: GoogleFonts.notoSans(
+          fontSize: 18.0,
+          fontWeight: FontWeight.bold,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    ),
+    content: Text(
+      content,
+      style: GoogleFonts.notoSans(),
+      textAlign: TextAlign.center,
+    ),
+    contentPadding: EdgeInsets.all(8.0),
+    actions: [
+      Container(
+        width: MediaQuery.of(context).size.width * 0.4,
+        child: MaterialButton(
+          onPressed: () {},
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(20),
+              bottomLeft: Radius.circular(20),
+            ),
+          ),
+          color: Color(0xffFF9411),
+          child: Text(
+            buttonLabel,
+            style: GoogleFonts.notoSans(color: Colors.white, fontWeight: FontWeight.w600),
+          ),
+          height: 45,
+          minWidth: double.infinity,
+        ),
       ),
     ],
   );

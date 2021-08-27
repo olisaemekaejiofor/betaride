@@ -15,6 +15,7 @@ import 'package:mybetaride/models/terminals_model.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/profile.dart';
 import 'package:http/http.dart' as http;
+import 'package:mybetaride/views/home/schedule.dart';
 
 class Home extends StatefulWidget {
   bool userBoardVisible;
@@ -30,6 +31,7 @@ class _HomeState extends State<Home> {
   ProfileService profile = ProfileService();
   TerminalService terminal = TerminalService();
   VehicleService vehicle = VehicleService();
+  CheckDriver driver = CheckDriver();
   Position currentPosition;
   LatLng initialcameraposition = LatLng(6.440641, 23.2549939);
   GoogleMapController controller;
@@ -154,6 +156,7 @@ class _HomeState extends State<Home> {
         headers: headers,
         body: jsonEncode({
           "paymentType": "Cash",
+          "status": "Offline",
           "fromAddress": pickup.text,
           "toAddress": destination.text,
           "startTime": startTimer,
@@ -161,14 +164,15 @@ class _HomeState extends State<Home> {
           "stateId": "6064ac06b862500015aa9dd9",
           "terminalId": terminalId,
           "distanceInMiles":
-              calculateDistance(latLng[0], latLng[1], latLng[2], latLng[3]).toString(),
+              calculateDistance(latLng[0], latLng[1], latLng[2], latLng[3]).toStringAsFixed(1) +
+                  "Km",
           "driverId": data.id,
           "amount": 300.20
         }),
       );
       print(response.statusCode);
       if (response.statusCode == 201) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Home(true, false)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Schedule()));
       } else {
         print(response.body);
         print("Wahala Dey");
@@ -192,7 +196,7 @@ class _HomeState extends State<Home> {
         appBar: (widget.newSchedule == true)
             ? AppBar(backgroundColor: Color(0xffFF9411), elevation: 0)
             : homeAppBar(),
-        drawer: homeDrawer(context, profile.getProfile(),
+        drawer: homeDrawer(context, profile.getProfile(), driver.check(),
             width: MediaQuery.of(context).size.width * 85, fun: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
         }, logout: () {
@@ -254,24 +258,61 @@ class _HomeState extends State<Home> {
             //     }),
             Visibility(
               visible: widget.userBoardVisible,
-              child: Positioned(
-                bottom: 0.0,
-                height: MediaQuery.of(context).size.height * 0.1,
-                child: GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(30),
-                          topLeft: Radius.circular(30),
-                        ),
-                      ),
-                      context: context,
-                      builder: (context) {
-                        return Container(
+              child: FutureBuilder(
+                future: HomePref().getHomeSchedule(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Positioned(
+                      bottom: 0.0,
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      child: GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(30),
+                                topLeft: Radius.circular(30),
+                              ),
+                            ),
+                            context: context,
+                            builder: (context) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width * 1,
+                                height: MediaQuery.of(context).size.height * 0.5,
+                                color: Colors.white,
+                                child: Column(
+                                  children: [
+                                    SizedBox(height: 20),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset("assets/coolicon.png", width: 25),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "Users on Board",
+                                          style: GoogleFonts.notoSans(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 15),
+                                    expansion(),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(30),
+                                topLeft: Radius.circular(30),
+                              )),
                           width: MediaQuery.of(context).size.width * 1,
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          color: Colors.white,
                           child: Column(
                             children: [
                               SizedBox(height: 20),
@@ -289,45 +330,34 @@ class _HomeState extends State<Home> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 15),
-                              expansion(),
+                              // SizedBox(height: 15),
+                              // expansion(),
                             ],
                           ),
-                        );
-                      },
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(30),
-                          topLeft: Radius.circular(30),
-                        )),
-                    width: MediaQuery.of(context).size.width * 1,
-                    child: Column(
-                      children: [
-                        SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset("assets/coolicon.png", width: 25),
-                            SizedBox(width: 10),
-                            Text(
-                              "Users on Board",
-                              style: GoogleFonts.notoSans(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ],
                         ),
-                        // SizedBox(height: 15),
-                        // expansion(),
-                      ],
-                    ),
-                  ),
-                ),
+                      ),
+                    );
+                  } else {
+                    return Positioned(
+                      bottom: 0.0,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(30),
+                              topLeft: Radius.circular(30),
+                            )),
+                        width: MediaQuery.of(context).size.width * 1,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [Text("No active schedule\n this widget is still on work!")],
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
             ),
             Visibility(

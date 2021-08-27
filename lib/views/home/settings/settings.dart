@@ -6,6 +6,7 @@ import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/home/profile.dart';
+import 'package:mybetaride/views/home/settings/faq.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -14,6 +15,7 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   ProfileService profile = ProfileService();
+  CheckDriver driver = CheckDriver();
   bool showNotification = false;
 
   @override
@@ -29,7 +31,7 @@ class _SettingsState extends State<Settings> {
                 fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
-      drawer: homeDrawer(context, profile.getProfile(),
+      drawer: homeDrawer(context, profile.getProfile(), driver.check(),
           width: MediaQuery.of(context).size.width * 85, fun: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
       }, logout: () {
@@ -73,7 +75,7 @@ class _SettingsState extends State<Settings> {
             ),
             InkWell(
               onTap: () {
-                Navigator.of(context).pushNamed('/faqs');
+                Navigator.push(context, MaterialPageRoute(builder: (context) => FAQs()));
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

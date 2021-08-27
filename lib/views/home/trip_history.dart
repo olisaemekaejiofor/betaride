@@ -22,6 +22,7 @@ class RideHistory extends StatefulWidget {
 
 class _RideHistoryState extends State<RideHistory> {
   ProfileService profile = ProfileService();
+  CheckDriver driver = CheckDriver();
   GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
   var selectedDate;
 
@@ -49,7 +50,7 @@ class _RideHistoryState extends State<RideHistory> {
         ),
         centerTitle: true,
       ),
-      drawer: homeDrawer(context, profile.getProfile(),
+      drawer: homeDrawer(context, profile.getProfile(), driver.check(),
           width: MediaQuery.of(context).size.width * 85, name: "Toyin Omobolanle", fun: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
       }, logout: () {
