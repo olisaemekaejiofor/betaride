@@ -7,8 +7,8 @@ import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/models/schedule_model.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
-import 'package:mybetaride/views/home/home.dart';
-import 'package:mybetaride/views/home/profile.dart';
+import 'package:mybetaride/views/dashboard/home.dart';
+import 'package:mybetaride/views/dashboard/profile.dart';
 
 class Schedule extends StatefulWidget {
   @override

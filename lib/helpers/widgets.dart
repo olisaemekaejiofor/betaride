@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/models/profile_model.dart';
 import 'package:mybetaride/models/schedule_model.dart';
-import 'package:mybetaride/views/home/help/help.dart';
-import 'package:mybetaride/views/home/home.dart';
-import 'package:mybetaride/views/home/invite_friends.dart';
-import 'package:mybetaride/views/home/schedule.dart';
-import 'package:mybetaride/views/home/settings/settings.dart';
-import 'package:mybetaride/views/home/trip_history.dart';
+import 'package:mybetaride/views/dashboard/help/help.dart';
+import 'package:mybetaride/views/dashboard/home.dart';
+import 'package:mybetaride/views/dashboard/invite_friends.dart';
+import 'package:mybetaride/views/dashboard/schedule.dart';
+import 'package:mybetaride/views/dashboard/settings/settings.dart';
+import 'package:mybetaride/views/dashboard/trip_history.dart';
 
 Container doubleFormField({
   String label_1,

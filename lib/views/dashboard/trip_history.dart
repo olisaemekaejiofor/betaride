@@ -5,7 +5,7 @@ import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
-import 'package:mybetaride/views/home/profile.dart';
+import 'package:mybetaride/views/dashboard/profile.dart';
 
 class History {
   final String name;

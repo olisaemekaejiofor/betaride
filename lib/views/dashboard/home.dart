@@ -8,14 +8,17 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:mybetaride/Providers/internetProvider.dart';
+import 'package:mybetaride/helpers/nointernet.dart';
 import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/models/terminals_model.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
-import 'package:mybetaride/views/home/profile.dart';
+import 'package:mybetaride/views/dashboard/profile.dart';
 import 'package:http/http.dart' as http;
-import 'package:mybetaride/views/home/schedule.dart';
+import 'package:mybetaride/views/dashboard/schedule.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   bool userBoardVisible;
@@ -181,6 +184,12 @@ class _HomeState extends State<Home> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<InternetProvider>(context, listen: false).startMonitoring();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       // ignore: missing_return
@@ -191,7 +200,237 @@ class _HomeState extends State<Home> {
           Navigator.pop(context);
         }
       },
-      child: Scaffold(
+      child: pageUI(),
+    );
+  }
+
+  Widget pageUI() {
+    return Consumer<InternetProvider>(builder: (context, model, child) {
+      if (model.isOnline != null) {
+        return model.isOnline
+            ? Scaffold(
+                resizeToAvoidBottomInset: false,
+                appBar: (widget.newSchedule == true)
+                    ? AppBar(backgroundColor: Color(0xffFF9411), elevation: 0)
+                    : homeAppBar(),
+                drawer: homeDrawer(context, profile.getProfile(), driver.check(),
+                    width: MediaQuery.of(context).size.width * 85, fun: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
+                }, logout: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+                  UserPref().removeUser();
+                  ScreenPref().setScreenPref(0);
+                }),
+                body: Stack(
+                  children: [
+                    GoogleMap(
+                      mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(target: initialcameraposition),
+                      onMapCreated: _onMapCreated,
+                      myLocationEnabled: true,
+                      tiltGesturesEnabled: false,
+                      compassEnabled: false,
+                      zoomControlsEnabled: false,
+                      mapToolbarEnabled: false,
+                      myLocationButtonEnabled: false,
+                    ),
+                    // FutureBuilder(
+                    //     future: client.getSchedule(),
+                    //     builder: (BuildContext context, AsyncSnapshot<List<ScheduleData>> snapshot) {
+                    //       if (snapshot.hasData) {
+                    //         List<ScheduleData> schedule = snapshot.data;
+                    //         if (schedule.length == 0) {
+                    //           return SizedBox();
+                    //         } else {
+                    //           return Visibility(
+                    //             visible: widget.acceptRejectVisible,
+                    //             child: Align(
+                    //               alignment: Alignment.bottomCenter,
+                    //               child: Container(
+                    //                 height: MediaQuery.of(context).size.height * 0.35,
+                    //                 child: PageView.builder(
+                    //                   itemCount: schedule.length,
+                    //                   itemBuilder: (context, index) {
+                    //                     return Padding(
+                    //                       padding: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 30.0),
+                    //                       child: acceptReject(
+                    //                         context,
+                    //                         schedule[index],
+                    //                         containerWidth: MediaQuery.of(context).size.width * 0.9,
+                    //                         rejectWidth: MediaQuery.of(context).size.width * 0.25,
+                    //                         acceptWidth: MediaQuery.of(context).size.width * 0.25,
+                    //                         reject: reject,
+                    //                         accept: accept,
+                    //                       ),
+                    //                     );
+                    //                   },
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //           );
+                    //         }
+                    //       } else {
+                    //         return SizedBox();
+                    //       }
+                    //     }),
+                    Visibility(
+                      visible: widget.userBoardVisible,
+                      child: FutureBuilder(
+                        future: HomePref().getHomeSchedule(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Positioned(
+                              bottom: 0.0,
+                              height: MediaQuery.of(context).size.height * 0.1,
+                              child: GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(30),
+                                        topLeft: Radius.circular(30),
+                                      ),
+                                    ),
+                                    context: context,
+                                    builder: (context) {
+                                      return Container(
+                                        width: MediaQuery.of(context).size.width * 1,
+                                        height: MediaQuery.of(context).size.height * 0.5,
+                                        color: Colors.white,
+                                        child: Column(
+                                          children: [
+                                            SizedBox(height: 20),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Image.asset("assets/coolicon.png", width: 25),
+                                                SizedBox(width: 10),
+                                                Text(
+                                                  "Users on Board",
+                                                  style: GoogleFonts.notoSans(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 15),
+                                            expansion(),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(30),
+                                        topLeft: Radius.circular(30),
+                                      )),
+                                  width: MediaQuery.of(context).size.width * 1,
+                                  child: Column(
+                                    children: [
+                                      SizedBox(height: 20),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset("assets/coolicon.png", width: 25),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            "Users on Board",
+                                            style: GoogleFonts.notoSans(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // SizedBox(height: 15),
+                                      // expansion(),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Positioned(
+                              bottom: 0.0,
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(30),
+                                      topLeft: Radius.circular(30),
+                                    )),
+                                width: MediaQuery.of(context).size.width * 1,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text("No active schedule\n this widget is still on work!")
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    Visibility(
+                      visible: widget.newSchedule,
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 25.0),
+                            height: MediaQuery.of(context).size.height * 0.45,
+                            color: Color(0xffFF9411),
+                            child: Column(
+                              children: [
+                                form(
+                                  double.infinity,
+                                  label: "Set pickup terminal",
+                                  controller: pickup,
+                                  hint: "Select pickup",
+                                ),
+                                SizedBox(height: 20),
+                                form(
+                                  double.infinity,
+                                  label: "Set destination terminal",
+                                  controller: destination,
+                                  hint: "Select destination",
+                                ),
+                                SizedBox(height: 20),
+                                doubleForm(),
+                                SizedBox(height: 5),
+                              ],
+                            ),
+                          ),
+                          Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                            child: SCustomLongButton(
+                              context,
+                              labelColor: Colors.white,
+                              buttonColor: Color(0xffFF9411),
+                              label: "Create Schedule",
+                              fun: () {
+                                sendNewSchedule();
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 30)
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : NoInternet();
+      }
+      return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: (widget.newSchedule == true)
             ? AppBar(backgroundColor: Color(0xffFF9411), elevation: 0)
@@ -408,8 +647,8 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 
   Column form(double width, {String label, TextEditingController controller, String hint}) {

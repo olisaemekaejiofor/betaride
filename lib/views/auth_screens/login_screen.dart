@@ -9,7 +9,7 @@ import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/forgotten_password.dart';
 import 'package:mybetaride/views/auth_screens/register.dart';
-import 'package:mybetaride/views/home/home.dart';
+import 'package:mybetaride/views/dashboard/home.dart';
 import 'package:provider/provider.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -118,11 +118,16 @@ class _LogInScreenState extends State<LogInScreen> {
                                 buildLoginColumn(
                                   label: 'Password',
                                   hintText: 'Password',
-                                  obscure: true,
+                                  obscure: isHidden,
                                   controller: passwordController,
-                                  icon: Icon(
-                                    Icons.visibility_off_outlined,
-                                    color: Colors.white,
+                                  icon: InkWell(
+                                    onTap: _togglePass,
+                                    child: Icon(
+                                      (isHidden == true)
+                                          ? Icons.visibility_off_outlined
+                                          : Icons.visibility,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(height: 20.0),
@@ -232,11 +237,14 @@ class _LogInScreenState extends State<LogInScreen> {
                         buildLoginColumn(
                           label: 'Password',
                           hintText: 'Password',
-                          obscure: true,
+                          obscure: isHidden,
                           controller: passwordController,
-                          icon: Icon(
-                            Icons.visibility_off_outlined,
-                            color: Colors.white,
+                          icon: InkWell(
+                            onTap: _togglePass,
+                            child: Icon(
+                              (isHidden == true) ? Icons.visibility_off_outlined : Icons.visibility,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                         SizedBox(height: 20.0),
@@ -299,6 +307,14 @@ class _LogInScreenState extends State<LogInScreen> {
       );
     });
   }
+
+  void _togglePass() {
+    setState(() {
+      isHidden = !isHidden;
+    });
+  }
+
+  bool isHidden = true;
 
   Column buildLoginColumn(
       {String label,

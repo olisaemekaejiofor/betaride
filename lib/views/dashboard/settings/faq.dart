@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mybetaride/views/home/settings/about_rides.dart';
-import 'package:mybetaride/views/home/settings/get_started.dart';
-import 'package:mybetaride/views/home/settings/user_guide.dart';
+import 'package:mybetaride/views/dashboard/settings/about_rides.dart';
+import 'package:mybetaride/views/dashboard/settings/get_started.dart';
+import 'package:mybetaride/views/dashboard/settings/user_guide.dart';
 
 class FAQs extends StatefulWidget {
   @override

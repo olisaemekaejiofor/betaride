@@ -7,7 +7,7 @@ import 'package:mybetaride/helpers/app_url.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:mybetaride/views/home/home.dart';
+import 'package:mybetaride/views/dashboard/home.dart';
 
 class VehicleDetails extends StatefulWidget {
   @override

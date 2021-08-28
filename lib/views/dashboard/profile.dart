@@ -19,11 +19,11 @@ class _ProfileState extends State<Profile> {
   var state = ["Lagos", "Abia", "Delta", "Ogun", "Edo", "Enugu", "Osun", "Abuja"];
   String stateValue = "Lagos";
   ProfileService client = ProfileService();
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
+  TextEditingController firstNameController;
+  TextEditingController lastNameController;
+  TextEditingController emailController;
+  TextEditingController phoneController;
+  TextEditingController cityController;
   check(String controller, String newValue) {
     if (controller == '') {
       controller = newValue;
@@ -67,6 +67,11 @@ class _ProfileState extends State<Profile> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -84,10 +89,8 @@ class _ProfileState extends State<Profile> {
           builder: (BuildContext context, AsyncSnapshot<ProfileData> snapshot) {
             if (snapshot.hasData) {
               ProfileData profile = snapshot.data;
-              firstNameController.text = profile.firstname;
-              lastNameController.text = profile.lastname;
-              emailController.text = profile.email;
-              phoneController.text = profile.phone;
+              firstNameController = TextEditingController(text: profile.firstname);
+              lastNameController = TextEditingController(text: profile.lastname);
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 30),
                 child: Column(
@@ -142,7 +145,7 @@ class _ProfileState extends State<Profile> {
                               singleFormField(
                                 label: "E-mail Address",
                                 formChild: TextFormField(
-                                  controller: emailController,
+                                  readOnly: true,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.symmetric(horizontal: 10),
                                     border: InputBorder.none,
@@ -157,7 +160,7 @@ class _ProfileState extends State<Profile> {
                               singleFormField(
                                 label: "Phone number",
                                 formChild: TextFormField(
-                                  controller: phoneController,
+                                  readOnly: true,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.symmetric(horizontal: 10),
                                     border: InputBorder.none,

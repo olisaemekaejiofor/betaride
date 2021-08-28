@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/widgets.dart';
-import 'package:mybetaride/views/home/help/feedbacks.dart';
+import 'package:mybetaride/views/dashboard/help/feedbacks.dart';
 
 class HelpOptions {
   final String image;
