@@ -54,8 +54,10 @@ class _RideHistoryState extends State<RideHistory> {
           width: MediaQuery.of(context).size.width * 85, name: "Toyin Omobolanle", fun: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
       }, logout: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+        UserPref().removeUser();
+        HomePref().removeSchedule();
         ScreenPref().setScreenPref(0);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
       }),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

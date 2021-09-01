@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mybetaride/helpers/widgets.dart';
+import 'package:mybetaride/helpers/coming_soon.dart';
+// import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/dashboard/help/feedbacks.dart';
 
 class HelpOptions {
@@ -21,20 +22,20 @@ class Help extends StatelessWidget {
           text: 'Request \nAppointment',
           text1: '',
           screen: () {
-            comingSoonFlush(context);
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ComingSoon()));
           }),
       HelpOptions(
           image: 'assets/contact.png',
           text: 'Contact Us',
           screen: () {
-            comingSoonFlush(context);
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ComingSoon()));
           },
           text1: 'Get across to us via \nour contacts'),
       HelpOptions(
           image: 'assets/appointment 1.png',
           text: 'Chat Us',
           screen: () {
-            comingSoonFlush(context);
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ComingSoon()));
           },
           text1: 'Talk to MyBetaRide'),
       HelpOptions(

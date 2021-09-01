@@ -5,8 +5,6 @@ import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/dashboard/home.dart';
 import 'package:mybetaride/views/onboard/onboard.dart';
-import 'package:mybetaride/views/uploading_details_screens/vehicle_details.dart';
-import 'package:mybetaride/views/welcomeScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -41,12 +39,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Widget> pages = [LogInScreen(), VehicleDetails(), WelcomePage(), Home(true, false)];
+  List<Widget> pages = [OnBoard(), LogInScreen(), Home(true, false)];
 
   OnlineOffline client = OnlineOffline();
   @override
   void initState() {
-    client.futurecheck();
     super.initState();
   }
 

@@ -11,7 +11,7 @@ class NoInternet extends StatelessWidget {
         if (Navigator.canPop(context)) {
           SystemNavigator.pop();
         } else {
-          Navigator.pop(context);
+          SystemNavigator.pop();
         }
       },
       child: Scaffold(
@@ -20,8 +20,21 @@ class NoInternet extends StatelessWidget {
           child: Column(
             children: [
               Spacer(),
-              Text("Can't connect to internet. Please\n check your network settings!",
-                  style: GoogleFonts.notoSans(fontSize: 24.0)),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                child: Image.asset("assets/Offline image.png"),
+              ),
+              Text(
+                "You are offline",
+                style: GoogleFonts.notoSans(fontSize: 24.0, fontWeight: FontWeight.w600),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 5),
+              Text(
+                "It's not your fault the signal is out.\nTo get back, please check your\ninternet connections",
+                style: GoogleFonts.notoSans(fontSize: 20.0),
+                textAlign: TextAlign.center,
+              ),
               Spacer(),
               // CustomLongButton(context,
               //     label: "Try Again",

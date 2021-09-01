@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/helpers/coming_soon.dart';
 import 'package:mybetaride/models/profile_model.dart';
 import 'package:mybetaride/models/schedule_model.dart';
 import 'package:mybetaride/views/dashboard/help/help.dart';
@@ -311,7 +312,7 @@ GestureDetector SecCustomLongButton(BuildContext context,
     {String label, Color buttonColor, Color labelColor, Widget screen}) {
   return GestureDetector(
     onTap: () {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => screen != null ? screen : null),
       );
@@ -497,74 +498,74 @@ Column formField({TextEditingController controller, String label, String hintTex
 // }
 AppBar homeAppBar() {
   return AppBar(
-    backgroundColor: Colors.white,
-    automaticallyImplyLeading: false,
-    centerTitle: true,
-    leading: Builder(
-      builder: (context) => IconButton(
-        iconSize: 30,
-        onPressed: () => Scaffold.of(context).openDrawer(),
-        icon: Icon(
-          Icons.menu,
-          color: Color(0xff525252),
+      backgroundColor: Colors.white,
+      automaticallyImplyLeading: false,
+      centerTitle: true,
+      leading: Builder(
+        builder: (context) => IconButton(
+          iconSize: 30,
+          onPressed: () => Scaffold.of(context).openDrawer(),
+          icon: Icon(
+            Icons.menu,
+            color: Color(0xff525252),
+          ),
         ),
       ),
-    ),
-    // title: StreamBuilder(
-    //     stream: stream,
-    //     builder: (context, snapshot) {
-    //       if (snapshot.hasData) {
-    //         if (snapshot.data == true) {
-    //           return Container(
-    //             width: 150,
-    //             height: 25,
-    //             decoration: BoxDecoration(
-    //               color: Color(0xffE1FFFF),
-    //               borderRadius: BorderRadius.circular(20),
-    //             ),
-    //             child: Center(
-    //               child: Text(
-    //                 "Available",
-    //                 style: GoogleFonts.notoSans(
-    //                     color: Color(0xff0698D7), fontSize: 12, fontWeight: FontWeight.w600),
-    //               ),
-    //             ),
-    //           );
-    //         }
-    //         return Container(
-    //           width: 150,
-    //           height: 25,
-    //           decoration: BoxDecoration(
-    //             color: Color(0xffE1FFFF),
-    //             borderRadius: BorderRadius.circular(20),
-    //           ),
-    //           child: Center(
-    //             child: Text(
-    //               "Unavailable",
-    //               style: GoogleFonts.notoSans(
-    //                   color: Color(0xff0698D7), fontSize: 12, fontWeight: FontWeight.w600),
-    //             ),
-    //           ),
-    //         );
-    //       } else {
-    //         return Container(
-    //           width: 150,
-    //           height: 25,
-    //           decoration: BoxDecoration(
-    //             color: Colors.red,
-    //             borderRadius: BorderRadius.circular(20),
-    //           ),
-    //           child: Center(
-    //             child: Text(
-    //               "Unavailable",
-    //               style: GoogleFonts.notoSans(
-    //                   color: Color(0xff0698D7), fontSize: 12, fontWeight: FontWeight.w600),
-    //             ),
-    //           ),
-    //         );
-    //       }
-    //     }),
-  );
+      title:
+          //     stream: stream,
+          //     builder: (context, snapshot) {
+          //       if (snapshot.hasData) {
+          //         if (snapshot.data == true) {
+          Container(
+        width: 150,
+        height: 25,
+        decoration: BoxDecoration(
+          color: Color(0xffE1FFFF),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Center(
+          child: Text(
+            "Available",
+            style: GoogleFonts.notoSans(
+                color: Color(0xff0698D7), fontSize: 12, fontWeight: FontWeight.w600),
+          ),
+        ),
+      )
+      //         }
+      //         return Container(
+      //           width: 150,
+      //           height: 25,
+      //           decoration: BoxDecoration(
+      //             color: Color(0xffE1FFFF),
+      //             borderRadius: BorderRadius.circular(20),
+      //           ),
+      //           child: Center(
+      //             child: Text(
+      //               "Unavailable",
+      //               style: GoogleFonts.notoSans(
+      //                   color: Color(0xff0698D7), fontSize: 12, fontWeight: FontWeight.w600),
+      //             ),
+      //           ),
+      //         );
+      //       } else {
+      //         return Container(
+      //           width: 150,
+      //           height: 25,
+      //           decoration: BoxDecoration(
+      //             color: Colors.red,
+      //             borderRadius: BorderRadius.circular(20),
+      //           ),
+      //           child: Center(
+      //             child: Text(
+      //               "Unavailable",
+      //               style: GoogleFonts.notoSans(
+      //                   color: Color(0xff0698D7), fontSize: 12, fontWeight: FontWeight.w600),
+      //             ),
+      //           ),
+      //         );
+      //       }
+      //     }),
+      );
 }
 
 Drawer homeDrawer(BuildContext context, Future<ProfileData> userName, Future<bool> check,
@@ -668,7 +669,7 @@ Drawer homeDrawer(BuildContext context, Future<ProfileData> userName, Future<boo
         CustomTile(name: "Trip History", iconName: "steering-wheel (1)", widget: RideHistory()),
         ListTile(
           onTap: () {
-            comingSoonFlush(context);
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ComingSoon()));
           },
           leading: Image.asset("assets/credit-card.png", width: 25.0),
           title: Text(

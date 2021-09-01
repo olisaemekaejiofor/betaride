@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/helpers/coming_soon.dart';
 import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/dashboard/profile.dart';
-import 'package:mybetaride/views/dashboard/settings/faq.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -35,8 +35,10 @@ class _SettingsState extends State<Settings> {
           width: MediaQuery.of(context).size.width * 85, fun: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
       }, logout: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+        UserPref().removeUser();
+        HomePref().removeSchedule();
         ScreenPref().setScreenPref(0);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
       }),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 110),
@@ -75,7 +77,7 @@ class _SettingsState extends State<Settings> {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => FAQs()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ComingSoon()));
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

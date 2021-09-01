@@ -15,7 +15,7 @@ import 'package:mybetaride/models/terminals_model.dart';
 import 'package:mybetaride/views/dashboard/home.dart';
 
 class ScheduleService {
-  final url = "https://mybetaride.herokuapp.com/api/v1/schedule/activeschedules";
+  final url = "https://mybetaride.herokuapp.com/api/v1/schedule/mySchedule";
   Future<List<ScheduleData>> getSchedule() async {
     String token = await UserPref().getToken();
     var headers = {'Authorization': 'Bearer $token'};
@@ -51,28 +51,39 @@ class ScheduleService {
 
     String token = await UserPref().getToken();
     var headers = {'Authorization': 'Bearer $token', "Content-Type": "application/json"};
-    Response res =
-        await post(Uri.parse(uurl), headers: headers, body: jsonEncode({"status": "Online"}));
-
-    if (res.statusCode == 201) {
-      String homePref = await HomePref().getHomeSchedule();
-      if (homePref == null || homePref == '') {
-        HomePref().setHomeSchedule(id);
-        Navigator.pop(context);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Home(true, false)));
+    var res = await put(Uri.parse(uurl), headers: headers, body: jsonEncode({"status": "Online"}));
+    print(res.statusCode);
+    print(res.body);
+    if (myList == true) {
+      if (res.statusCode == 201) {
+        String homePref = await HomePref().getHomeSchedule();
+        if (homePref == null || homePref == '') {
+          HomePref().setHomeSchedule(id);
+          Navigator.pop(context);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Home(true, false)));
+        } else {
+          Navigator.pop(context);
+          showDialog(
+            context: context,
+            builder: (context) => customAlert(context,
+                title: "You already have an active schedule",
+                content: "To activate another schedule you have to cancel the current schedule",
+                buttonLabel: "Cancel",
+                buttonLabel2: "Ignore"),
+          );
+        }
       } else {
-        Navigator.pop(context);
-        showDialog(
-          context: context,
-          builder: (context) => customAlert(context,
-              title: "You already have an active schedule",
-              content: "To activate another schedule you have to cancel the current schedule",
-              buttonLabel: "Cancel",
-              buttonLabel2: "Ignore"),
-        );
+        return null;
       }
     } else {
-      return null;
+      showDialog(
+        context: context,
+        builder: (context) => oneCustomAlert(context,
+            title: "Ooops!",
+            content:
+                "Can't connect to internet right now, please check your network settings and try again.",
+            buttonLabel: "OK"),
+      );
     }
   }
 }

@@ -53,6 +53,17 @@ class _HomeState extends State<Home> {
   bool changeTime = false;
   bool changeDate = false;
 
+  String greeting() {
+    var date = DateTime.now();
+    if (date.hour < 12) {
+      return "Good Morning";
+    } else if (date.hour > 12 && date.hour == 17) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
+    }
+  }
+
   void _onMapCreated(GoogleMapController cntlr) {
     controller = cntlr;
     location.onLocationChanged.listen((l) {
@@ -217,9 +228,10 @@ class _HomeState extends State<Home> {
                     width: MediaQuery.of(context).size.width * 85, fun: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
                 }, logout: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
                   UserPref().removeUser();
+                  HomePref().removeSchedule();
                   ScreenPref().setScreenPref(0);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
                 }),
                 body: Stack(
                   children: [
@@ -359,18 +371,66 @@ class _HomeState extends State<Home> {
                               bottom: 0.0,
                               height: MediaQuery.of(context).size.height * 0.3,
                               child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 30),
                                 decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(30),
-                                      topLeft: Radius.circular(30),
-                                    )),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(30),
+                                    topLeft: Radius.circular(30),
+                                  ),
+                                ),
                                 width: MediaQuery.of(context).size.width * 1,
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("No active schedule\n this widget is still on work!")
+                                    Spacer(),
+                                    FutureBuilder(
+                                      future: UserPref().getName(),
+                                      builder: (context, snapshot) {
+                                        return Text(greeting() + " " + snapshot.data,
+                                            style: GoogleFonts.notoSans(fontSize: 20));
+                                      },
+                                    ),
+                                    Text("Please do stay safe",
+                                        style: GoogleFonts.notoSans(
+                                            color: Color(0xff707070), fontSize: 16)),
+                                    Spacer(),
+                                    Text("Want to take a ride again?",
+                                        style: GoogleFonts.notoSans(
+                                            color: Color(0xff6C1B4F),
+                                            fontSize: 26,
+                                            fontWeight: FontWeight.w600)),
+                                    SizedBox(height: 20),
+                                    MaterialButton(
+                                      onPressed: () => Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) => Schedule())),
+                                      color: Color(0xffFF9411),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(30),
+                                          bottomLeft: Radius.circular(30),
+                                        ),
+                                      ),
+                                      height: 50,
+                                      minWidth: MediaQuery.of(context).size.width * 1,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          ImageIcon(
+                                            AssetImage("assets/calendar.png"),
+                                            color: Colors.white,
+                                            size: 25,
+                                          ),
+                                          SizedBox(width: 10),
+                                          Text("Create Schedule",
+                                              style: GoogleFonts.notoSans(
+                                                  color: Colors.white,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600))
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 25),
                                   ],
                                 ),
                               ),
@@ -431,221 +491,8 @@ class _HomeState extends State<Home> {
             : NoInternet();
       }
       return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: (widget.newSchedule == true)
-            ? AppBar(backgroundColor: Color(0xffFF9411), elevation: 0)
-            : homeAppBar(),
-        drawer: homeDrawer(context, profile.getProfile(), driver.check(),
-            width: MediaQuery.of(context).size.width * 85, fun: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => Profile()));
-        }, logout: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
-          UserPref().removeUser();
-          ScreenPref().setScreenPref(0);
-        }),
-        body: Stack(
-          children: [
-            GoogleMap(
-              mapType: MapType.normal,
-              initialCameraPosition: CameraPosition(target: initialcameraposition),
-              onMapCreated: _onMapCreated,
-              myLocationEnabled: true,
-              tiltGesturesEnabled: false,
-              compassEnabled: false,
-              zoomControlsEnabled: false,
-              mapToolbarEnabled: false,
-              myLocationButtonEnabled: false,
-            ),
-            // FutureBuilder(
-            //     future: client.getSchedule(),
-            //     builder: (BuildContext context, AsyncSnapshot<List<ScheduleData>> snapshot) {
-            //       if (snapshot.hasData) {
-            //         List<ScheduleData> schedule = snapshot.data;
-            //         if (schedule.length == 0) {
-            //           return SizedBox();
-            //         } else {
-            //           return Visibility(
-            //             visible: widget.acceptRejectVisible,
-            //             child: Align(
-            //               alignment: Alignment.bottomCenter,
-            //               child: Container(
-            //                 height: MediaQuery.of(context).size.height * 0.35,
-            //                 child: PageView.builder(
-            //                   itemCount: schedule.length,
-            //                   itemBuilder: (context, index) {
-            //                     return Padding(
-            //                       padding: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 30.0),
-            //                       child: acceptReject(
-            //                         context,
-            //                         schedule[index],
-            //                         containerWidth: MediaQuery.of(context).size.width * 0.9,
-            //                         rejectWidth: MediaQuery.of(context).size.width * 0.25,
-            //                         acceptWidth: MediaQuery.of(context).size.width * 0.25,
-            //                         reject: reject,
-            //                         accept: accept,
-            //                       ),
-            //                     );
-            //                   },
-            //                 ),
-            //               ),
-            //             ),
-            //           );
-            //         }
-            //       } else {
-            //         return SizedBox();
-            //       }
-            //     }),
-            Visibility(
-              visible: widget.userBoardVisible,
-              child: FutureBuilder(
-                future: HomePref().getHomeSchedule(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Positioned(
-                      bottom: 0.0,
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      child: GestureDetector(
-                        onTap: () {
-                          showModalBottomSheet(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(30),
-                                topLeft: Radius.circular(30),
-                              ),
-                            ),
-                            context: context,
-                            builder: (context) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width * 1,
-                                height: MediaQuery.of(context).size.height * 0.5,
-                                color: Colors.white,
-                                child: Column(
-                                  children: [
-                                    SizedBox(height: 20),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset("assets/coolicon.png", width: 25),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          "Users on Board",
-                                          style: GoogleFonts.notoSans(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 15),
-                                    expansion(),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(30),
-                                topLeft: Radius.circular(30),
-                              )),
-                          width: MediaQuery.of(context).size.width * 1,
-                          child: Column(
-                            children: [
-                              SizedBox(height: 20),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset("assets/coolicon.png", width: 25),
-                                  SizedBox(width: 10),
-                                  Text(
-                                    "Users on Board",
-                                    style: GoogleFonts.notoSans(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              // SizedBox(height: 15),
-                              // expansion(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  } else {
-                    return Positioned(
-                      bottom: 0.0,
-                      height: MediaQuery.of(context).size.height * 0.3,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(30),
-                              topLeft: Radius.circular(30),
-                            )),
-                        width: MediaQuery.of(context).size.width * 1,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [Text("No active schedule\n this widget is still on work!")],
-                        ),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ),
-            Visibility(
-              visible: widget.newSchedule,
-              child: Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 25.0),
-                    height: MediaQuery.of(context).size.height * 0.45,
-                    color: Color(0xffFF9411),
-                    child: Column(
-                      children: [
-                        form(
-                          double.infinity,
-                          label: "Set pickup terminal",
-                          controller: pickup,
-                          hint: "Select pickup",
-                        ),
-                        SizedBox(height: 20),
-                        form(
-                          double.infinity,
-                          label: "Set destination terminal",
-                          controller: destination,
-                          hint: "Select destination",
-                        ),
-                        SizedBox(height: 20),
-                        doubleForm(),
-                        SizedBox(height: 5),
-                      ],
-                    ),
-                  ),
-                  Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: SCustomLongButton(
-                      context,
-                      labelColor: Colors.white,
-                      buttonColor: Color(0xffFF9411),
-                      label: "Create Schedule",
-                      fun: () {
-                        sendNewSchedule();
-                      },
-                    ),
-                  ),
-                  SizedBox(height: 30)
-                ],
-              ),
-            ),
-          ],
+        body: Center(
+          child: CircularProgressIndicator(),
         ),
       );
     });

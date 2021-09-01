@@ -54,8 +54,7 @@ class UserPref {
   Future<String> getName() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String firstname = prefs.getString('firstname');
-    String lastname = prefs.getString('lastname');
-    return firstname + " " + lastname;
+    return firstname;
   }
 }
 

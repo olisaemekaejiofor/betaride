@@ -30,6 +30,29 @@ class _LogInScreenState extends State<LogInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider auth = Provider.of<AuthProvider>(context);
+    var login = () async {
+      showDialog(
+        context: context,
+        builder: (context) => Center(child: CircularProgressIndicator()),
+      );
+      if (emailController.text == '' || passwordController.text == '') {
+        Navigator.pop(context);
+        flushbar(context, "Please fill all fields");
+      } else {
+        auth.login(emailController.text, passwordController.text).then((respose) {
+          if (respose['status'] == true) {
+            Navigator.pop(context);
+            ScreenPref().setScreenPref(2);
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => Home(true, false)));
+          } else {
+            Navigator.pop(context);
+            flushbar(context, "Incorrect Details");
+          }
+        });
+      }
+    };
     return WillPopScope(
       // ignore: missing_return
       onWillPop: () {
@@ -41,36 +64,13 @@ class _LogInScreenState extends State<LogInScreen> {
       },
       child: Scaffold(
         backgroundColor: Color(0xffFF8C00),
-        body: pageUI(),
+        body: pageUI(login),
       ),
     );
   }
 
-  Widget pageUI() {
+  Widget pageUI(void Function() login) {
     return Consumer<InternetProvider>(builder: (context, model, child) {
-      AuthProvider auth = Provider.of<AuthProvider>(context);
-      var login = () async {
-        showDialog(
-          context: context,
-          builder: (context) => Center(child: CircularProgressIndicator()),
-        );
-        if (emailController.text == '' || passwordController.text == '') {
-          Navigator.pop(context);
-          flushbar(context, "Please fill all fields");
-        } else {
-          auth.login(emailController.text, passwordController.text).then((respose) {
-            if (respose['status'] == true) {
-              Navigator.pop(context);
-              ScreenPref().setScreenPref(3);
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => Home(true, false)));
-            } else {
-              Navigator.pop(context);
-              flushbar(context, "Incorrect Details");
-            }
-          });
-        }
-      };
       if (model.isOnline != null) {
         return model.isOnline
             ? Stack(
@@ -272,7 +272,7 @@ class _LogInScreenState extends State<LogInScreen> {
                           labelColor: Color(0xffFF9411),
                           buttonColor: Colors.white,
                           label: "Login",
-                          fun: login,
+                          fun: () {},
                         ),
                         SizedBox(height: 20.0),
                         Center(

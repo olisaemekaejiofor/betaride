@@ -19,11 +19,11 @@ class _ProfileState extends State<Profile> {
   var state = ["Lagos", "Abia", "Delta", "Ogun", "Edo", "Enugu", "Osun", "Abuja"];
   String stateValue = "Lagos";
   ProfileService client = ProfileService();
-  TextEditingController firstNameController;
-  TextEditingController lastNameController;
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController;
   TextEditingController phoneController;
-  TextEditingController cityController;
+  TextEditingController cityController = TextEditingController();
   check(String controller, String newValue) {
     if (controller == '') {
       controller = newValue;
@@ -43,8 +43,6 @@ class _ProfileState extends State<Profile> {
     var body = {
       "firstName": check(firstNameController.text, data.firstname),
       "lastName": check(lastNameController.text, data.lastname),
-      "email": check(emailController.text, data.email),
-      "phone": check(phoneController.text, data.phone),
       "address": check(cityController.text + "" + stateValue, data.address),
       "stateOfResidence": stateValue,
     };
@@ -57,9 +55,16 @@ class _ProfileState extends State<Profile> {
       },
       body: jsonEncode(body),
     );
-    print(res.body);
+    print(res.statusCode);
     if (res.statusCode == 200) {
       Navigator.pop(context);
+      showDialog(
+          context: context,
+          builder: (context) => customAlert(context,
+              title: "Profile Updated Successfully",
+              content: " ",
+              buttonLabel: "Go home",
+              buttonLabel2: "Make more changes"));
       // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
       //   return Home(true, false);
       // }));
@@ -89,8 +94,6 @@ class _ProfileState extends State<Profile> {
           builder: (BuildContext context, AsyncSnapshot<ProfileData> snapshot) {
             if (snapshot.hasData) {
               ProfileData profile = snapshot.data;
-              firstNameController = TextEditingController(text: profile.firstname);
-              lastNameController = TextEditingController(text: profile.lastname);
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 30),
                 child: Column(
