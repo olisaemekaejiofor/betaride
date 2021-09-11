@@ -54,58 +54,61 @@ class _OnboardPagesState extends State<OnboardPages> {
                 onPageChanged: onChanged,
               ),
               SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List<Widget>.generate(
-                      _pages.length,
-                      (int index) {
-                        return AnimatedContainer(
-                          duration: Duration(milliseconds: 300),
-                          height: 15,
-                          width: (index == _currentPage) ? 15 : 15,
-                          margin: EdgeInsets.symmetric(horizontal: 5, vertical: 20),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border(
-                                bottom: BorderSide(color: Colors.white),
-                                top: BorderSide(color: Colors.white),
-                                left: BorderSide(color: Colors.white),
-                                right: BorderSide(color: Colors.white),
-                              ),
-                              color: (index == _currentPage) ? Colors.white : Colors.transparent),
-                        );
-                      },
-                    ),
-                  ),
-                  MaterialButton(
-                    onPressed: (_currentPage == 2)
-                        ? () {
-                            Navigator.push(
-                                context, MaterialPageRoute(builder: (context) => OnBoard()));
-                          }
-                        : () {
-                            _controller.nextPage(
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.easeOut,
-                            );
-                          },
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List<Widget>.generate(
+                        _pages.length,
+                        (int index) {
+                          return AnimatedContainer(
+                            duration: Duration(milliseconds: 300),
+                            height: 15,
+                            width: (index == _currentPage) ? 15 : 15,
+                            margin: EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border(
+                                  bottom: BorderSide(color: Colors.white),
+                                  top: BorderSide(color: Colors.white),
+                                  left: BorderSide(color: Colors.white),
+                                  right: BorderSide(color: Colors.white),
+                                ),
+                                color: (index == _currentPage) ? Colors.white : Colors.transparent),
+                          );
+                        },
                       ),
                     ),
-                    height: 30,
-                    minWidth: 100,
-                    child: Text("Next",
-                        style:
-                            GoogleFonts.notoSans(color: Colors.white, fontWeight: FontWeight.w600)),
-                  ),
-                ],
+                    MaterialButton(
+                      onPressed: (_currentPage == 2)
+                          ? () {
+                              Navigator.push(
+                                  context, MaterialPageRoute(builder: (context) => OnBoard()));
+                            }
+                          : () {
+                              _controller.nextPage(
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeOut,
+                              );
+                            },
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                        ),
+                      ),
+                      height: 30,
+                      minWidth: 100,
+                      child: Text("Next",
+                          style: GoogleFonts.notoSans(
+                              color: Colors.white, fontWeight: FontWeight.w600)),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

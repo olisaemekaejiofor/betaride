@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:another_flushbar/flushbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/widgets.dart';
@@ -18,17 +16,7 @@ class _ForgottenPasswordScreenState extends State<ForgottenPasswordScreen> {
 
   Future retrieve() async {
     if (mail.text == "") {
-      Flushbar(
-        icon: Icon(Icons.error, size: 26, color: Colors.white),
-        flushbarPosition: FlushbarPosition.TOP,
-        duration: Duration(seconds: 5),
-        message: "Please fill all the fields",
-        shouldIconPulse: true,
-        backgroundColor: Colors.red[400],
-        borderRadius: BorderRadius.circular(10),
-        padding: EdgeInsets.symmetric(vertical: 20),
-        margin: EdgeInsets.symmetric(horizontal: 10),
-      )..show(context);
+      flushbar(context, "Fill all fields");
     } else {
       showDialog(
         context: context,
@@ -60,7 +48,7 @@ class _ForgottenPasswordScreenState extends State<ForgottenPasswordScreen> {
             actions: [
               GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacement(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(builder: (BuildContext context) {
                       return CreateNewPassword();

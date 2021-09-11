@@ -39,6 +39,7 @@ class ScheduleService {
   }
 
   Future activate(BuildContext context, String id) async {
+    void stop() => Navigator.pop(context);
     showDialog(
       context: context,
       builder: (context) => Center(
@@ -65,7 +66,7 @@ class ScheduleService {
           Navigator.pop(context);
           showDialog(
             context: context,
-            builder: (context) => customAlert(context,
+            builder: (context) => customAlert(context, stop,
                 title: "You already have an active schedule",
                 content: "To activate another schedule you have to cancel the current schedule",
                 buttonLabel: "Cancel",

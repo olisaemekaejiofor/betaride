@@ -58,7 +58,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
       print(res.body);
       if (res.statusCode == 201) {
         Navigator.pop(context);
-        ScreenPref().setScreenPref(0);
+        ScreenPref().setScreenPref(1);
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => Home(true, false)));
       }

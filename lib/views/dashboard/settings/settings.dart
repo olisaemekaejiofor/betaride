@@ -18,6 +18,13 @@ class _SettingsState extends State<Settings> {
   CheckDriver driver = CheckDriver();
   bool showNotification = false;
 
+  void logout() {
+    UserPref().removeUser();
+    HomePref().removeSchedule();
+    ScreenPref().setScreenPref(0);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => LogInScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,10 +165,11 @@ class _SettingsState extends State<Settings> {
                 builder: (context) {
                   return customAlert(
                     context,
+                    logout,
                     title: "Log out?",
                     content: "Are you sure you want to log out?",
-                    buttonLabel2: "Yes, Logout",
-                    buttonLabel: "No, Stay here",
+                    buttonLabel2: "No, Stay here",
+                    buttonLabel: "Yes, logout",
                   );
                 },
               ),

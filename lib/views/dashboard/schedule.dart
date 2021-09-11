@@ -13,6 +13,8 @@ import 'package:mybetaride/views/dashboard/home.dart';
 import 'package:mybetaride/views/dashboard/profile.dart';
 import 'package:provider/provider.dart';
 
+import '../welcomeScreen.dart';
+
 class Schedule extends StatefulWidget {
   @override
   _ScheduleState createState() => _ScheduleState();
@@ -22,6 +24,7 @@ class _ScheduleState extends State<Schedule> {
   ProfileService profile = ProfileService();
   ScheduleService client = ScheduleService();
   CheckDriver driver = CheckDriver();
+  void move() => Navigator.push(context, MaterialPageRoute(builder: (_) => WelcomePage()));
 
   void show() {
     showDialog(
@@ -29,6 +32,7 @@ class _ScheduleState extends State<Schedule> {
       builder: (context) {
         return customAlert(
           context,
+          move,
           title: "You have not uploaded your vehicle details",
           content:
               "If you have uploaded your vahicle details please ignore and wait till you're verified",

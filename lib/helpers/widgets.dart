@@ -1199,16 +1199,6 @@ Widget schedulePost(
   );
 }
 
-Widget comingSoonFlush(BuildContext context) {
-  return Flushbar(
-    message: "Coming soon!!!",
-    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 45),
-    margin: EdgeInsets.symmetric(horizontal: 110, vertical: 30),
-    duration: Duration(seconds: 3),
-    borderRadius: BorderRadius.circular(50),
-  )..show(context);
-}
-
 Widget expansion() {
   return Expanded(
     child: ListView.builder(
@@ -1392,7 +1382,7 @@ Widget expansion() {
   );
 }
 
-Widget customAlert(BuildContext context,
+Widget customAlert(BuildContext context, void Function() func,
     {String title, String content, String buttonLabel, String buttonLabel2}) {
   return AlertDialog(
     shape: RoundedRectangleBorder(
@@ -1424,7 +1414,7 @@ Widget customAlert(BuildContext context,
           Container(
             width: MediaQuery.of(context).size.width * 0.4,
             child: MaterialButton(
-              onPressed: () {},
+              onPressed: func,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                   topRight: Radius.circular(20),

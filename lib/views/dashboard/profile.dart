@@ -10,6 +10,8 @@ import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/models/profile_model.dart';
 import 'package:http/http.dart' as http;
 
+import 'home.dart';
+
 class Profile extends StatefulWidget {
   @override
   _ProfileState createState() => _ProfileState();
@@ -19,8 +21,8 @@ class _ProfileState extends State<Profile> {
   var state = ["Lagos", "Abia", "Delta", "Ogun", "Edo", "Enugu", "Osun", "Abuja"];
   String stateValue = "Lagos";
   ProfileService client = ProfileService();
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController lastNameController = TextEditingController();
+  TextEditingController firstNameController;
+  TextEditingController lastNameController;
   TextEditingController emailController;
   TextEditingController phoneController;
   TextEditingController cityController = TextEditingController();
@@ -31,6 +33,8 @@ class _ProfileState extends State<Profile> {
     }
     return controller;
   }
+
+  void move() => Navigator.push(context, MaterialPageRoute(builder: (_) => Home(true, false)));
 
   Future update() async {
     showDialog(
@@ -60,7 +64,7 @@ class _ProfileState extends State<Profile> {
       Navigator.pop(context);
       showDialog(
           context: context,
-          builder: (context) => customAlert(context,
+          builder: (context) => customAlert(context, move,
               title: "Profile Updated Successfully",
               content: " ",
               buttonLabel: "Go home",
@@ -94,6 +98,8 @@ class _ProfileState extends State<Profile> {
           builder: (BuildContext context, AsyncSnapshot<ProfileData> snapshot) {
             if (snapshot.hasData) {
               ProfileData profile = snapshot.data;
+              firstNameController = TextEditingController(text: profile.firstname);
+              lastNameController = TextEditingController(text: profile.lastname);
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 30),
                 child: Column(
