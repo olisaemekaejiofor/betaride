@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 
 import '../welcomeScreen.dart';
@@ -48,6 +49,7 @@ class _UploadProfilePicState extends State<UploadProfilePic> {
     print(doc.paths);
     setState(() {
       path = doc.paths.first;
+      VehicleDetailsPref().setProfilePic(path);
     });
   }
 
@@ -59,126 +61,113 @@ class _UploadProfilePicState extends State<UploadProfilePic> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      // ignore: missing_return
-      onWillPop: () {
-        if (Navigator.canPop(context)) {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => WelcomePage()));
-        } else {
-          Navigator.pop(context);
-        }
-      },
-      child: Scaffold(
-        backgroundColor: Color(0xffFF9411),
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          automaticallyImplyLeading: false,
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(Icons.keyboard_arrow_left, color: Colors.white, size: 30),
-          ),
+    return Scaffold(
+      backgroundColor: Color(0xffFF9411),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.keyboard_arrow_left, color: Colors.white, size: 30),
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Please Upload\nyour Profile Picture",
-                  style: GoogleFonts.notoSans(
-                    fontSize: 26.0,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              SizedBox(height: 10.0),
-              Text(
-                "Once you submit your profile picture it cant be edited after the validation process. So please ensure;",
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Please Upload\nyour Profile Picture",
                 style: GoogleFonts.notoSans(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 26.0,
+                  fontWeight: FontWeight.w700,
                   color: Colors.white,
                 ),
               ),
-              Spacer(flex: 2),
-              Stack(
-                children: [
-                  Center(
-                    child: CircleAvatar(
-                      radius: 100,
-                      backgroundColor: Colors.white,
-                      child: Image.asset("assets/man.png"),
-                    ),
+            ),
+            SizedBox(height: 10.0),
+            Text(
+              "Once you submit your profile picture it cant be edited after the validation process. So please ensure;",
+              style: GoogleFonts.notoSans(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+            Spacer(flex: 2),
+            Stack(
+              children: [
+                Center(
+                  child: CircleAvatar(
+                    radius: 100,
+                    backgroundColor: Colors.white,
+                    child: Image.asset("assets/man.png"),
                   ),
-                  Positioned(
-                    left: 220,
-                    top: 145,
-                    child: GestureDetector(
-                      // onTap: () {
-                      //   galleryImg();
-                      // },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(color: Colors.white),
-                            bottom: BorderSide(color: Colors.white),
-                            left: BorderSide(color: Colors.white),
-                            right: BorderSide(color: Colors.white),
-                          ),
-                          borderRadius: BorderRadius.circular(50),
+                ),
+                Positioned(
+                  left: 220,
+                  top: 145,
+                  child: GestureDetector(
+                    // onTap: () {
+                    //   galleryImg();
+                    // },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: Colors.white),
+                          bottom: BorderSide(color: Colors.white),
+                          left: BorderSide(color: Colors.white),
+                          right: BorderSide(color: Colors.white),
                         ),
-                        child: CircleAvatar(
-                          radius: 25,
-                          backgroundColor: Color(0xffFF9411),
-                          child: Icon(Icons.add, color: Colors.white),
-                        ),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: CircleAvatar(
+                        radius: 25,
+                        backgroundColor: Color(0xffFF9411),
+                        child: Icon(Icons.add, color: Colors.white),
                       ),
                     ),
                   ),
-                ],
-              ),
-              Spacer(),
-              todo("Show your whole face and tips of your   \nshoulder   "),
-              SizedBox(height: 10),
-              todo("No sunglasses or hats please                    "),
-              SizedBox(height: 10),
-              todo("Take your photo in a well-lit enviroment "),
-              SizedBox(height: 10),
-              Spacer(flex: 2),
-              SCustomLongButton(
-                context,
-                label: "Upload",
-                labelColor: Color(0xffFF9411),
-                buttonColor: Colors.white,
-                fun: () {
-                  saveImgPref();
-                },
-              ),
-              Spacer(),
-              (path == null)
-                  ? Center(
-                      child: Text(
-                        'Next',
-                        style: TextStyle(
-                          fontSize: 26.0,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0XffFFC885),
-                        ),
+                ),
+              ],
+            ),
+            Spacer(),
+            todo("Show your whole face and tips of your   \nshoulder   "),
+            SizedBox(height: 10),
+            todo("No sunglasses or hats please                    "),
+            SizedBox(height: 10),
+            todo("Take your photo in a well-lit enviroment "),
+            SizedBox(height: 10),
+            Spacer(flex: 2),
+            SCustomLongButton(
+              context,
+              label: "Upload",
+              labelColor: Color(0xffFF9411),
+              buttonColor: Colors.white,
+              fun: () {
+                saveImgPref();
+              },
+            ),
+            Spacer(),
+            (path == null)
+                ? Center(
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                        fontSize: 26.0,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0XffFFC885),
                       ),
-                    )
-                  : NextButton(context,
-                      screen: UploadDriverLicense(
-                        profilepic: path,
-                      )),
-              Spacer(),
-            ],
-          ),
+                    ),
+                  )
+                : NextButton(context, screen: UploadDriverLicense()),
+            Spacer(),
+          ],
         ),
       ),
     );

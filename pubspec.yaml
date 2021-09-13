@@ -21,6 +21,7 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  flutter_screenutil: 
   flutter:
     sdk: flutter
 
@@ -47,6 +48,7 @@ dependencies:
   flutter_typeahead: ^3.2.0
   flutter_datetime_picker: ^1.5.1
   expandable: 
+  url_launcher: ^6.0.10
 
   
 dev_dependencies:

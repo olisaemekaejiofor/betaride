@@ -76,3 +76,70 @@ class HomePref {
     prefs.remove("activeSchedule");
   }
 }
+
+class VehicleDetailsPref {
+  Future setLicense(String path) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('license', path);
+  }
+
+  Future setProfilePic(String path) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('profilePic', path);
+  }
+
+  Future setInsurance(String path) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('insurance', path);
+  }
+
+  Future setRoadWorthiness(String path) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('roadWorthiness', path);
+  }
+
+  Future setInspectionReport(String path) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('inspectionReport', path);
+  }
+
+  Future<String> getLicense() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String license = prefs.getString('license');
+    return license;
+  }
+
+  Future<String> getProfilePic() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String profilePic = prefs.getString('profilePic');
+    return profilePic;
+  }
+
+  Future<String> getInsurance() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String insurance = prefs.getString('insurance');
+    return insurance;
+  }
+
+  Future<String> getRoadWorthiness() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String roadWorthiness = prefs.getString('roadWorthiness');
+    return roadWorthiness;
+  }
+
+  Future<String> getInspectionReport() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String inspectionReport = prefs.getString('inspectionReport');
+    return inspectionReport;
+  }
+
+  Future removeVehicleDetails() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    prefs.remove('license');
+    prefs.remove('insurance');
+    prefs.remove('roadWorthiness');
+    prefs.remove('inspectionReport');
+    prefs.remove('profilePic');
+  }
+}

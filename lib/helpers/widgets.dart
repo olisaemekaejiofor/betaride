@@ -678,7 +678,7 @@ Drawer homeDrawer(BuildContext context, Future<ProfileData> userName, Future<boo
                 color: Color(0xff3e3e3e), fontWeight: FontWeight.w400, fontSize: 20.0),
           ),
         ),
-        CustomTile(name: "Invite Friends", iconName: "friends", widget: Invite()),
+        CustomTile(name: "Invite Friends", iconName: "friends", widget: ComingSoon()),
         CustomTile(name: "Help", iconName: "call-center", widget: Help()),
         CustomTile(name: "Settings", iconName: "settings", widget: Settings()),
         Expanded(child: SizedBox()),
@@ -1446,7 +1446,8 @@ Widget customAlert(BuildContext context, void Function() func,
   );
 }
 
-Widget oneCustomAlert(BuildContext context, {String title, String content, String buttonLabel}) {
+Widget oneCustomAlert(BuildContext context,
+    {String title, String content, String buttonLabel, void Function() fun}) {
   return AlertDialog(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
@@ -1474,7 +1475,7 @@ Widget oneCustomAlert(BuildContext context, {String title, String content, Strin
       Container(
         width: MediaQuery.of(context).size.width * 0.4,
         child: MaterialButton(
-          onPressed: () {},
+          onPressed: fun,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(20),

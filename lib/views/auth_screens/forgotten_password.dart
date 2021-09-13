@@ -128,10 +128,9 @@ class _ForgottenPasswordScreenState extends State<ForgottenPasswordScreen> {
             ),
             Spacer(),
             singleFormField(
-              label: "Password",
+              label: "Email Address",
               formChild: TextFormField(
                 controller: mail,
-                obscureText: true,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 10),
                   border: InputBorder.none,

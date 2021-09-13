@@ -32,7 +32,7 @@ class _RegisterState extends State<Register> {
           passwordController.text != '' ||
           emailController.text != '' ||
           stateController.text != '') {
-        if (passwordController.text.length <= 5) {
+        if (passwordController.text.length >= 6) {
           if (RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
               .hasMatch(emailController.text)) {
             showDialog(
@@ -46,7 +46,7 @@ class _RegisterState extends State<Register> {
               emailController.text,
               passwordController.text,
               currentValue,
-              "0" + phoneController.text,
+              phoneController.text,
             )
                 .then((response) {
               print(response['status']);
@@ -56,14 +56,14 @@ class _RegisterState extends State<Register> {
                     context, MaterialPageRoute(builder: (context) => LogInScreen()));
               } else {
                 Navigator.pop(context);
-                flushbar(context, "Registration Failed");
+                flushbar(context, "A user has registered with this email/phone number, Try again");
               }
             });
           } else {
             flushbar(context, "Please enter a valid email address");
           }
         } else {
-          flushbar(context, "Password needs to be more tan 5 characters");
+          flushbar(context, "Password needs to be more than 6 characters");
         }
       } else {
         flushbar(context, "All feilds are required");
@@ -229,7 +229,7 @@ class _RegisterState extends State<Register> {
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.symmetric(horizontal: 10),
                                         border: InputBorder.none,
-                                        hintText: "8123456790",
+                                        hintText: "08123456790",
                                         hintStyle: GoogleFonts.notoSans(
                                           color: Color(0xffC78638),
                                           fontWeight: FontWeight.w300,

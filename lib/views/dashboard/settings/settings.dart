@@ -7,6 +7,7 @@ import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/dashboard/profile.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -83,8 +84,10 @@ class _SettingsState extends State<Settings> {
               height: 50,
             ),
             InkWell(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ComingSoon()));
+              onTap: () async {
+                if (await canLaunch('https://mybetaride.com')) {
+                  await launch('https://mybetaride.com', enableJavaScript: true);
+                }
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,56 +108,77 @@ class _SettingsState extends State<Settings> {
             SizedBox(
               height: 50,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Terms and conditions',
-                  style: GoogleFonts.notoSans(
-                      fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.w500),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Colors.white,
-                )
-              ],
+            GestureDetector(
+              onTap: () async {
+                if (await canLaunch('https://mybetaride.com')) {
+                  await launch('https://mybetaride.com', enableJavaScript: true);
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Terms and conditions',
+                    style: GoogleFonts.notoSans(
+                        fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.w500),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: Colors.white,
+                  )
+                ],
+              ),
             ),
             SizedBox(
               height: 50,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Privacy',
-                  style: GoogleFonts.notoSans(
-                      fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.w500),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Colors.white,
-                )
-              ],
+            GestureDetector(
+              onTap: () async {
+                if (await canLaunch('https://mybetaride.com')) {
+                  await launch('https://mybetaride.com', enableJavaScript: true);
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Privacy',
+                    style: GoogleFonts.notoSans(
+                        fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.w500),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: Colors.white,
+                  )
+                ],
+              ),
             ),
             SizedBox(
               height: 50,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'About us',
-                  style: GoogleFonts.notoSans(
-                      fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.w500),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                  color: Colors.white,
-                )
-              ],
+            GestureDetector(
+              onTap: () async {
+                if (await canLaunch('https://mybetaride.com')) {
+                  await launch('https://mybetaride.com', enableJavaScript: true);
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'About us',
+                    style: GoogleFonts.notoSans(
+                        fontSize: 18.0, color: Color(0xffffffff), fontWeight: FontWeight.w500),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: Colors.white,
+                  )
+                ],
+              ),
             ),
             SizedBox(
               height: 50,

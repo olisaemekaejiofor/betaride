@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/coming_soon.dart';
-// import 'package:mybetaride/helpers/widgets.dart';
+import 'package:mybetaride/views/dashboard/help/contact.dart';
 import 'package:mybetaride/views/dashboard/help/feedbacks.dart';
 
 class HelpOptions {
@@ -28,7 +28,7 @@ class Help extends StatelessWidget {
           image: 'assets/contact.png',
           text: 'Contact Us',
           screen: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ComingSoon()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Contact()));
           },
           text1: 'Get across to us via \nour contacts'),
       HelpOptions(

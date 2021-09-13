@@ -79,7 +79,7 @@ class AuthProvider extends ChangeNotifier {
       "address": state,
       "phone": phone,
       "stateOfResidence": state,
-      "role": "driver",
+      "role": "driver"
     };
 
     return await post(

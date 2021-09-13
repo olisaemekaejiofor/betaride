@@ -39,7 +39,10 @@ class _VehicleDetailsState extends State<VehicleDetails> {
       "licenseNumber": license.text,
       "engineNumber": engine.text
     };
-    var headers = {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'};
+    var headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
     if (model.text == '' ||
         original.text == '' ||
         type.text == '' ||
@@ -221,7 +224,7 @@ class _VehicleDetailsState extends State<VehicleDetails> {
                                     style: GoogleFonts.notoSans(color: Colors.white70),
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
-                                      hintText: "Type of Car",
+                                      hintText: "Car Type",
                                       hintStyle: GoogleFonts.notoSans(color: Colors.white70),
                                     ),
                                   ),
