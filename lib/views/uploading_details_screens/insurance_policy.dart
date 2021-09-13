@@ -6,8 +6,6 @@ import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/uploading_details_screens/roadworthiness_certificate.dart';
 
-import '../welcomeScreen.dart';
-
 class UploadInsurancePolicy extends StatefulWidget {
   @override
   _UploadInsurancePolicyState createState() => _UploadInsurancePolicyState();

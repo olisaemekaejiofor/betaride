@@ -6,7 +6,6 @@ import 'package:mybetaride/models/profile_model.dart';
 import 'package:mybetaride/models/schedule_model.dart';
 import 'package:mybetaride/views/dashboard/help/help.dart';
 import 'package:mybetaride/views/dashboard/home.dart';
-import 'package:mybetaride/views/dashboard/invite_friends.dart';
 import 'package:mybetaride/views/dashboard/schedule.dart';
 import 'package:mybetaride/views/dashboard/settings/settings.dart';
 import 'package:mybetaride/views/dashboard/trip_history.dart';

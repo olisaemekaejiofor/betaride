@@ -6,8 +6,6 @@ import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/uploading_details_screens/inspection_report.dart';
 
-import '../welcomeScreen.dart';
-
 // ignore: must_be_immutable
 class UploadRoadWorthinessCertificate extends StatefulWidget {
   @override

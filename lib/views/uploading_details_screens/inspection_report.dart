@@ -2,13 +2,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
-// import 'package:mybetaride/helpers/shared_prefs.dart';
-// import 'package:mybetaride/helpers/app_url.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:mybetaride/views/uploading_details_screens/vehicle_details.dart';
-
-import '../welcomeScreen.dart';
 
 class UploadInspectionReport extends StatefulWidget {
   @override

@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 
-import '../welcomeScreen.dart';
 import 'driver_license.dart';
 
 class UploadProfilePic extends StatefulWidget {
