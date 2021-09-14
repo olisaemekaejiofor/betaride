@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,13 +21,13 @@ class Contact extends StatelessWidget {
             child: CircleAvatar(
                 backgroundColor: Colors.white.withOpacity(0.3),
                 radius: 25,
-                child: Icon(Icons.keyboard_arrow_left)),
+                child: Icon(Icons.keyboard_arrow_left, size: 25, color: Color(0xff000000))),
           ),
         ),
         title: Text(
           'Contact Us',
           style: GoogleFonts.notoSans(
-              fontSize: 16.sp, color: Color(0xFF000000), fontWeight: FontWeight.w700),
+              fontSize: 16, color: Color(0xFF000000), fontWeight: FontWeight.w700),
         ),
       ),
       body: Container(
@@ -37,27 +36,25 @@ class Contact extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              height: 12.h,
-            ),
+            Expanded(child: SizedBox()),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 110.w),
+              padding: EdgeInsets.symmetric(horizontal: 110),
               child: Container(
-                width: 136.w,
-                height: 136.h,
+                width: 136,
+                height: 136,
                 decoration: BoxDecoration(color: Color(0xFFFFFBE9), shape: BoxShape.circle),
                 child: Padding(
                   padding: const EdgeInsets.all(36.0),
                   child: Image.asset(
-                    'assets/contact(1) 1.png',
-                    width: 43.w,
-                    height: 43.h,
+                    'assets/contact (1) 1.png',
+                    width: 43,
+                    height: 43,
                   ),
                 ),
               ),
             ),
             SizedBox(
-              height: 21.h,
+              height: 21,
             ),
             Text(
               'Send us an E-mail\n info@Mybetaride.com',
@@ -66,10 +63,10 @@ class Contact extends StatelessWidget {
                   fontSize: 16, color: Color(0xffF000000), fontWeight: FontWeight.w700),
             ),
             SizedBox(
-              height: 80.h,
+              height: 80,
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 53.w),
+              padding: EdgeInsets.symmetric(horizontal: 53),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -83,17 +80,17 @@ class Contact extends StatelessWidget {
                         },
                         child: CircleAvatar(
                           backgroundColor: Color(0xFFFFFBE9),
-                          radius: 25.w,
+                          radius: 25,
                           child: Image.asset('assets/phone-call-bold 1.png'),
                         ),
                       ),
                       SizedBox(
-                        height: 14.h,
+                        height: 14,
                       ),
                       Text(
                         '08167758317',
                         style: GoogleFonts.notoSans(
-                          fontSize: 12.w,
+                          fontSize: 12,
                           color: Color(0xFF000000),
                           fontWeight: FontWeight.w400,
                         ),
@@ -110,17 +107,17 @@ class Contact extends StatelessWidget {
                         },
                         child: CircleAvatar(
                           backgroundColor: Color(0xFFFFFBE9),
-                          radius: 25.w,
-                          child: Image.asset('assets/images/twitter-logo 2.png'),
+                          radius: 25,
+                          child: Image.asset('assets/twitter-logo 2.png'),
                         ),
                       ),
                       SizedBox(
-                        height: 14.h,
+                        height: 14,
                       ),
                       Text(
                         'Mybetaride',
                         style: GoogleFonts.notoSans(
-                            fontSize: 12.w, color: Color(0xFF000000), fontWeight: FontWeight.w400),
+                            fontSize: 12, color: Color(0xFF000000), fontWeight: FontWeight.w400),
                       ),
                     ],
                   ),
@@ -134,17 +131,17 @@ class Contact extends StatelessWidget {
                         },
                         child: CircleAvatar(
                           backgroundColor: Color(0xFFFFFBE9),
-                          radius: 25.w,
+                          radius: 25,
                           child: Image.asset('assets/globe 1.png'),
                         ),
                       ),
                       SizedBox(
-                        height: 14.h,
+                        height: 14,
                       ),
                       Text(
                         'Mybetaride.com',
                         style: GoogleFonts.notoSans(
-                          fontSize: 12.sp,
+                          fontSize: 12,
                           color: Color(0xFF000000),
                           fontWeight: FontWeight.w400,
                         ),
@@ -154,11 +151,9 @@ class Contact extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
-              height: 151.h,
-            ),
+            Expanded(child: SizedBox()),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 18.w),
+              padding: EdgeInsets.symmetric(horizontal: 18, vertical: 50),
               child: SCustomLongButton(context, label: 'Send Email', fun: () async {
                 if (await canLaunch('mailto:info@mybetaride.com?subject=Hello')) {
                   await launch('mailto:info@mybetaride.com?subject=Hello');

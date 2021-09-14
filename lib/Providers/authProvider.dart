@@ -71,7 +71,8 @@ class AuthProvider extends ChangeNotifier {
     String state,
     String phone,
   ) async {
-    final Map<String, dynamic> apiBodyData = {
+    final Map<String, dynamic> apiBody = {
+      "role": "driver",
       "firstName": firstname,
       "lastName": lastname,
       "password": password,
@@ -79,33 +80,23 @@ class AuthProvider extends ChangeNotifier {
       "address": state,
       "phone": phone,
       "stateOfResidence": state,
-      "role": "driver"
     };
 
     return await post(
       Uri.parse(AppUrl.register),
-      body: json.encode(apiBodyData),
+      body: jsonEncode(apiBody),
       headers: {'Content-Type': 'application/json'},
     ).then(onValue).catchError(onError);
   }
 
-  // Future saveImgPref() async {
-  //   var doc = await FilePicker.platform.pickFiles(
-  //       type: FileType.image, allowedExtensions: ["png", "jpg"], allowCompression: false);
-  // }
-
-  // Future uploadDoc() async {
-  //   // var
-  // }
-
   static Future<FutureOr> onValue(Response response) async {
     var result;
 
-    final Map<String, dynamic> responseData = json.decode(response.body);
+    final Map<String, dynamic> responseData = jsonDecode(response.body);
     print(responseData);
     print(response.statusCode);
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       User authUser = User.fromJson(responseData);
       ScreenPref().setScreenPref(0);
 

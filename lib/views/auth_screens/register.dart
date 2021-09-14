@@ -56,7 +56,7 @@ class _RegisterState extends State<Register> {
                     context, MaterialPageRoute(builder: (context) => LogInScreen()));
               } else {
                 Navigator.pop(context);
-                flushbar(context, "A user has registered with this email/phone number, Try again");
+                flushbar(context, response['data'].toString());
               }
             });
           } else {

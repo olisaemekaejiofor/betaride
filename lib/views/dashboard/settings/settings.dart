@@ -84,8 +84,8 @@ class _SettingsState extends State<Settings> {
             ),
             InkWell(
               onTap: () async {
-                if (await canLaunch('https://mybetaride.com')) {
-                  await launch('https://mybetaride.com', enableJavaScript: true);
+                if (await canLaunch('https://mybetaride.com/faq/')) {
+                  await launch('https://mybetaride.com/faq/', enableJavaScript: true);
                 }
               },
               child: Row(
@@ -109,8 +109,9 @@ class _SettingsState extends State<Settings> {
             ),
             GestureDetector(
               onTap: () async {
-                if (await canLaunch('https://mybetaride.com')) {
-                  await launch('https://mybetaride.com', enableJavaScript: true);
+                if (await canLaunch('https://mybetaride.com/terms-and-conditions/')) {
+                  await launch('https://mybetaride.com/terms-and-conditions/',
+                      enableJavaScript: true);
                 }
               },
               child: Row(
@@ -134,8 +135,8 @@ class _SettingsState extends State<Settings> {
             ),
             GestureDetector(
               onTap: () async {
-                if (await canLaunch('https://mybetaride.com')) {
-                  await launch('https://mybetaride.com', enableJavaScript: true);
+                if (await canLaunch('https://mybetaride.com/safety/')) {
+                  await launch('https://mybetaride.com/safety/', enableJavaScript: true);
                 }
               },
               child: Row(
@@ -159,8 +160,8 @@ class _SettingsState extends State<Settings> {
             ),
             GestureDetector(
               onTap: () async {
-                if (await canLaunch('https://mybetaride.com')) {
-                  await launch('https://mybetaride.com', enableJavaScript: true);
+                if (await canLaunch('https://mybetaride.com/about-us/')) {
+                  await launch('https://mybetaride.com/about-us/', enableJavaScript: true);
                 }
               },
               child: Row(
