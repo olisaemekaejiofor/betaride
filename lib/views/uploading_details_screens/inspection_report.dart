@@ -15,6 +15,10 @@ class _UploadInspectionReportState extends State<UploadInspectionReport> {
   String path;
 
   Future finish() async {
+    showDialog(
+      context: context,
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
     String token = await UserPref().getToken();
 
     String profilePic = await VehicleDetailsPref().getProfilePic();
@@ -67,10 +71,6 @@ class _UploadInspectionReportState extends State<UploadInspectionReport> {
   @override
   Widget build(BuildContext context) {
     Future saveImgP() async {
-      showDialog(
-        context: context,
-        builder: (context) => Center(child: CircularProgressIndicator()),
-      );
       var doc = await FilePicker.platform.pickFiles(
           type: FileType.custom, allowedExtensions: ["png", "jpg"], allowCompression: false);
       setState(() {
