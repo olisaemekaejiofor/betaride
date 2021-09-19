@@ -6,6 +6,7 @@ import 'package:mybetaride/helpers/nointernet.dart';
 import 'package:mybetaride/helpers/widgets.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/auth_screens/register.dart';
+import 'package:mybetaride/views/onboard/onboard_pages.dart';
 import 'package:provider/provider.dart';
 
 class OnBoard extends StatefulWidget {
@@ -73,7 +74,7 @@ class _OnBoardState extends State<OnBoard> {
                         labelColor: Colors.white,
                         buttonColor: Color(0xffFF9411),
                         label: "Get Registered!",
-                        screen: Register(),
+                        screen: OnboardPages(),
                       ),
                       SizedBox(height: 25),
                       GestureDetector(

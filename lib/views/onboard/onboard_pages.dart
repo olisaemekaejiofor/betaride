@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mybetaride/views/auth_screens/register.dart';
 
 import 'onboard.dart';
 
@@ -23,7 +24,7 @@ class _OnboardPagesState extends State<OnboardPages> {
       image: "assets/Group 21.png",
     ),
     Slider(
-      title: "Get paid at\n an instant",
+      title: "Get paid at\nan instant",
       subtitle: "You recieve your payment\non your wallet immediately",
       image: "assets/Group 20.png",
     ),
@@ -56,58 +57,60 @@ class _OnboardPagesState extends State<OnboardPages> {
               SizedBox(height: 20),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List<Widget>.generate(
-                        _pages.length,
-                        (int index) {
-                          return AnimatedContainer(
-                            duration: Duration(milliseconds: 300),
-                            height: 15,
-                            width: (index == _currentPage) ? 15 : 15,
-                            margin: EdgeInsets.symmetric(horizontal: 5, vertical: 20),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border(
-                                  bottom: BorderSide(color: Colors.white),
-                                  top: BorderSide(color: Colors.white),
-                                  left: BorderSide(color: Colors.white),
-                                  right: BorderSide(color: Colors.white),
-                                ),
-                                color: (index == _currentPage) ? Colors.white : Colors.transparent),
-                          );
-                        },
-                      ),
-                    ),
-                    MaterialButton(
-                      onPressed: (_currentPage == 2)
-                          ? () {
-                              Navigator.push(
-                                  context, MaterialPageRoute(builder: (context) => OnBoard()));
-                            }
-                          : () {
-                              _controller.nextPage(
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeOut,
-                              );
-                            },
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10),
-                          bottomLeft: Radius.circular(10),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List<Widget>.generate(
+                          _pages.length,
+                          (int index) {
+                            return AnimatedContainer(
+                              duration: Duration(milliseconds: 300),
+                              height: 10,
+                              width: (index == _currentPage) ? 20 : 20,
+                              margin: EdgeInsets.symmetric(horizontal: 5, vertical: 20),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: (index == _currentPage) ? Color(0xffFF9411) : Colors.grey),
+                            );
+                          },
                         ),
                       ),
-                      height: 30,
-                      minWidth: 100,
-                      child: Text("Next",
+                      MaterialButton(
+                        onPressed: (_currentPage == 2)
+                            ? () {
+                                Navigator.push(
+                                    context, MaterialPageRoute(builder: (context) => Register()));
+                              }
+                            : () {
+                                _controller.nextPage(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeOut,
+                                );
+                              },
+                        color: Color(0xffFF9411),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(10),
+                            bottomLeft: Radius.circular(10),
+                          ),
+                        ),
+                        height: 45,
+                        minWidth: 120,
+                        child: Text(
+                          "Next",
                           style: GoogleFonts.notoSans(
-                              color: Colors.white, fontWeight: FontWeight.w600)),
-                    ),
-                  ],
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -134,10 +137,10 @@ class Slider extends StatelessWidget {
           children: [
             Container(
               width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.50,
+              height: MediaQuery.of(context).size.height * 0.55,
               color: Color(0xffFFE2BF),
             ),
-            SizedBox(height: 75),
+            SizedBox(height: 100),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(

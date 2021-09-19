@@ -241,21 +241,28 @@ class OnlineOffline {
 }
 
 class CheckDriver {
-  Future<bool> check() async {
+  Future<String> check() async {
     String token = await UserPref().getToken();
     var headers = {'Authorization': 'Bearer $token'};
     var res = await get(Uri.parse(AppUrl.getVehicle), headers: headers);
-    if (res.statusCode == 200) {
+    var another = await get(Uri.parse(AppUrl.docUpload), headers: headers);
+    if (res.statusCode == 200 && another.statusCode == 200) {
       var data = jsonDecode(res.body);
+      var anotherData = jsonDecode(another.body);
       List<dynamic> vehicleData = data['data'];
+      List<dynamic> docData = anotherData['data'];
       print(vehicleData);
+      print(docData);
       if (vehicleData.length == 0) {
-        return false;
-      } else if (vehicleData[0]['status'] == "Unverified") {
-        return false;
+        return "Unverified";
+      } else if (vehicleData[0]['status'] == "Unverified" && docData.length == 0) {
+        return "Unverified";
+      } else if (docData.length > 0 && vehicleData[0]['status'] == "Unverified") {
+        return "Pending";
+      } else {
+        return "Verified";
       }
-    } else {
-      return true;
     }
+    return "Error";
   }
 }

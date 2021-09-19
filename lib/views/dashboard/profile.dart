@@ -181,39 +181,14 @@ class _ProfileState extends State<Profile> {
                                   ),
                                 ),
                               ),
-                              doubleFormField(
-                                label_1: "State",
-                                label_2: "City",
-                                width: MediaQuery.of(context).size.width * 0.40,
-                                formChild1: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: DropdownButton(
-                                    icon: Icon(Icons.keyboard_arrow_down, color: Color(0xffC78638)),
-                                    underline: Container(),
-                                    value: stateValue,
-                                    style: GoogleFonts.notoSans(
-                                      color: Color(0xffC78638),
-                                      fontWeight: FontWeight.w300,
-                                    ),
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        stateValue = newValue;
-                                      });
-                                    },
-                                    items: state.map((val) {
-                                      return DropdownMenuItem(
-                                        value: val,
-                                        child: Text(val),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                                formChild2: TextFormField(
-                                  controller: cityController,
+                              singleFormField(
+                                label: "Address",
+                                formChild: TextFormField(
+                                  readOnly: true,
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.symmetric(horizontal: 10),
                                     border: InputBorder.none,
-                                    hintText: "City",
+                                    hintText: profile.address,
                                     hintStyle: GoogleFonts.notoSans(
                                       color: Color(0xffC78638),
                                       fontWeight: FontWeight.w300,

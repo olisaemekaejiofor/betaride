@@ -567,7 +567,7 @@ AppBar homeAppBar() {
       );
 }
 
-Drawer homeDrawer(BuildContext context, Future<ProfileData> userName, Future<bool> check,
+Drawer homeDrawer(BuildContext context, Future<ProfileData> userName, Future<String> check,
     {double width, String name, void Function() fun, void Function() logout}) {
   return Drawer(
     child: Container(
@@ -636,18 +636,9 @@ Drawer homeDrawer(BuildContext context, Future<ProfileData> userName, Future<boo
                     FutureBuilder(
                         future: check,
                         builder: (context, snapshot) {
-                          if (snapshot.data == true) {
+                          if (snapshot.hasData) {
                             return Text(
-                              "Driver Status: Verified",
-                              style: GoogleFonts.notoSans(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w300,
-                                fontSize: 14.0,
-                              ),
-                            );
-                          } else {
-                            return Text(
-                              "Driver Status: Not Verified",
+                              "Driver Status: " + snapshot.data,
                               style: GoogleFonts.notoSans(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w300,
@@ -655,6 +646,7 @@ Drawer homeDrawer(BuildContext context, Future<ProfileData> userName, Future<boo
                               ),
                             );
                           }
+                          return CircularProgressIndicator();
                         }),
                   ],
                 )

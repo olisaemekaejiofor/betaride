@@ -7,4 +7,5 @@ class AppUrl {
   static const String addVehicle = baseUrl + '/vehicle/';
   static const String documentUpload = baseUrl + '/documentupload';
   static const String getVehicle = baseUrl + '/vehicle/me';
+  static const String docUpload = baseUrl + '/documentupload';
 }

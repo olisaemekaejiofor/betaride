@@ -46,7 +46,7 @@ class _RegisterState extends State<Register> {
               emailController.text,
               passwordController.text,
               currentValue,
-              phoneController.text,
+              "0" + phoneController.text,
             )
                 .then((response) {
               print(response['status']);
@@ -56,7 +56,8 @@ class _RegisterState extends State<Register> {
                     context, MaterialPageRoute(builder: (context) => LogInScreen()));
               } else {
                 Navigator.pop(context);
-                flushbar(context, response['data'].toString());
+                flushbar(context,
+                    "A User has either registered with this Email or Phone number. Please try again.");
               }
             });
           } else {
@@ -229,7 +230,7 @@ class _RegisterState extends State<Register> {
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.symmetric(horizontal: 10),
                                         border: InputBorder.none,
-                                        hintText: "08123456790",
+                                        hintText: "8123456790",
                                         hintStyle: GoogleFonts.notoSans(
                                           color: Color(0xffC78638),
                                           fontWeight: FontWeight.w300,
