@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:mybetaride/helpers/nointernet.dart';
 import 'package:mybetaride/helpers/services.dart';
 import 'package:mybetaride/helpers/shared_prefs.dart';
 import 'package:mybetaride/helpers/widgets.dart';
+import 'package:mybetaride/models/schedule_model.dart';
 import 'package:mybetaride/models/terminals_model.dart';
 import 'package:mybetaride/views/auth_screens/login_screen.dart';
 import 'package:mybetaride/views/dashboard/profile.dart';
@@ -194,10 +196,27 @@ class _HomeState extends State<Home> {
     }
   }
 
+  int count = 1;
+  String id;
+  change() async {
+    String sid = await HomePref().getHomeSchedule();
+    id = sid;
+  }
+
+  StreamController<ScheduleData> _usersController;
+  loadDetails() async {}
+
   @override
   void initState() {
     super.initState();
     Provider.of<InternetProvider>(context, listen: false).startMonitoring();
+    change();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    change();
   }
 
   @override
@@ -291,12 +310,14 @@ class _HomeState extends State<Home> {
                         future: HomePref().getHomeSchedule(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            change();
                             return Positioned(
                               bottom: 0.0,
                               height: MediaQuery.of(context).size.height * 0.1,
                               child: GestureDetector(
                                 onTap: () {
                                   showModalBottomSheet(
+                                    isScrollControlled: true,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(30),
@@ -315,6 +336,7 @@ class _HomeState extends State<Home> {
                                             Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
+                                                Spacer(),
                                                 Image.asset("assets/coolicon.png", width: 25),
                                                 SizedBox(width: 10),
                                                 Text(
@@ -324,10 +346,70 @@ class _HomeState extends State<Home> {
                                                     fontSize: 18,
                                                   ),
                                                 ),
+                                                Spacer(),
+                                                IconButton(
+                                                  onPressed: () {},
+                                                  icon: Icon(Icons.refresh,
+                                                      size: 25, color: Colors.black),
+                                                ),
                                               ],
                                             ),
                                             SizedBox(height: 15),
-                                            expansion(),
+                                            Expanded(
+                                              child: FutureBuilder(
+                                                future: client.scheduleById(id),
+                                                builder: (context,
+                                                    AsyncSnapshot<List<String>> snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    print(snapshot);
+                                                    if (snapshot.data.length == 0) {
+                                                      return Center(
+                                                        child: Text(
+                                                          "No Riders have accepted your schedule yet!",
+                                                          style: GoogleFonts.notoSans(fontSize: 18),
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      return ListView.builder(
+                                                        itemCount: snapshot.data.length,
+                                                        itemBuilder: (context, index) {
+                                                          return expansion(context);
+                                                        },
+                                                      );
+                                                    }
+                                                  } else {
+                                                    return Center(
+                                                      child: CircularProgressIndicator(),
+                                                    );
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(12.0),
+                                              child: SCustomLongButton(
+                                                context,
+                                                label: "End Schedule",
+                                                buttonColor: Color(0xffFF9411),
+                                                labelColor: Colors.white,
+                                                fun: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) => Center(
+                                                      child: CircularProgressIndicator(),
+                                                    ),
+                                                  );
+                                                  HomePref().removeSchedule();
+                                                  Future.delayed(Duration(seconds: 5), () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                Home(true, false)));
+                                                  });
+                                                },
+                                              ),
+                                            )
                                           ],
                                         ),
                                       );

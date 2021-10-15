@@ -1190,186 +1190,174 @@ Widget schedulePost(
   );
 }
 
-Widget expansion() {
-  return Expanded(
-    child: ListView.builder(
-      itemCount: 4,
-      itemBuilder: (context, index) {
-        return Column(
+Widget expansion(BuildContext context) {
+  return ExpansionTile(
+    textColor: Colors.black,
+    leading: CircleAvatar(radius: 25, backgroundImage: AssetImage("assets/bgdraw.png")),
+    title: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Tobi Dayo",
+            style: GoogleFonts.notoSans(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            )),
+        Text(
+          "Dutsenara Abuja, Nigeria",
+          style: GoogleFonts.notoSans(
+            color: Colors.black,
+          ),
+        ),
+      ],
+    ),
+    trailing: Icon(Icons.keyboard_arrow_right),
+    children: [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Row(
           children: [
-            ExpansionTile(
-              textColor: Colors.black,
-              leading: CircleAvatar(radius: 25, backgroundImage: AssetImage("assets/bgdraw.png")),
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Tobi Dayo",
-                      style: GoogleFonts.notoSans(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      )),
-                  Text(
-                    "Dutsenara Abuja, Nigeria",
-                    style: GoogleFonts.notoSans(
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              trailing: Icon(Icons.keyboard_arrow_right),
+            Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Row(
-                    children: [
-                      Column(
-                        children: [
-                          Image.asset("assets/Ellipse 29.png", width: 15),
-                          Image.asset("assets/Line 2.png", height: 40),
-                          Image.asset("assets/Rectangle 40.png", width: 15),
-                          SizedBox(height: 20),
-                        ],
-                      ),
-                      SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Pick Up location",
-                            style: GoogleFonts.notoSans(
-                              color: Color(0xffFF8C00),
-                              fontSize: 14.0,
-                            ),
-                          ),
-                          Text(
-                            "Dutse-nara, Abuja, Nigeria",
-                            style: GoogleFonts.notoSans(
-                              color: Color(0xff3e3e3e),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 17.0,
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          Text(
-                            "Destination",
-                            style: GoogleFonts.notoSans(
-                              color: Color(0xffFF8C00),
-                              fontSize: 14.0,
-                            ),
-                          ),
-                          Text(
-                            "Iwo, Osun state, Nigeria",
-                            style: GoogleFonts.notoSans(
-                              color: Color(0xff3e3e3e),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 17.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Spacer(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            "Seat no",
-                            style: GoogleFonts.notoSans(
-                              color: Color(0xffFF8C00),
-                              fontSize: 12.0,
-                            ),
-                          ),
-                          Text(
-                            "4",
-                            style: GoogleFonts.notoSans(
-                              color: Color(0xffFF8C00),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15.0,
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          Text(
-                            "Distance",
-                            style: GoogleFonts.notoSans(
-                              color: Color(0xffFF8C00),
-                              fontSize: 12.0,
-                            ),
-                          ),
-                          Text(
-                            "20km",
-                            style: GoogleFonts.notoSans(
-                              color: Color(0xffFF8C00),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                Image.asset("assets/Ellipse 29.png", width: 15),
+                Image.asset("assets/Line 2.png", height: 40),
+                Image.asset("assets/Rectangle 40.png", width: 15),
+                SizedBox(height: 20),
+              ],
+            ),
+            SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Pick Up location",
+                  style: GoogleFonts.notoSans(
+                    color: Color(0xffFF8C00),
+                    fontSize: 14.0,
                   ),
                 ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: () {},
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.25,
-                        child: Center(
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                "assets/finish (1).png",
-                                height: 30,
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                "Flag",
-                                style: GoogleFonts.notoSans(
-                                  color: Color(0xffFF8C00),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    MaterialButton(
-                      onPressed: () {},
-                      color: Color(0xffFF8C00),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10),
-                          bottomLeft: Radius.circular(10),
-                        ),
-                      ),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.25,
-                        height: 30,
-                        child: Center(
-                          child: Text(
-                            "Drop-off",
-                            style: GoogleFonts.notoSans(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
+                Text(
+                  "Dutse-nara, Abuja, Nigeria",
+                  style: GoogleFonts.notoSans(
+                    color: Color(0xff3e3e3e),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 17.0,
+                  ),
+                ),
+                SizedBox(height: 15),
+                Text(
+                  "Destination",
+                  style: GoogleFonts.notoSans(
+                    color: Color(0xffFF8C00),
+                    fontSize: 14.0,
+                  ),
+                ),
+                Text(
+                  "Iwo, Osun state, Nigeria",
+                  style: GoogleFonts.notoSans(
+                    color: Color(0xff3e3e3e),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 17.0,
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            Spacer(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  "Seat no",
+                  style: GoogleFonts.notoSans(
+                    color: Color(0xffFF8C00),
+                    fontSize: 12.0,
+                  ),
+                ),
+                Text(
+                  "4",
+                  style: GoogleFonts.notoSans(
+                    color: Color(0xffFF8C00),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15.0,
+                  ),
+                ),
+                SizedBox(height: 15),
+                Text(
+                  "Distance",
+                  style: GoogleFonts.notoSans(
+                    color: Color(0xffFF8C00),
+                    fontSize: 12.0,
+                  ),
+                ),
+                Text(
+                  "20km",
+                  style: GoogleFonts.notoSans(
+                    color: Color(0xffFF8C00),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15.0,
+                  ),
+                ),
+              ],
+            ),
           ],
-        );
-      },
-    ),
+        ),
+      ),
+      SizedBox(height: 20),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextButton(
+            onPressed: () {},
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.25,
+              child: Center(
+                child: Row(
+                  children: [
+                    Image.asset(
+                      "assets/finish (1).png",
+                      height: 30,
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      "Flag",
+                      style: GoogleFonts.notoSans(
+                        color: Color(0xffFF8C00),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          MaterialButton(
+            onPressed: () {},
+            color: Color(0xffFF8C00),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(10),
+                bottomLeft: Radius.circular(10),
+              ),
+            ),
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.25,
+              height: 30,
+              child: Center(
+                child: Text(
+                  "Drop-off",
+                  style: GoogleFonts.notoSans(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.0,
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    ],
   );
 }
 

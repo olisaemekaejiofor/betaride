@@ -29,8 +29,7 @@ class ScheduleService {
       } else {
         List<ScheduleData> schedule =
             data.map((dynamic item) => ScheduleData.fromJson(item)).toList();
-        List<ScheduleData> filtered = schedule.where((s) => s.status == "Offline").toList();
-        print(filtered);
+        //List<ScheduleData> filtered = schedule.where((s) => s.status == "Offline").toList();
         return schedule;
       }
     } else {
@@ -47,7 +46,6 @@ class ScheduleService {
       ),
     );
     var myList = await OnlineOffline().futurecheck();
-    print(myList);
     var uurl = "https://mybetaride.herokuapp.com/api/v1/schedule/updateschedule/$id";
 
     String token = await UserPref().getToken();
@@ -86,6 +84,42 @@ class ScheduleService {
             buttonLabel: "OK"),
       );
     }
+  }
+
+  Future<List<String>> scheduleById(String id) async {
+    var url = Uri.parse("https://mybetaride.herokuapp.com/api/v1/schedule/schedulebyId/$id");
+    String token = await UserPref().getToken();
+    var headers = {'Authorization': 'Bearer $token', "Content-Type": "application/json"};
+    var res = await get(url, headers: headers);
+    print(res.statusCode);
+    var data = jsonDecode(res.body);
+    List<dynamic> ridersId = data['schedule']['riderId'];
+    print(ridersId);
+    List<String> names = await usersInSchedule(ridersId);
+    print(names);
+    return names;
+  }
+
+  Future<List<String>> usersInSchedule(List<dynamic> id) async {
+    List<String> data = [];
+    id.forEach((e) async {
+      var url = Uri.parse("https://mybetaride.herokuapp.com/api/v1/auth/getUser/$e");
+      String token = await UserPref().getToken();
+      var headers = {'Authorization': 'Bearer $token', "Content-Type": "application/json"};
+      var res = await get(url, headers: headers);
+      print(res.body);
+      var data = jsonDecode(res.body);
+      if (data['data'] == null) {
+        return null;
+      } else {
+        // print(data['data']['firstName']);
+        String fullName = data['data']['firstName'] + " " + data['data']['lastName'];
+        print(fullName);
+        data.add(fullName);
+      }
+      print(e);
+    });
+    return data;
   }
 }
 
@@ -251,8 +285,8 @@ class CheckDriver {
       var anotherData = jsonDecode(another.body);
       List<dynamic> vehicleData = data['data'];
       List<dynamic> docData = anotherData['data'];
-      print(vehicleData);
-      print(docData);
+      // print(vehicleData);
+      // print(docData);
       if (vehicleData.length == 0) {
         return "Unverified";
       } else if (vehicleData[0]['status'] == "Unverified" && docData.length == 0) {
